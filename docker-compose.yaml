@@ -6,7 +6,7 @@ services:
     container_name: pares_converter_app
     restart: always
     ports:
-      - "8000:8000"
+      - "8080:8000"
     environment:
       - HOST=0.0.0.0
       - PORT=8000
