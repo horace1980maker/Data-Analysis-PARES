@@ -1,0 +1,21 @@
+﻿mdv_id,mdv_name,amenaza_id,amenaza,sum_weighted_impact,driver_rank
+063aa46094712d3c,Frejol,f26421cdcefaed57,Contaminación basurero,51.0,1.0
+063aa46094712d3c,Frejol,a00874b0a4b9fad1,Desbordamiento de río,18.0,2.0
+063aa46094712d3c,Frejol,9e6ffa759c6ee67d,Sequía,11.900000000000002,3.0
+1c9d6ba988a9e794,Aguacate,9e6ffa759c6ee67d,Sequía,102.00000000000001,1.0
+33c37fad737a885a,Limon,9e6ffa759c6ee67d,Sequía,102.00000000000001,1.0
+3a2a0a042c5f8024,Flor de Jamaica,f26421cdcefaed57,Contaminación basurero,51.0,1.0
+3a2a0a042c5f8024,Flor de Jamaica,a00874b0a4b9fad1,Desbordamiento de río,18.0,2.0
+3a2a0a042c5f8024,Flor de Jamaica,9e6ffa759c6ee67d,Sequía,11.900000000000002,3.0
+52eec67a4b1b1678,Trigo y Arveja,9e6ffa759c6ee67d,Sequía,33.150000000000006,1.0
+55936d484bd77a2e,Maiz,9e6ffa759c6ee67d,Sequía,33.150000000000006,1.0
+7ca5e5320e5fccd7,Mango,fd517575a0c7a9ad,Cambio de uso de suelo,8.0,1.0
+b0b0df395857af5c,Pimiento,f26421cdcefaed57,Contaminación basurero,51.0,1.0
+b0b0df395857af5c,Pimiento,a00874b0a4b9fad1,Desbordamiento de río,18.0,2.0
+b0b0df395857af5c,Pimiento,9e6ffa759c6ee67d,Sequía,11.900000000000002,3.0
+b5dc8ed2897489e5,Ganaderia,722e7ea3d78ca8fb,Quema,7.0,1.0
+b98917cbf88a37e4,Aguacate y limon,f26421cdcefaed57,Contaminación basurero,51.0,1.0
+b98917cbf88a37e4,Aguacate y limon,9e6ffa759c6ee67d,Sequía,11.900000000000002,2.0
+df057dcc7783df9a,Borregos,722e7ea3d78ca8fb,Quema,7.0,1.0
+edf96190569e69a8,Mango y limon,f26421cdcefaed57,Contaminación basurero,51.0,1.0
+edf96190569e69a8,Mango y limon,9e6ffa759c6ee67d,Sequía,11.900000000000002,2.0

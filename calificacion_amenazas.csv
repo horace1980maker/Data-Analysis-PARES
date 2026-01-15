@@ -1,0 +1,15 @@
+Valor,Nombre,Dimensión,Descripcion
+1,"Muy bajo, “Casi no nos afecta”",magnitud,"Provoca daños pequeños, con problemas por uno o dos días, pero no cambia la forma de trabajar los medios de vida ni el bienestar de las personas. Todo vuelve a la normalidad con rapidez."
+2,"Bajo, “Nos afecta un poco, pero lo podemos manejar”",magnitud,"Causa afectaciones localizadas sobre los medios de vida o en uno o más servicios ecosistémicos. Requiere realizar algunas medidas, pero la comunidad lo puede resolver con sus propios recursos."
+3,"Moderado, “Nos complica bastante”",magnitud,"Desencadena otros impactos, el daño es más fuerte. Afecta varios medios de vida, servicios ecosistémicos y el bienestar de las personas. Se requieren realizar una serie de medidas, pero lo pueden resolver en colaboración con actores locales."
+4,Alto “Nos golpea duro”,magnitud,"Afecta de manera significativa múltiples medios de vida y servicios ecosistémicos, y el bienestar de las personas está comprometido. Se requiere realizar medidas que requieren más tiempo y cambios en la forma de vivir. Se requiere colaboración de actores locales y externos, de una forma coordinada."
+5,Muy alto “Nos deja sin nada”,magnitud,"Genera un colapso en el sistema socio ecológico, afectando de forma severa y prolongada los servicios ecosistémicos esenciales y los medios de vida. Las comunidades pierden capacidades, se requiere el apoyo de más actores locales y externos."
+1,Ocasional,frecuencia,Ocurre de manera poco frecuente o esporádica. No tiene un patrón claro ni ocurre sucede todos los años.
+2,Recurrente,frecuencia,"Ocurre con cierta regularidad, aunque no de forma continua, anualmente o cada pocos años"
+3,Constante,frecuencia,"Está siempre presente o se manifiesta de forma continua a lo largo del tiempo, afectando de manera permanente"
+3,Nueva,tendencia,Ha surgido recientemente (en los últimos 5 años) y antes no existía.
+2,Aumenta,tendencia,Ha incrementado en intensidad en los últimos 5 años.
+1,Ligeramente aumenta,tendencia,Se va visto un aumento progresivo en la intensidad en los últimos 5 años.
+0,Estable,tendencia,No se han observado cambios significativos en su intensidad o presencia en los últimos 5 años.
+-1,Ligeramente disminuye,tendencia,"Su intensidad ha empezado a disminuir levemente, pero aún persiste."
+-2,Disminuye,tendencia,Disminución de la intensidad y sostenida de la amenaza durante los últimos 5 años

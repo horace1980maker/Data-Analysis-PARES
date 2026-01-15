@@ -1,0 +1,117 @@
+{
+  "pipeline": "storyline4",
+  "version": "1.0.0",
+  "input_path": "..\\FINAL_tv_ZA_analysis_ready_20260114_1026_01.xlsx",
+  "output_dir": "test_output",
+  "params": {
+    "top_n": 10,
+    "min_records": 1,
+    "normalize_rel_type": true,
+    "rel_type_map": {
+      "colabora": [
+        "colabora",
+        "colaboracion",
+        "cooperacion",
+        "alianza",
+        "collab",
+        "collaboration",
+        "cooperate",
+        "ally"
+      ],
+      "conflicto": [
+        "conflicto",
+        "conflict",
+        "tension",
+        "disputa",
+        "dispute",
+        "antagonism",
+        "confrontation"
+      ]
+    },
+    "max_heatmap_items": 20,
+    "min_text_len": 2,
+    "w_actor_network_strength": 0.35,
+    "w_dialogue_coverage": 0.25,
+    "w_conflict_risk": 0.4,
+    "fill_missing_numeric": 0.0,
+    "fill_missing_norm": 0.5
+  },
+  "sheet_availability": {
+    "LOOKUP_CONTEXT": true,
+    "LOOKUP_GEO": true,
+    "LOOKUP_ACTOR": true,
+    "LOOKUP_CONFLICTO": true,
+    "TIDY_5_1_ACTORES": true,
+    "TIDY_5_1_RELACIONES": true,
+    "TIDY_5_2_DIALOGO": true,
+    "TIDY_5_2_DIALOGO_ACTOR": true,
+    "TIDY_6_1_CONFLICT_EVENTS": true,
+    "TIDY_6_2_CONFLICTO_ACTOR": true,
+    "TIDY_4_2_1_MAPEO_CONFLICTO": true,
+    "TIDY_4_2_2_MAPEO_CONFLICTO": true,
+    "QA_INPUT_SCHEMA": true,
+    "QA_PK_DUPLICATES": true,
+    "QA_MISSING_IDS": true,
+    "QA_FOREIGN_KEYS": true
+  },
+  "row_counts": {
+    "LOOKUP_CONTEXT": 4,
+    "LOOKUP_GEO": 2,
+    "LOOKUP_ACTOR": 43,
+    "LOOKUP_CONFLICTO": 9,
+    "TIDY_5_1_ACTORES": 25,
+    "TIDY_5_1_RELACIONES": 73,
+    "TIDY_5_2_DIALOGO": 6,
+    "TIDY_5_2_DIALOGO_ACTOR": 18,
+    "TIDY_6_1_CONFLICT_EVENTS": 8,
+    "TIDY_6_2_CONFLICTO_ACTOR": 8,
+    "TIDY_4_2_1_MAPEO_CONFLICTO": 18,
+    "TIDY_4_2_2_MAPEO_CONFLICTO": 18,
+    "QA_INPUT_SCHEMA": 17,
+    "QA_PK_DUPLICATES": 40,
+    "QA_MISSING_IDS": 45,
+    "QA_FOREIGN_KEYS": 46
+  },
+  "start_time": "2026-01-14T19:57:17.377418",
+  "end_time": "2026-01-14T19:57:30.429021",
+  "duration_seconds": 13.051603,
+  "warnings": [],
+  "qa_summary": {
+    "QA_INPUT_SCHEMA": 17,
+    "QA_PK_DUPLICATES": 40,
+    "QA_MISSING_IDS": 45,
+    "QA_FOREIGN_KEYS": 46
+  },
+  "outputs": {
+    "tables": [
+      "DIM_CONTEXT_GEO",
+      "ACTORS_OVERALL",
+      "ACTOR_CENTRALITY_OVERALL",
+      "ACTOR_CENTRALITY_BY_GRUPO",
+      "DYADS_OVERALL",
+      "DYADS_BY_GRUPO",
+      "DIALOGUE_SPACES_OVERALL",
+      "DIALOGUE_SPACES_BY_GRUPO",
+      "DIALOGUE_PARTICIPATION_OVERALL",
+      "ACTOR_IN_SPACES_OVERALL",
+      "DIALOGUE_STRENGTHS_FREQ_OVERALL",
+      "DIALOGUE_WEAKNESSES_FREQ_OVERALL",
+      "CONFLICTS_OVERALL",
+      "CONFLICTS_BY_GRUPO",
+      "CONFLICT_TIMELINE_OVERALL",
+      "CONFLICT_TIMELINE_BY_GRUPO",
+      "CONFLICT_ACTORS_OVERALL"
+    ],
+    "figures": [
+      "bar_top_actors_collab_overall",
+      "bar_top_actors_conflict_overall",
+      "heatmap_dyads_collab_overall",
+      "heatmap_dyads_conflict_overall",
+      "bar_dialogue_participation",
+      "bar_actor_in_spaces",
+      "line_conflict_timeline_overall",
+      "line_conflict_timeline_Zona_Alta",
+      "bar_top_conflicts"
+    ]
+  }
+}

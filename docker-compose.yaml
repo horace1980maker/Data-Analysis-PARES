@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pares_converter_app
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      # Optional: Mount a temp folder if you want to inspect outputs locally during dev
+      # - ./tmp_output:/app/tmp_output
+      - ./docs:/app/docs

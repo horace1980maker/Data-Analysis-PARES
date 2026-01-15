@@ -1,0 +1,12 @@
+﻿amenaza_id,tipo_amenaza,amenaza,mean_suma,mean_magnitud,mean_frequencia,mean_tendencia,n,suma_norm
+10cd3b13a71c7982,no-climática,Deforestación,6.0,3.0,2.0,1.0,2,0.5
+2adad27075aa6645,climática,Heladas,6.0,3.0,2.0,1.0,2,0.5
+2ede2154db793c56,no-climática,Relleno sanitario,8.0,3.0,3.0,2.0,2,1.0
+3cc2bea94f4d377e,climática,Crecidas torrenciales,5.0,5.0,1.0,-1.0,2,0.25
+453c808a6c02bcd7,no-climática,Uso inadecuado de agroquímicos,7.0,3.0,3.0,1.0,2,0.75
+497ba1b6987b6329,climática,Lluvias intensas,6.0,5.0,1.0,0.0,1,0.5
+6358077a82025963,no-climática,Quemas,5.0,5.0,1.0,-1.0,1,0.25
+9e6ffa759c6ee67d,climática,Sequía,7.4,3.8,2.4,1.2,5,0.8500000000000001
+b018d3365b9ed7c6,no-climática,Contaminación de agua,6.0,3.0,2.0,1.0,2,0.5
+cb78114dc607c99f,climática,Desbordamiento del río,6.0,3.0,3.0,0.0,2,0.5
+e821910cb0e4039a,climática,Olas de calor,4.0,2.0,1.0,1.0,2,0.0

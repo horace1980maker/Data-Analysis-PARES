@@ -1,0 +1,16 @@
+# Storyline 2 Pipeline Parameters
+
+# Ranking and output limits
+top_n: 10                      # Number of top items in rankings
+min_records_for_rank: 1        # Minimum records to include in rankings
+
+# Threat pressure computation
+use_threat_severity_weight: true   # Weight threats by severity (suma from TIDY_4_1_AMENAZAS)
+threat_weight_fallback: 1.0        # Default weight when threat severity is missing
+
+# Visualization limits
+max_heatmap_items: 15              # Maximum items per axis in heatmaps
+
+# Missing data handling
+fill_missing_numeric: 0.0          # Default value for missing numeric columns
+fill_missing_norm: 0.5             # Default normalized value when data is missing

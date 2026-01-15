@@ -1,0 +1,28 @@
+# Weight scenarios for Action Priority Index (API)
+# API = w_priority * priority_norm + w_risk * risk_norm + w_capacity_gap * cap_gap_norm
+# All weights must sum to 1.0
+
+scenarios:
+  balanced:
+    description: "Equal weight to priority and risk, moderate weight to capacity gap"
+    w_priority: 0.4
+    w_risk: 0.4
+    w_capacity_gap: 0.2
+
+  livelihood_first:
+    description: "Emphasize livelihood priority (importance to community)"
+    w_priority: 0.5
+    w_risk: 0.3
+    w_capacity_gap: 0.2
+
+  risk_first:
+    description: "Emphasize threat/risk exposure"
+    w_priority: 0.3
+    w_risk: 0.5
+    w_capacity_gap: 0.2
+
+# Default scenario to use if not specified
+default_scenario: balanced
+
+# Top N livelihoods/threats to include in rankings
+top_n: 10

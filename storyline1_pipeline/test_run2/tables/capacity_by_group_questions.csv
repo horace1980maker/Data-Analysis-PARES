@@ -1,0 +1,373 @@
+﻿grupo,question_id,question_text,mean_response_0_1,n_responses
+Zona  Media,05bf12bc285840a9,"… tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",0.1,1
+Zona  Media,3b4785ad9e5713b8,"…experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",0.1,1
+Zona  Media,62dca5fdd7195eb3,… tiene mujeres empleadas con remuneración en este sistema productivo?,0.1,1
+Zona  Media,99223c4f0411d718,"…fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",0.1,1
+Zona  Media,b3b57618a3a273fe,… tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?,0.1,1
+Zona  Media,bcdc7d34a16cbd1e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?,0.1,1
+Zona  Media,c60800c11c8f21de,"…dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",0.1,1
+Zona  Media,d84af63ab09fff3e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*,0.1,1
+Zona  Media,e42c378bac43d5c9,… tiene remesas que representan más del 60% de sus ingresos?,0.1,1
+Zona  Media,fbea02b539793edd,… tiene una vivienda permanente? [con título de propiedad],0.1,1
+Zona  Media,02eb8e55a11a0285,… tiene acceso a créditos para la producción?,0.3,1
+Zona  Media,0d7266adddbcb336,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?,0.3,1
+Zona  Media,0f368a3655631a63,… confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?,0.3,1
+Zona  Media,13a59c8562947b1a,…usa leña como principal fuente de energía en la casa?,0.3,1
+Zona  Media,2e4a71aff759a984,… está encabezada por mujeres? (jefaturas de hogar),0.3,1
+Zona  Media,46066eba7063f5a4,… añade valor a sus productos?,0.3,1
+Zona  Media,689ee4bbbd104107,…tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?,0.3,1
+Zona  Media,7d13b5f48a5c8e43,… tiene acceso a seguros para la producción?,0.3,1
+Zona  Media,7fa498bf715950f8,… dispone de sus propios medios de transporte para comercializar sus productos?,0.3,1
+Zona  Media,82bfb88ab2c5b99a,"Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",0.3,1
+Zona  Media,925d9326de8520cf,… depende totalmente de este sistema productivo para sostener sus ingresos?,0.3,1
+Zona  Media,98fafc873e8d73a4,"… tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",0.3,1
+Zona  Media,9b34de3d15065b20,… tiene acceso a agua limpia y potable durante todo el año?,0.3,1
+Zona  Media,a68b8eb5f8bcf412,… tiene vivienda una habitación específica para cada integrante de la familia?,0.3,1
+Zona  Media,aab106e4db4df3d3,… accede a información del mercado?,0.3,1
+Zona  Media,adbb02694892e8ac,"… si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",0.3,1
+Zona  Media,b3baffceb34c2ac2,… tiene acceso a leña/energía durante todo el año para uso en la casa?,0.3,1
+Zona  Media,bdcaed2ee6f702c9,…dispone de mano de obra (familiar o contratada) cuando la necesita?,0.3,1
+Zona  Media,bee6d5cbcd1e5eb6,… son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?,0.3,1
+Zona  Media,d5d7ad6293a6dd11,"… tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",0.3,1
+Zona  Media,dfd74456e472e108,… recibe información climática para su sistema productivo?,0.3,1
+Zona  Media,f091f2a849fc2a6c,… experimenta discriminación por ser migrante en este paisaje?,0.3,1
+Zona  Media,f858b7c8f419649a,"De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",0.3,1
+Zona  Media,0ca775a58fdb87fc,…tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?,0.5,1
+Zona  Media,0de65afd443032d6,…participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?,0.5,1
+Zona  Media,22abdd7b98714874,… dispone de carreteras adecuadas para distribuir los productos?,0.5,1
+Zona  Media,2833767d80ca0d9d,… las mujeres pueden transitar libremente sin problemas de seguridad?,0.5,1
+Zona  Media,2abdf41fbd4aa698,… participa en plataformas/espacios de toma de decisiones comunitarias?,0.5,1
+Zona  Media,2af3a962bc84c9a2,… usa conocimiento local o indígena para enfrentar amenazas climáticas?,0.5,1
+Zona  Media,46ea0440ca02d217,… confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?,0.5,1
+Zona  Media,4b3c44fe94033c1a,"…confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",0.5,1
+Zona  Media,563d2ae918a6caa9,"… ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",0.5,1
+Zona  Media,5772cdd4b7953ff9,"…tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",0.5,1
+Zona  Media,5c26f0ae638d2997,… tiene acceso a internet?,0.5,1
+Zona  Media,78d0da2dc732d40d,"…tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",0.5,1
+Zona  Media,7d0131ca34dc64dd,¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?,0.5,1
+Zona  Media,89062a1f1ade6ac9,"Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",0.5,1
+Zona  Media,a521505cf3f8c361,¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?,0.5,1
+Zona  Media,b87b1e89453bfbc0,…tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano),0.5,1
+Zona  Media,bc1013e7bb7e5996,"…ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",0.5,1
+Zona  Media,e420078f9e4ab6dc,… vende sus productos a través de un intermediario?,0.5,1
+Zona  Media,e442b481c5a89cf8,… estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?,0.5,1
+Zona  Media,e4e63f1c65b01a1f,"…tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",0.5,1
+Zona  Media,e5ed49ee4592e805,… tiene ingresos estables y suficientes durante todo el año?,0.5,1
+Zona  Media,0ccc4eb87bb4df71,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?,0.7,1
+Zona  Media,12b3ae4e79dd222e,"… recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",0.7,1
+Zona  Media,29098184c75a0cbf,…dispone con diversidad tecnológica para la implementación de prácticas?,0.7,1
+Zona  Media,4d1fead568de14a8,… puede transitar libremente sin problemas de seguridad?,0.7,1
+Zona  Media,7547c714876b4b7e,… tiene a todas las personas mayores de 15 años que saben leer y escribir?,0.9,1
+Zona  Media,a9d0c0b399ee1031,… tiene acceso a la electricidad?,0.9,1
+Zona  Media,ac4ce4cfe134771a,… envía a los jóvenes a terminar la enseñanza secundaria?,0.9,1
+Zona  Media,e0c0ca868a875791,… envía a los niños a finalizar la enseñanza primaria?,0.9,1
+Zona Alta,29098184c75a0cbf,…dispone con diversidad tecnológica para la implementación de prácticas?,0.1,1
+Zona Alta,3b4785ad9e5713b8,"…experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",0.1,2
+Zona Alta,46066eba7063f5a4,… añade valor a sus productos?,0.1,2
+Zona Alta,78d0da2dc732d40d,"…tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",0.1,2
+Zona Alta,7d13b5f48a5c8e43,… tiene acceso a seguros para la producción?,0.1,1
+Zona Alta,7fa498bf715950f8,… dispone de sus propios medios de transporte para comercializar sus productos?,0.1,2
+Zona Alta,bcdc7d34a16cbd1e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?,0.1,1
+Zona Alta,bee6d5cbcd1e5eb6,… son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?,0.1,2
+Zona Alta,c60800c11c8f21de,"…dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",0.1,1
+Zona Alta,f858b7c8f419649a,"De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",0.1,1
+Zona Alta,0f368a3655631a63,… confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?,0.2,2
+Zona Alta,22abdd7b98714874,… dispone de carreteras adecuadas para distribuir los productos?,0.2,2
+Zona Alta,2af3a962bc84c9a2,… usa conocimiento local o indígena para enfrentar amenazas climáticas?,0.2,2
+Zona Alta,a68b8eb5f8bcf412,… tiene vivienda una habitación específica para cada integrante de la familia?,0.2,2
+Zona Alta,d84af63ab09fff3e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*,0.2,2
+Zona Alta,e4e63f1c65b01a1f,"…tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",0.2,2
+Zona Alta,02eb8e55a11a0285,… tiene acceso a créditos para la producción?,0.3,2
+Zona Alta,05bf12bc285840a9,"… tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",0.3,2
+Zona Alta,12b3ae4e79dd222e,"… recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",0.3,2
+Zona Alta,13a59c8562947b1a,…usa leña como principal fuente de energía en la casa?,0.3,2
+Zona Alta,2e4a71aff759a984,… está encabezada por mujeres? (jefaturas de hogar),0.3,2
+Zona Alta,563d2ae918a6caa9,"… ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",0.3,2
+Zona Alta,5c26f0ae638d2997,… tiene acceso a internet?,0.3,2
+Zona Alta,82bfb88ab2c5b99a,"Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",0.3,1
+Zona Alta,aab106e4db4df3d3,… accede a información del mercado?,0.3,2
+Zona Alta,b3b57618a3a273fe,… tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?,0.3,1
+Zona Alta,b3baffceb34c2ac2,… tiene acceso a leña/energía durante todo el año para uso en la casa?,0.3,2
+Zona Alta,e42c378bac43d5c9,… tiene remesas que representan más del 60% de sus ingresos?,0.3,1
+Zona Alta,e442b481c5a89cf8,… estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?,0.3,2
+Zona Alta,bc1013e7bb7e5996,"…ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",0.39999999999999997,2
+Zona Alta,4b3c44fe94033c1a,"…confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",0.4,2
+Zona Alta,a521505cf3f8c361,¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?,0.4,2
+Zona Alta,adbb02694892e8ac,"… si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",0.4,2
+Zona Alta,0ccc4eb87bb4df71,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?,0.5,2
+Zona Alta,0d7266adddbcb336,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?,0.5,2
+Zona Alta,2abdf41fbd4aa698,… participa en plataformas/espacios de toma de decisiones comunitarias?,0.5,2
+Zona Alta,62dca5fdd7195eb3,… tiene mujeres empleadas con remuneración en este sistema productivo?,0.5,1
+Zona Alta,7d0131ca34dc64dd,¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?,0.5,2
+Zona Alta,98fafc873e8d73a4,"… tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",0.5,1
+Zona Alta,b87b1e89453bfbc0,…tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano),0.5,2
+Zona Alta,e420078f9e4ab6dc,… vende sus productos a través de un intermediario?,0.5,2
+Zona Alta,2833767d80ca0d9d,… las mujeres pueden transitar libremente sin problemas de seguridad?,0.6,2
+Zona Alta,5772cdd4b7953ff9,"…tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",0.6,2
+Zona Alta,99223c4f0411d718,"…fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",0.6,2
+Zona Alta,a9d0c0b399ee1031,… tiene acceso a la electricidad?,0.6,2
+Zona Alta,ac4ce4cfe134771a,… envía a los jóvenes a terminar la enseñanza secundaria?,0.6,2
+Zona Alta,d5d7ad6293a6dd11,"… tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",0.6,2
+Zona Alta,e5ed49ee4592e805,… tiene ingresos estables y suficientes durante todo el año?,0.6,2
+Zona Alta,0ca775a58fdb87fc,…tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?,0.7,2
+Zona Alta,46ea0440ca02d217,… confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?,0.7,2
+Zona Alta,4d1fead568de14a8,… puede transitar libremente sin problemas de seguridad?,0.7,2
+Zona Alta,89062a1f1ade6ac9,"Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",0.7,2
+Zona Alta,925d9326de8520cf,… depende totalmente de este sistema productivo para sostener sus ingresos?,0.7,2
+Zona Alta,bdcaed2ee6f702c9,…dispone de mano de obra (familiar o contratada) cuando la necesita?,0.7,2
+Zona Alta,689ee4bbbd104107,…tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?,0.8,2
+Zona Alta,7547c714876b4b7e,… tiene a todas las personas mayores de 15 años que saben leer y escribir?,0.8,2
+Zona Alta,9b34de3d15065b20,… tiene acceso a agua limpia y potable durante todo el año?,0.8,2
+Zona Alta,e0c0ca868a875791,… envía a los niños a finalizar la enseñanza primaria?,0.8,2
+Zona Alta,fbea02b539793edd,… tiene una vivienda permanente? [con título de propiedad],0.8,2
+Zona Alta,0de65afd443032d6,…participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?,,0
+Zona Alta,dfd74456e472e108,… recibe información climática para su sistema productivo?,,0
+Zona Alta,f091f2a849fc2a6c,… experimenta discriminación por ser migrante en este paisaje?,,0
+Zona Baja,c60800c11c8f21de,"…dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",0.1,1
+Zona Baja,7fa498bf715950f8,… dispone de sus propios medios de transporte para comercializar sus productos?,0.10000000000000002,3
+Zona Baja,bee6d5cbcd1e5eb6,… son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?,0.10000000000000002,3
+Zona Baja,0de65afd443032d6,…participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?,0.16666666666666666,3
+Zona Baja,0f368a3655631a63,… confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?,0.16666666666666666,3
+Zona Baja,4b3c44fe94033c1a,"…confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",0.16666666666666666,3
+Zona Baja,62dca5fdd7195eb3,… tiene mujeres empleadas con remuneración en este sistema productivo?,0.16666666666666666,3
+Zona Baja,b3b57618a3a273fe,… tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?,0.16666666666666666,3
+Zona Baja,d84af63ab09fff3e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*,0.16666666666666666,3
+Zona Baja,dfd74456e472e108,… recibe información climática para su sistema productivo?,0.16666666666666666,3
+Zona Baja,f858b7c8f419649a,"De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",0.16666666666666666,3
+Zona Baja,3b4785ad9e5713b8,"…experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",0.2,2
+Zona Baja,46066eba7063f5a4,… añade valor a sus productos?,0.2,2
+Zona Baja,99223c4f0411d718,"…fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",0.2,2
+Zona Baja,0ccc4eb87bb4df71,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?,0.2333333333333333,3
+Zona Baja,0d7266adddbcb336,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?,0.2333333333333333,3
+Zona Baja,29098184c75a0cbf,…dispone con diversidad tecnológica para la implementación de prácticas?,0.2333333333333333,3
+Zona Baja,2abdf41fbd4aa698,… participa en plataformas/espacios de toma de decisiones comunitarias?,0.2333333333333333,3
+Zona Baja,46ea0440ca02d217,… confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?,0.2333333333333333,3
+Zona Baja,7d0131ca34dc64dd,¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?,0.2333333333333333,3
+Zona Baja,98fafc873e8d73a4,"… tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",0.2333333333333333,3
+Zona Baja,bcdc7d34a16cbd1e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?,0.2333333333333333,3
+Zona Baja,05bf12bc285840a9,"… tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",0.3,3
+Zona Baja,12b3ae4e79dd222e,"… recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",0.3,3
+Zona Baja,2e4a71aff759a984,… está encabezada por mujeres? (jefaturas de hogar),0.3,3
+Zona Baja,563d2ae918a6caa9,"… ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",0.3,3
+Zona Baja,78d0da2dc732d40d,"…tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",0.3,3
+Zona Baja,7d13b5f48a5c8e43,… tiene acceso a seguros para la producción?,0.3,1
+Zona Baja,82bfb88ab2c5b99a,"Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",0.3,3
+Zona Baja,a68b8eb5f8bcf412,… tiene vivienda una habitación específica para cada integrante de la familia?,0.3,3
+Zona Baja,aab106e4db4df3d3,… accede a información del mercado?,0.3,3
+Zona Baja,adbb02694892e8ac,"… si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",0.3,3
+Zona Baja,d5d7ad6293a6dd11,"… tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",0.3,3
+Zona Baja,e42c378bac43d5c9,… tiene remesas que representan más del 60% de sus ingresos?,0.3,3
+Zona Baja,f091f2a849fc2a6c,… experimenta discriminación por ser migrante en este paisaje?,0.3,1
+Zona Baja,bc1013e7bb7e5996,"…ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",0.36666666666666664,3
+Zona Baja,02eb8e55a11a0285,… tiene acceso a créditos para la producción?,0.3666666666666667,3
+Zona Baja,5772cdd4b7953ff9,"…tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",0.3666666666666667,3
+Zona Baja,89062a1f1ade6ac9,"Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",0.3666666666666667,3
+Zona Baja,a521505cf3f8c361,¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?,0.3666666666666667,3
+Zona Baja,bdcaed2ee6f702c9,…dispone de mano de obra (familiar o contratada) cuando la necesita?,0.3666666666666667,3
+Zona Baja,e442b481c5a89cf8,… estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?,0.3666666666666667,3
+Zona Baja,2af3a962bc84c9a2,… usa conocimiento local o indígena para enfrentar amenazas climáticas?,0.39999999999999997,2
+Zona Baja,b3baffceb34c2ac2,… tiene acceso a leña/energía durante todo el año para uso en la casa?,0.39999999999999997,2
+Zona Baja,689ee4bbbd104107,…tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?,0.4333333333333333,3
+Zona Baja,925d9326de8520cf,… depende totalmente de este sistema productivo para sostener sus ingresos?,0.43333333333333335,3
+Zona Baja,13a59c8562947b1a,…usa leña como principal fuente de energía en la casa?,0.5,2
+Zona Baja,22abdd7b98714874,… dispone de carreteras adecuadas para distribuir los productos?,0.5,3
+Zona Baja,e5ed49ee4592e805,… tiene ingresos estables y suficientes durante todo el año?,0.5,3
+Zona Baja,0ca775a58fdb87fc,…tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?,0.5666666666666667,3
+Zona Baja,b87b1e89453bfbc0,…tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano),0.5666666666666667,3
+Zona Baja,fbea02b539793edd,… tiene una vivienda permanente? [con título de propiedad],0.5666666666666667,3
+Zona Baja,2833767d80ca0d9d,… las mujeres pueden transitar libremente sin problemas de seguridad?,0.6333333333333333,3
+Zona Baja,5c26f0ae638d2997,… tiene acceso a internet?,0.6333333333333333,3
+Zona Baja,7547c714876b4b7e,… tiene a todas las personas mayores de 15 años que saben leer y escribir?,0.6333333333333333,3
+Zona Baja,ac4ce4cfe134771a,… envía a los jóvenes a terminar la enseñanza secundaria?,0.6333333333333333,3
+Zona Baja,e420078f9e4ab6dc,… vende sus productos a través de un intermediario?,0.6333333333333333,3
+Zona Baja,4d1fead568de14a8,… puede transitar libremente sin problemas de seguridad?,0.6999999999999998,3
+Zona Baja,9b34de3d15065b20,… tiene acceso a agua limpia y potable durante todo el año?,0.7000000000000001,3
+Zona Baja,e0c0ca868a875791,… envía a los niños a finalizar la enseñanza primaria?,0.7000000000000001,3
+Zona Baja,e4e63f1c65b01a1f,"…tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",0.7000000000000001,3
+Zona Baja,a9d0c0b399ee1031,… tiene acceso a la electricidad?,0.9,3
+Zona alta,46066eba7063f5a4,… añade valor a sus productos?,0.1,2
+Zona alta,62dca5fdd7195eb3,… tiene mujeres empleadas con remuneración en este sistema productivo?,0.1,1
+Zona alta,aab106e4db4df3d3,… accede a información del mercado?,0.1,2
+Zona alta,b3b57618a3a273fe,… tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?,0.1,1
+Zona alta,dfd74456e472e108,… recibe información climática para su sistema productivo?,0.1,2
+Zona alta,f858b7c8f419649a,"De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",0.1,2
+Zona alta,02eb8e55a11a0285,… tiene acceso a créditos para la producción?,0.2,2
+Zona alta,12b3ae4e79dd222e,"… recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",0.2,2
+Zona alta,29098184c75a0cbf,…dispone con diversidad tecnológica para la implementación de prácticas?,0.2,2
+Zona alta,7fa498bf715950f8,… dispone de sus propios medios de transporte para comercializar sus productos?,0.2,2
+Zona alta,99223c4f0411d718,"…fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",0.2,2
+Zona alta,e4e63f1c65b01a1f,"…tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",0.2,2
+Zona alta,0ca775a58fdb87fc,…tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?,0.3,2
+Zona alta,0d7266adddbcb336,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?,0.3,1
+Zona alta,0de65afd443032d6,…participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?,0.3,2
+Zona alta,2af3a962bc84c9a2,… usa conocimiento local o indígena para enfrentar amenazas climáticas?,0.3,2
+Zona alta,78d0da2dc732d40d,"…tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",0.3,2
+Zona alta,7d13b5f48a5c8e43,… tiene acceso a seguros para la producción?,0.3,1
+Zona alta,9b34de3d15065b20,… tiene acceso a agua limpia y potable durante todo el año?,0.3,2
+Zona alta,adbb02694892e8ac,"… si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",0.3,2
+Zona alta,b87b1e89453bfbc0,…tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano),0.3,2
+Zona alta,bcdc7d34a16cbd1e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?,0.3,1
+Zona alta,bdcaed2ee6f702c9,…dispone de mano de obra (familiar o contratada) cuando la necesita?,0.3,2
+Zona alta,bee6d5cbcd1e5eb6,… son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?,0.3,2
+Zona alta,c60800c11c8f21de,"…dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",0.3,2
+Zona alta,d5d7ad6293a6dd11,"… tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",0.3,2
+Zona alta,d84af63ab09fff3e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*,0.3,1
+Zona alta,e42c378bac43d5c9,… tiene remesas que representan más del 60% de sus ingresos?,0.3,1
+Zona alta,e442b481c5a89cf8,… estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?,0.3,2
+Zona alta,e5ed49ee4592e805,… tiene ingresos estables y suficientes durante todo el año?,0.3,2
+Zona alta,13a59c8562947b1a,…usa leña como principal fuente de energía en la casa?,0.39999999999999997,2
+Zona alta,2abdf41fbd4aa698,… participa en plataformas/espacios de toma de decisiones comunitarias?,0.39999999999999997,2
+Zona alta,3b4785ad9e5713b8,"…experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",0.4,2
+Zona alta,46ea0440ca02d217,… confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?,0.4,2
+Zona alta,7d0131ca34dc64dd,¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?,0.4,2
+Zona alta,82bfb88ab2c5b99a,"Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",0.4,2
+Zona alta,89062a1f1ade6ac9,"Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",0.4,2
+Zona alta,925d9326de8520cf,… depende totalmente de este sistema productivo para sostener sus ingresos?,0.4,2
+Zona alta,a521505cf3f8c361,¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?,0.4,2
+Zona alta,a68b8eb5f8bcf412,… tiene vivienda una habitación específica para cada integrante de la familia?,0.4,2
+Zona alta,b3baffceb34c2ac2,… tiene acceso a leña/energía durante todo el año para uso en la casa?,0.4,2
+Zona alta,05bf12bc285840a9,"… tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",0.5,2
+Zona alta,0ccc4eb87bb4df71,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?,0.5,2
+Zona alta,0f368a3655631a63,… confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?,0.5,2
+Zona alta,22abdd7b98714874,… dispone de carreteras adecuadas para distribuir los productos?,0.5,2
+Zona alta,2e4a71aff759a984,… está encabezada por mujeres? (jefaturas de hogar),0.5,2
+Zona alta,4b3c44fe94033c1a,"…confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",0.5,2
+Zona alta,563d2ae918a6caa9,"… ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",0.5,2
+Zona alta,5772cdd4b7953ff9,"…tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",0.5,2
+Zona alta,5c26f0ae638d2997,… tiene acceso a internet?,0.5,2
+Zona alta,98fafc873e8d73a4,"… tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",0.5,2
+Zona alta,bc1013e7bb7e5996,"…ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",0.5,2
+Zona alta,f091f2a849fc2a6c,… experimenta discriminación por ser migrante en este paisaje?,0.5,1
+Zona alta,fbea02b539793edd,… tiene una vivienda permanente? [con título de propiedad],0.5,2
+Zona alta,2833767d80ca0d9d,… las mujeres pueden transitar libremente sin problemas de seguridad?,0.6,2
+Zona alta,4d1fead568de14a8,… puede transitar libremente sin problemas de seguridad?,0.6,2
+Zona alta,689ee4bbbd104107,…tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?,0.6,2
+Zona alta,ac4ce4cfe134771a,… envía a los jóvenes a terminar la enseñanza secundaria?,0.6,2
+Zona alta,7547c714876b4b7e,… tiene a todas las personas mayores de 15 años que saben leer y escribir?,0.7,2
+Zona alta,e0c0ca868a875791,… envía a los niños a finalizar la enseñanza primaria?,0.7,2
+Zona alta,e420078f9e4ab6dc,… vende sus productos a través de un intermediario?,0.7,2
+Zona alta,a9d0c0b399ee1031,… tiene acceso a la electricidad?,0.8,2
+Zona baja,7d13b5f48a5c8e43,… tiene acceso a seguros para la producción?,0.1,2
+Zona baja,b3b57618a3a273fe,… tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?,0.1,2
+Zona baja,c60800c11c8f21de,"…dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",0.1,2
+Zona baja,dfd74456e472e108,… recibe información climática para su sistema productivo?,0.1,1
+Zona baja,f858b7c8f419649a,"De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",0.1,2
+Zona baja,0de65afd443032d6,…participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?,0.2,2
+Zona baja,13a59c8562947b1a,…usa leña como principal fuente de energía en la casa?,0.2,2
+Zona baja,02eb8e55a11a0285,… tiene acceso a créditos para la producción?,0.3,2
+Zona baja,12b3ae4e79dd222e,"… recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",0.3,2
+Zona baja,2abdf41fbd4aa698,… participa en plataformas/espacios de toma de decisiones comunitarias?,0.3,2
+Zona baja,2af3a962bc84c9a2,… usa conocimiento local o indígena para enfrentar amenazas climáticas?,0.3,1
+Zona baja,3b4785ad9e5713b8,"…experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",0.3,1
+Zona baja,46066eba7063f5a4,… añade valor a sus productos?,0.3,1
+Zona baja,4b3c44fe94033c1a,"…confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",0.3,2
+Zona baja,563d2ae918a6caa9,"… ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",0.3,2
+Zona baja,7fa498bf715950f8,… dispone de sus propios medios de transporte para comercializar sus productos?,0.3,2
+Zona baja,925d9326de8520cf,… depende totalmente de este sistema productivo para sostener sus ingresos?,0.3,2
+Zona baja,99223c4f0411d718,"…fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",0.3,2
+Zona baja,b3baffceb34c2ac2,… tiene acceso a leña/energía durante todo el año para uso en la casa?,0.3,2
+Zona baja,bc1013e7bb7e5996,"…ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",0.3,2
+Zona baja,bcdc7d34a16cbd1e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?,0.3,2
+Zona baja,bee6d5cbcd1e5eb6,… son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?,0.3,2
+Zona baja,e42c378bac43d5c9,… tiene remesas que representan más del 60% de sus ingresos?,0.3,2
+Zona baja,e442b481c5a89cf8,… estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?,0.3,2
+Zona baja,05bf12bc285840a9,"… tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",0.39999999999999997,2
+Zona baja,adbb02694892e8ac,"… si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",0.39999999999999997,2
+Zona baja,d5d7ad6293a6dd11,"… tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",0.39999999999999997,2
+Zona baja,d84af63ab09fff3e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*,0.39999999999999997,2
+Zona baja,fbea02b539793edd,… tiene una vivienda permanente? [con título de propiedad],0.39999999999999997,2
+Zona baja,0d7266adddbcb336,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?,0.4,2
+Zona baja,0f368a3655631a63,… confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?,0.4,2
+Zona baja,29098184c75a0cbf,…dispone con diversidad tecnológica para la implementación de prácticas?,0.4,2
+Zona baja,46ea0440ca02d217,… confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?,0.4,2
+Zona baja,98fafc873e8d73a4,"… tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",0.4,2
+Zona baja,2833767d80ca0d9d,… las mujeres pueden transitar libremente sin problemas de seguridad?,0.5,2
+Zona baja,2e4a71aff759a984,… está encabezada por mujeres? (jefaturas de hogar),0.5,2
+Zona baja,62dca5fdd7195eb3,… tiene mujeres empleadas con remuneración en este sistema productivo?,0.5,2
+Zona baja,7d0131ca34dc64dd,¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?,0.5,1
+Zona baja,82bfb88ab2c5b99a,"Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",0.5,2
+Zona baja,89062a1f1ade6ac9,"Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",0.5,2
+Zona baja,9b34de3d15065b20,… tiene acceso a agua limpia y potable durante todo el año?,0.5,2
+Zona baja,a68b8eb5f8bcf412,… tiene vivienda una habitación específica para cada integrante de la familia?,0.5,2
+Zona baja,aab106e4db4df3d3,… accede a información del mercado?,0.5,2
+Zona baja,f091f2a849fc2a6c,… experimenta discriminación por ser migrante en este paisaje?,0.5,1
+Zona baja,0ccc4eb87bb4df71,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?,0.6,2
+Zona baja,4d1fead568de14a8,… puede transitar libremente sin problemas de seguridad?,0.6,2
+Zona baja,5c26f0ae638d2997,… tiene acceso a internet?,0.6,2
+Zona baja,689ee4bbbd104107,…tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?,0.6,2
+Zona baja,78d0da2dc732d40d,"…tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",0.6,2
+Zona baja,a521505cf3f8c361,¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?,0.6,2
+Zona baja,bdcaed2ee6f702c9,…dispone de mano de obra (familiar o contratada) cuando la necesita?,0.6,2
+Zona baja,e420078f9e4ab6dc,… vende sus productos a través de un intermediario?,0.6,2
+Zona baja,0ca775a58fdb87fc,…tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?,0.7,2
+Zona baja,22abdd7b98714874,… dispone de carreteras adecuadas para distribuir los productos?,0.7,2
+Zona baja,a9d0c0b399ee1031,… tiene acceso a la electricidad?,0.7,2
+Zona baja,b87b1e89453bfbc0,…tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano),0.7,2
+Zona baja,e4e63f1c65b01a1f,"…tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",0.7,2
+Zona baja,e5ed49ee4592e805,… tiene ingresos estables y suficientes durante todo el año?,0.7,2
+Zona baja,5772cdd4b7953ff9,"…tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",0.8,2
+Zona baja,7547c714876b4b7e,… tiene a todas las personas mayores de 15 años que saben leer y escribir?,0.8,2
+Zona baja,ac4ce4cfe134771a,… envía a los jóvenes a terminar la enseñanza secundaria?,0.8,2
+Zona baja,e0c0ca868a875791,… envía a los niños a finalizar la enseñanza primaria?,0.8,2
+Zona media,7fa498bf715950f8,… dispone de sus propios medios de transporte para comercializar sus productos?,0.1,4
+Zona media,dfd74456e472e108,… recibe información climática para su sistema productivo?,0.16666666666666666,3
+Zona media,bee6d5cbcd1e5eb6,… son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?,0.19999999999999998,4
+Zona media,13a59c8562947b1a,…usa leña como principal fuente de energía en la casa?,0.2,4
+Zona media,29098184c75a0cbf,…dispone con diversidad tecnológica para la implementación de prácticas?,0.2,4
+Zona media,2af3a962bc84c9a2,… usa conocimiento local o indígena para enfrentar amenazas climáticas?,0.2,2
+Zona media,c60800c11c8f21de,"…dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",0.2,4
+Zona media,f858b7c8f419649a,"De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",0.2,4
+Zona media,2abdf41fbd4aa698,… participa en plataformas/espacios de toma de decisiones comunitarias?,0.25,4
+Zona media,7d13b5f48a5c8e43,… tiene acceso a seguros para la producción?,0.25,4
+Zona media,b3baffceb34c2ac2,… tiene acceso a leña/energía durante todo el año para uso en la casa?,0.25,4
+Zona media,bcdc7d34a16cbd1e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?,0.25,4
+Zona media,2e4a71aff759a984,… está encabezada por mujeres? (jefaturas de hogar),0.3,4
+Zona media,82bfb88ab2c5b99a,"Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",0.3,3
+Zona media,adbb02694892e8ac,"… si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",0.3,4
+Zona media,b3b57618a3a273fe,… tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?,0.3,4
+Zona media,0de65afd443032d6,…participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?,0.35,4
+Zona media,0f368a3655631a63,… confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?,0.35,4
+Zona media,46ea0440ca02d217,… confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?,0.35,4
+Zona media,925d9326de8520cf,… depende totalmente de este sistema productivo para sostener sus ingresos?,0.35,4
+Zona media,aab106e4db4df3d3,… accede a información del mercado?,0.35,4
+Zona media,d5d7ad6293a6dd11,"… tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",0.35,4
+Zona media,d84af63ab09fff3e,…tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*,0.35,4
+Zona media,f091f2a849fc2a6c,… experimenta discriminación por ser migrante en este paisaje?,0.35,4
+Zona media,12b3ae4e79dd222e,"… recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",0.39999999999999997,4
+Zona media,62dca5fdd7195eb3,… tiene mujeres empleadas con remuneración en este sistema productivo?,0.39999999999999997,4
+Zona media,bdcaed2ee6f702c9,…dispone de mano de obra (familiar o contratada) cuando la necesita?,0.39999999999999997,4
+Zona media,e5ed49ee4592e805,… tiene ingresos estables y suficientes durante todo el año?,0.39999999999999997,4
+Zona media,02eb8e55a11a0285,… tiene acceso a créditos para la producción?,0.4,4
+Zona media,e42c378bac43d5c9,… tiene remesas que representan más del 60% de sus ingresos?,0.4,4
+Zona media,0ca775a58fdb87fc,…tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?,0.44999999999999996,4
+Zona media,98fafc873e8d73a4,"… tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",0.44999999999999996,4
+Zona media,22abdd7b98714874,… dispone de carreteras adecuadas para distribuir los productos?,0.45,4
+Zona media,a68b8eb5f8bcf412,… tiene vivienda una habitación específica para cada integrante de la familia?,0.45,4
+Zona media,05bf12bc285840a9,"… tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",0.5,4
+Zona media,46066eba7063f5a4,… añade valor a sus productos?,0.5,3
+Zona media,4b3c44fe94033c1a,"…confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",0.5,4
+Zona media,5772cdd4b7953ff9,"…tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",0.5,4
+Zona media,89062a1f1ade6ac9,"Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",0.5,4
+Zona media,0d7266adddbcb336,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?,0.5499999999999999,4
+Zona media,563d2ae918a6caa9,"… ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",0.55,4
+Zona media,7d0131ca34dc64dd,¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?,0.55,4
+Zona media,99223c4f0411d718,"…fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",0.55,4
+Zona media,b87b1e89453bfbc0,…tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano),0.55,4
+Zona media,3b4785ad9e5713b8,"…experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",0.5666666666666667,3
+Zona media,4d1fead568de14a8,… puede transitar libremente sin problemas de seguridad?,0.6,4
+Zona media,689ee4bbbd104107,…tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?,0.6,4
+Zona media,bc1013e7bb7e5996,"…ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",0.6,4
+Zona media,e420078f9e4ab6dc,… vende sus productos a través de un intermediario?,0.6,4
+Zona media,0ccc4eb87bb4df71,¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?,0.6499999999999999,4
+Zona media,e442b481c5a89cf8,… estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?,0.6499999999999999,4
+Zona media,a521505cf3f8c361,¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?,0.65,4
+Zona media,fbea02b539793edd,… tiene una vivienda permanente? [con título de propiedad],0.65,4
+Zona media,2833767d80ca0d9d,… las mujeres pueden transitar libremente sin problemas de seguridad?,0.7,4
+Zona media,7547c714876b4b7e,… tiene a todas las personas mayores de 15 años que saben leer y escribir?,0.7,4
+Zona media,9b34de3d15065b20,… tiene acceso a agua limpia y potable durante todo el año?,0.7,4
+Zona media,ac4ce4cfe134771a,… envía a los jóvenes a terminar la enseñanza secundaria?,0.7,4
+Zona media,e0c0ca868a875791,… envía a los niños a finalizar la enseñanza primaria?,0.7,4
+Zona media,e4e63f1c65b01a1f,"…tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",0.7,4
+Zona media,5c26f0ae638d2997,… tiene acceso a internet?,0.75,4
+Zona media,78d0da2dc732d40d,"…tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",0.75,4
+Zona media,a9d0c0b399ee1031,… tiene acceso a la electricidad?,0.8,4

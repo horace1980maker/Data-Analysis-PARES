@@ -1,0 +1,29 @@
+# Service Criticality Index (SCI) weight scenarios
+# SCI = w_links_mdv*links_norm + w_users*users_norm + w_priority*priority_norm + w_seasonality*seasonality_norm
+
+scenarios:
+  balanced:
+    description: "Equal emphasis on connectivity, usage, priority, and seasonality"
+    w_links_mdv: 0.40      # Number of livelihoods linked to the service
+    w_users: 0.25          # Number of users (nr_usuarios)
+    w_priority: 0.20       # MDV priority weight (from TIDY_3_2_PRIORIZACION)
+    w_seasonality: 0.15    # Fragility from months lacking (mes_falta)
+
+  livelihood_priority:
+    description: "Emphasizes services linked to high-priority livelihoods"
+    w_links_mdv: 0.35
+    w_users: 0.20
+    w_priority: 0.35       # Higher weight on livelihood priority
+    w_seasonality: 0.10
+
+  fragility_first:
+    description: "Emphasizes services with seasonal gaps (higher vulnerability)"
+    w_links_mdv: 0.30
+    w_users: 0.20
+    w_priority: 0.15
+    w_seasonality: 0.35    # Higher weight on seasonality fragility
+
+# Ecosystem Leverage Index (ELI) weights
+eli_weights:
+  w_connectivity: 0.60     # Ecosystem connectivity (services + livelihoods)
+  w_critical_services: 0.40  # Mean SCI of linked services

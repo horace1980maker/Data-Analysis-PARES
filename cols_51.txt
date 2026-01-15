@@ -1,0 +1,1 @@
+fecha, admin0, paisaje, grupo, nombre_actor, tipo_actor, rol_paisaje, conflicto_con, colabor_con, poder, interes

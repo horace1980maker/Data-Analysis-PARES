@@ -1,0 +1,51 @@
+# Storyline 5 Portfolio Scoring Scenarios
+# Each scenario defines weights for the four portfolio components
+# All weights must sum to 1.0
+
+# ============================================================================
+# BALANCED SCENARIO (Default)
+# ============================================================================
+# Gives relatively equal consideration to all factors
+
+balanced:
+  w_impact_potential: 0.35         # From API (priority/risk/capacity)
+  w_leverage: 0.25                 # From SCI/ELI (service/ecosystem leverage)
+  w_equity_urgency: 0.20           # From EVI
+  w_feasibility: 0.20              # From feasibility proxy
+
+# ============================================================================
+# EQUITY-FIRST SCENARIO
+# ============================================================================
+# Prioritizes bundles addressing the most vulnerable/excluded groups
+
+equity_first:
+  w_impact_potential: 0.30
+  w_leverage: 0.20
+  w_equity_urgency: 0.35           # Highest weight on equity
+  w_feasibility: 0.15
+
+# ============================================================================
+# FEASIBILITY-FIRST SCENARIO
+# ============================================================================
+# Prioritizes bundles most likely to succeed (strong governance, low conflict)
+
+feasibility_first:
+  w_impact_potential: 0.30
+  w_leverage: 0.20
+  w_equity_urgency: 0.15
+  w_feasibility: 0.35              # Highest weight on feasibility
+
+# ============================================================================
+# NOTES
+# ============================================================================
+# 
+# Components:
+#   - impact_potential: Combined priority (community importance) + risk (threat exposure) + capacity gap
+#   - leverage: How critical the linked services/ecosystems are (SCI × ELI)
+#   - equity_urgency: Differentiated impacts + access barriers + exclusion signals
+#   - feasibility: Actor network strength + dialogue coverage - conflict risk
+#
+# Usage in scoring:
+#   PortfolioScore = sum(weight_i × component_i_normalized)
+#
+# Tiers are assigned by quantile of PortfolioScore within each scope (overall/grupo).

@@ -1,0 +1,46 @@
+{
+  "pipeline": "storyline1",
+  "version": "1.0.0",
+  "input_path": "..\\FINAL_SES_analysis_ready_2025-12-27_FIXED.xlsx",
+  "output_dir": "test_output",
+  "execution": {
+    "start_time": "2026-01-14T12:02:33.602914",
+    "end_time": "2026-01-14T12:02:34.586425",
+    "duration_seconds": 0.983511
+  },
+  "warnings": [
+    "Required sheet 'LOOKUP_CONTEXT' not found in workbook",
+    "Required sheet 'TIDY_3_2_PRIORIZACION' not found in workbook",
+    "Required sheet 'TIDY_4_1_AMENAZAS' not found in workbook",
+    "Required sheet 'TIDY_4_2_1_AMENAZA_MDV' not found in workbook",
+    "Required sheet 'TIDY_7_1_RESPONDENTS' not found in workbook",
+    "Required sheet 'TIDY_7_1_RESPONSES' not found in workbook",
+    "Required sheet 'LOOKUP_CA_QUESTIONS' not found in workbook"
+  ],
+  "qa_summary": {
+    "QA_INPUT_SCHEMA": 0,
+    "QA_PK_DUPLICATES": 0,
+    "QA_MISSING_IDS": 0,
+    "QA_FOREIGN_KEYS": 0
+  },
+  "outputs": {
+    "tables": [
+      "dim_context_geo",
+      "priority_by_mdv_overall",
+      "priority_by_mdv_group",
+      "threats_overall",
+      "threats_by_group",
+      "risk_by_mdv_overall",
+      "risk_by_mdv_group",
+      "top_threat_drivers_overall",
+      "top_threat_drivers_by_group",
+      "capacity_overall_by_mdv",
+      "capacity_by_group_by_mdv",
+      "capacity_overall_questions",
+      "capacity_by_group_questions"
+    ],
+    "figures": [
+      "quadrant_priority_risk"
+    ]
+  }
+}

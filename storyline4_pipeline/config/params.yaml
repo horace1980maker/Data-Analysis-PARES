@@ -1,0 +1,41 @@
+# Storyline 4 Pipeline Parameters
+# Feasibility, Governance & Conflict Risk Analysis
+
+# Ranking and output limits
+top_n: 10                        # Number of top items in rankings
+min_records: 1                   # Minimum records to include
+
+# Relation type normalization
+normalize_rel_type: true
+rel_type_map:
+  colabora:
+    - colabora
+    - colaboracion
+    - cooperacion
+    - alianza
+    - collab
+    - collaboration
+    - cooperate
+    - ally
+  conflicto:
+    - conflicto
+    - conflict
+    - tension
+    - disputa
+    - dispute
+    - antagonism
+    - confrontation
+
+# Visualization limits
+max_heatmap_items: 20            # Maximum items per axis in heatmaps
+min_text_len: 2                  # Minimum text length for parsing
+
+# Feasibility composite weights
+# These weights are used in the feasibility diagnostic index
+w_actor_network_strength: 0.35   # Weight for actor collaboration network strength
+w_dialogue_coverage: 0.25        # Weight for dialogue space coverage
+w_conflict_risk: 0.40            # Weight for conflict risk (constraint - higher risk = lower feasibility)
+
+# Missing data handling
+fill_missing_numeric: 0.0        # Default value for missing numeric columns
+fill_missing_norm: 0.5           # Default normalized value when data is missing

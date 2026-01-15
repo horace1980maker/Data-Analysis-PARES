@@ -1,0 +1,94 @@
+# Storyline 5 Pipeline Parameters
+# SbN Portfolio Design + Monitoring Plan
+
+# ============================================================================
+# BUNDLE CONSTRUCTION RULES
+# ============================================================================
+
+top_n: 10                          # Top bundles overall
+bundles_per_grupo: 5               # Top bundles per grupo
+max_services_per_bundle: 3         # Max services attached to each bundle
+max_threats_per_bundle: 3          # Max threats attached to each bundle
+max_ecosystems_per_bundle: 2       # Max ecosystems attached to each bundle
+
+# Whether to reuse pre-computed storyline outputs if provided
+use_optional_storyline_outputs: true
+
+# Bundle construction mode
+bundle_mode: "mdv_centred"         # options: mdv_centred (default), service_centred (future)
+min_bundle_evidence_rows: 1        # Minimum evidence rows to create a bundle
+
+# ============================================================================
+# TIER THRESHOLDS
+# ============================================================================
+# Tiers for recommendations (purely organizational labels based on score quantiles)
+
+tiers:
+  do_now_top_pct: 0.33             # Top 33% = "Do now"
+  do_next_mid_pct: 0.34            # Middle 34% = "Do next"  
+  do_later_low_pct: 0.33           # Bottom 33% = "Do later"
+
+# ============================================================================
+# CONFLICT GATE
+# ============================================================================
+# If conflict risk exceeds threshold, downgrade tier
+
+conflict_gate:
+  enabled: true
+  max_conflict_risk_for_do_now: 0.70   # If risk > 0.70, cannot be "Do now"
+  downgrade_steps: 1                    # How many tiers to downgrade
+
+# ============================================================================
+# MONITORING PLAN SIZING
+# ============================================================================
+
+monitoring:
+  max_indicators_total: 12         # Maximum indicators in library
+  indicators_per_bundle: 6         # Indicators assigned per bundle
+  include_governance: true         # Include governance indicators
+  include_equity: true             # Include equity indicators
+
+# ============================================================================
+# LOCAL METRIC COMPUTATION WEIGHTS
+# ============================================================================
+# Used when computing minimal indices locally (not from storyline outputs)
+
+local_weights:
+  # API (Impact Potential) components
+  w_priority: 0.40
+  w_risk: 0.40
+  w_capacity_gap: 0.20
+  
+  # SCI (Service Criticality) components
+  w_links_mdv: 0.30
+  w_users: 0.25
+  w_seasonality: 0.25
+  w_priority_weight: 0.20
+  
+  # ELI (Ecosystem Leverage) components
+  w_connectivity: 0.50
+  w_critical_services_share: 0.50
+  
+  # EVI (Equity) components
+  w_diff_intensity: 0.40
+  w_barriers_rate: 0.30
+  w_capacity_gap_equity: 0.30
+  
+  # Feasibility components
+  w_network_strength: 0.35
+  w_dialogue_coverage: 0.25
+  w_conflict_risk: 0.40
+
+# ============================================================================
+# MISSING DATA HANDLING
+# ============================================================================
+
+fill_missing_numeric: 0.0          # Default for missing numeric values
+fill_missing_norm: 0.5             # Default normalized value when data is missing
+
+# ============================================================================
+# VISUALIZATION LIMITS
+# ============================================================================
+
+max_matrix_items: 15               # Maximum items in portfolio matrix
+max_bar_items: 10                  # Maximum items in bar charts

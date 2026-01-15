@@ -1,0 +1,24 @@
+﻿grupo,amenaza_id,tipo_amenaza,amenaza,mean_suma,mean_magnitud,mean_frequencia,mean_tendencia,n,suma_norm
+Zona Alta,497ba1b6987b6329,climática,Lluvias intensas,6.0,5.0,1.0,0.0,1,0.5
+Zona Alta,6358077a82025963,no-climática,Quemas,5.0,5.0,1.0,-1.0,1,0.0
+Zona Alta,9e6ffa759c6ee67d,climática,Sequía,7.0,5.0,2.0,0.0,1,1.0
+Zona Baja,2ede2154db793c56,no-climática,Relleno sanitario,8.0,3.0,3.0,2.0,1,1.0
+Zona Baja,453c808a6c02bcd7,no-climática,Uso inadecuado de agroquímicos,7.0,3.0,3.0,1.0,1,0.75
+Zona Baja,9e6ffa759c6ee67d,climática,Sequía,5.0,2.0,2.0,1.0,1,0.25
+Zona Baja,b018d3365b9ed7c6,no-climática,Contaminación de agua,6.0,3.0,2.0,1.0,1,0.5
+Zona Baja,cb78114dc607c99f,climática,Desbordamiento del río,6.0,3.0,3.0,0.0,1,0.5
+Zona Baja,e821910cb0e4039a,climática,Olas de calor,4.0,2.0,1.0,1.0,1,0.0
+Zona Media,10cd3b13a71c7982,no-climática,Deforestación,6.0,3.0,2.0,1.0,1,0.2
+Zona Media,2adad27075aa6645,climática,Heladas,6.0,3.0,2.0,1.0,1,0.2
+Zona Media,3cc2bea94f4d377e,climática,Crecidas torrenciales,5.0,5.0,1.0,-1.0,1,0.0
+Zona Media,9e6ffa759c6ee67d,climática,Sequía,10.0,5.0,3.0,2.0,1,1.0
+Zona baja,2ede2154db793c56,no-climática,Relleno sanitario,8.0,3.0,3.0,2.0,1,1.0
+Zona baja,453c808a6c02bcd7,no-climática,Uso inadecuado de agroquímicos,7.0,3.0,3.0,1.0,1,0.75
+Zona baja,9e6ffa759c6ee67d,climática,Sequía,5.0,2.0,2.0,1.0,1,0.25
+Zona baja,b018d3365b9ed7c6,no-climática,Contaminación de agua,6.0,3.0,2.0,1.0,1,0.5
+Zona baja,cb78114dc607c99f,climática,Desbordamiento del río,6.0,3.0,3.0,0.0,1,0.5
+Zona baja,e821910cb0e4039a,climática,Olas de calor,4.0,2.0,1.0,1.0,1,0.0
+Zona media,10cd3b13a71c7982,no-climática,Deforestación,6.0,3.0,2.0,1.0,1,0.2
+Zona media,2adad27075aa6645,climática,Heladas,6.0,3.0,2.0,1.0,1,0.2
+Zona media,3cc2bea94f4d377e,climática,Crecidas torrenciales,5.0,5.0,1.0,-1.0,1,0.0
+Zona media,9e6ffa759c6ee67d,climática,Sequía,10.0,5.0,3.0,2.0,1,1.0

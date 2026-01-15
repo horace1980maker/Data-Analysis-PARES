@@ -1,0 +1,13 @@
+top_n: 10
+min_records: 1
+use_threat_severity_weight: true
+threat_weight_fallback: 1.0
+max_bar_items: 15
+min_text_len: 2
+# how to treat “dif_group” text normalization:
+dif_group_normalization: "lower_strip"   # options: lower_strip
+# EVI weights (must sum to 1.0):
+w_differentiated_impacts: 0.45
+w_access_barriers: 0.25
+w_inclusion_exclusion: 0.15
+w_capacity_gap: 0.15

@@ -1,0 +1,1 @@
+fecha, admin0, paisaje, grupo, cod_es_se, medio_de_vida_relacionado, elemento_se, accesso, barreras, nr_usuarios, mes_contrib, mes_falta, inclusion, incl_descripcion

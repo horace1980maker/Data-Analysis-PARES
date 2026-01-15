@@ -1,0 +1,378 @@
+import os
+import sys
+import tempfile
+import zipfile
+from datetime import datetime
+from pathlib import Path
+
+import requests
+import streamlit as st
+
+# Add parent directory to path for importing storyline1
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "storyline1_pipeline"))
+
+st.set_page_config(
+    page_title="PARES Tools",
+    page_icon="🌿",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# Custom CSS
+st.markdown("""
+<style>
+    .main-header {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c5530;
+        margin-bottom: 0.5rem;
+    }
+    .sub-header {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    .status-success {
+        color: #4caf50;
+        font-weight: bold;
+    }
+    .status-error {
+        color: #f44336;
+        font-weight: bold;
+    }
+    .storyline-card {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+        border-left: 4px solid #2c5530;
+    }
+    .storyline-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #2c5530;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Sidebar navigation
+st.sidebar.title("🌿 PARES Tools")
+page = st.sidebar.radio(
+    "Navigate to:",
+    ["📁 Converter", "📊 Analyzer"],
+    index=0,
+)
+
+# ============================================================================
+# CONVERTER PAGE
+# ============================================================================
+if page == "📁 Converter":
+    st.markdown('<p class="main-header">📁 PARES Excel Converter</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="sub-header">Upload a <strong>database_general_TIERRAVIVA</strong>-style workbook and download a converted <strong>FINAL_SES analysis-ready</strong> workbook.</p>',
+        unsafe_allow_html=True
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        api_url = st.text_input("API URL", value=os.getenv("API_URL", "http://localhost:8000"))
+    with col2:
+        org_slug = st.text_input("Organization slug", value="tierraviva")
+
+    uploaded = st.file_uploader("Upload Excel (.xlsx)", type=["xlsx"], key="converter_upload")
+
+    if uploaded is not None:
+        if st.button("🔄 Convert", type="primary"):
+            with st.spinner("Converting..."):
+                files = {"file": (uploaded.name, uploaded.getvalue(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")}
+                data = {"org_slug": org_slug}
+                try:
+                    resp = requests.post(f"{api_url}/convert", files=files, data=data, timeout=600)
+                    if resp.status_code != 200:
+                        st.error(f"Conversion failed: {resp.status_code} {resp.text}")
+                    else:
+                        filename = resp.headers.get("content-disposition", f'attachment; filename="FINAL_{org_slug}_analysis_ready.xlsx"')
+                        fname = "FINAL_output.xlsx"
+                        if "filename=" in filename:
+                            fname = filename.split("filename=")[1].strip().strip('"')
+                        st.success("✅ Conversion completed successfully!")
+                        st.download_button(
+                            "📥 Download converted workbook",
+                            data=resp.content,
+                            file_name=fname,
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                        st.caption(f"GeoId: {resp.headers.get('X-Converter-GeoId','')} | QA issues: {resp.headers.get('X-Converter-QAIssues','')}")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Connection error: {e}")
+
+# ============================================================================
+# ANALYZER PAGE
+# ============================================================================
+elif page == "📊 Analyzer":
+    st.markdown('<p class="main-header">📊 PARES Analyzer</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="sub-header">Run automated analysis storylines on your analysis-ready workbook.</p>',
+        unsafe_allow_html=True
+    )
+    
+    # Storyline descriptions
+    storylines = {
+        "Storyline 1": {
+            "title": "Where to Act First?",
+            "description": "Identify priority livelihoods and zones for SbN/adaptation actions based on Priority, Risk, and Adaptive Capacity.",
+            "status": "✅ Available",
+            "enabled": True,
+        },
+        "Storyline 2": {
+            "title": "Ecosystem-Service Lifelines",
+            "description": "Identify critical ecosystem services and their linkages to livelihoods and threats.",
+            "status": "🔜 Coming Soon",
+            "enabled": False,
+        },
+        "Storyline 3": {
+            "title": "Equity & Differentiated Vulnerability",
+            "description": "Analyze who is most affected and how to target SbN to avoid reinforcing inequities.",
+            "status": "🔜 Coming Soon",
+            "enabled": False,
+        },
+        "Storyline 4": {
+            "title": "Feasibility, Governance & Conflict Risk",
+            "description": "Assess implementability based on actor networks, governance, and conflict dynamics.",
+            "status": "🔜 Coming Soon",
+            "enabled": False,
+        },
+        "Storyline 5": {
+            "title": "SbN Portfolio Design + Monitoring Plan",
+            "description": "Synthesize findings into a recommended SbN/adaptation portfolio with MEAL framework.",
+            "status": "🔜 Coming Soon",
+            "enabled": False,
+        },
+    }
+    
+    # Display storyline cards
+    st.markdown("### Select a Storyline")
+    
+    selected_storyline = st.selectbox(
+        "Choose analysis to run:",
+        list(storylines.keys()),
+        format_func=lambda x: f"{x}: {storylines[x]['title']} {storylines[x]['status']}"
+    )
+    
+    sl = storylines[selected_storyline]
+    
+    st.markdown(f"""
+    <div class="storyline-card">
+        <p class="storyline-title">{selected_storyline}: {sl['title']}</p>
+        <p>{sl['description']}</p>
+        <p><strong>Status:</strong> {sl['status']}</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if not sl["enabled"]:
+        st.warning(f"⚠️ {selected_storyline} is not yet implemented. Please select Storyline 1.")
+    else:
+        st.markdown("---")
+        st.markdown("### Configuration")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            top_n = st.slider("Top N items in rankings", min_value=5, max_value=20, value=10)
+            include_figures = st.checkbox("Generate visualizations", value=True)
+        with col2:
+            include_report = st.checkbox("Generate HTML report", value=True)
+            strict_mode = st.checkbox("Strict mode (fail on missing sheets)", value=False)
+        
+        st.markdown("---")
+        st.markdown("### Upload Analysis-Ready Workbook")
+        
+        uploaded_analysis = st.file_uploader(
+            "Upload Excel (.xlsx) - must be an analysis-ready workbook with LOOKUP_* and TIDY_* sheets",
+            type=["xlsx"],
+            key="analyzer_upload"
+        )
+        
+        if uploaded_analysis is not None:
+            st.info(f"📄 Uploaded: **{uploaded_analysis.name}** ({uploaded_analysis.size / 1024:.1f} KB)")
+            
+            if st.button("🚀 Run Analysis", type="primary"):
+                try:
+                    # Import storyline1 modules
+                    from storyline1.io import create_runlog, load_tables, write_outputs
+                    from storyline1.metrics import compute_all_metrics
+                    from storyline1.plots import generate_all_plots
+                    from storyline1.report import generate_report
+                    import shutil
+                    import gc
+                    
+                    # Create temp directory for processing (manual cleanup to avoid Windows lock issues)
+                    tmpdir = tempfile.mkdtemp()
+                    
+                    try:
+                        # Save uploaded file
+                        input_path = Path(tmpdir) / uploaded_analysis.name
+                        input_path.write_bytes(uploaded_analysis.getvalue())
+                        
+                        outdir = Path(tmpdir) / "output"
+                        outdir.mkdir()
+                        
+                        start_time = datetime.now()
+                        
+                        # Progress tracking
+                        progress = st.progress(0, text="Loading tables...")
+                        
+                        # Step 1: Load tables
+                        tables, warnings = load_tables(str(input_path))
+                        
+                        if strict_mode and warnings:
+                            st.error("❌ Missing required sheets. Enable permissive mode or check your input file.")
+                            for w in warnings:
+                                st.warning(w)
+                            st.stop()
+                        
+                        for w in warnings:
+                            st.warning(w)
+                        
+                        progress.progress(20, text="Computing metrics...")
+                        
+                        # Step 2: Compute metrics
+                        metrics_tables = compute_all_metrics(tables, top_n=top_n, top_n_drivers=5)
+                        
+                        progress.progress(40, text="Generating visualizations...")
+                        
+                        # Step 3: Generate figures
+                        figures = {}
+                        if include_figures:
+                            figures = generate_all_plots(metrics_tables, str(outdir))
+                        
+                        progress.progress(60, text="Generating report...")
+                        
+                        # Step 4: Generate report
+                        report_html = None
+                        if include_report:
+                            report_html = generate_report(
+                                metrics_tables, figures, str(input_path), warnings
+                            )
+                        
+                        progress.progress(80, text="Writing outputs...")
+                        
+                        # Step 5: Write outputs
+                        end_time = datetime.now()
+                        
+                        qa_summary = {}
+                        for qa_name in ["QA_INPUT_SCHEMA", "QA_PK_DUPLICATES", "QA_MISSING_IDS", "QA_FOREIGN_KEYS"]:
+                            qa_df = tables.get(qa_name)
+                            qa_summary[qa_name] = len(qa_df) if qa_df is not None and not qa_df.empty else 0
+                        
+                        runlog = create_runlog(
+                            input_path=str(input_path),
+                            output_dir=str(outdir),
+                            warnings=warnings,
+                            qa_summary=qa_summary,
+                            tables_generated=list(metrics_tables.keys()),
+                            figures_generated=list(figures.keys()),
+                            start_time=start_time,
+                            end_time=end_time,
+                        )
+                        
+                        output_paths = write_outputs(
+                            str(outdir), metrics_tables, figures, report_html, runlog
+                        )
+                        
+                        progress.progress(90, text="Preparing downloads...")
+                        
+                        # Cache file contents in memory before temp cleanup
+                        xlsx_data = None
+                        xlsx_path = output_paths.get("xlsx")
+                        if xlsx_path and Path(xlsx_path).exists():
+                            with open(xlsx_path, "rb") as f:
+                                xlsx_data = f.read()
+                        
+                        report_data = None
+                        report_path = output_paths.get("report")
+                        if report_path and Path(report_path).exists():
+                            with open(report_path, "r", encoding="utf-8") as f:
+                                report_data = f.read()
+                        
+                        # Create ZIP in memory
+                        import io
+                        zip_buffer = io.BytesIO()
+                        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+                            for root, dirs, files in os.walk(outdir):
+                                for file in files:
+                                    file_path = Path(root) / file
+                                    arcname = file_path.relative_to(outdir)
+                                    zf.write(file_path, arcname)
+                        zip_data = zip_buffer.getvalue()
+                        
+                        progress.progress(100, text="Complete!")
+                        
+                    finally:
+                        # Clear references and garbage collect before cleanup
+                        tables = None
+                        metrics_tables = None
+                        figures = None
+                        gc.collect()
+                        
+                        # Try to clean up temp directory, ignore errors on Windows
+                        try:
+                            shutil.rmtree(tmpdir, ignore_errors=True)
+                        except Exception:
+                            pass  # Ignore cleanup errors on Windows
+                    
+                    # Show results (after temp cleanup)
+                    st.success(f"✅ Analysis completed in {(end_time - start_time).total_seconds():.1f} seconds!")
+                    
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Tables Generated", len(runlog.get("outputs", {}).get("tables", [])))
+                    with col2:
+                        st.metric("Figures Generated", len(runlog.get("outputs", {}).get("figures", [])))
+                    with col3:
+                        st.metric("Warnings", len(runlog.get("warnings", [])))
+                    
+                    st.markdown("---")
+                    st.markdown("### Download Results")
+                    
+                    # Download buttons (using cached data)
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        if xlsx_data:
+                            st.download_button(
+                                "📥 Download Excel Workbook",
+                                data=xlsx_data,
+                                file_name="storyline1_outputs.xlsx",
+                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            )
+                    
+                    with col2:
+                        if report_data:
+                            st.download_button(
+                                "📥 Download HTML Report",
+                                data=report_data,
+                                file_name="storyline1_report.html",
+                                mime="text/html",
+                            )
+                    
+                    st.download_button(
+                        "📦 Download All Outputs (ZIP)",
+                        data=zip_data,
+                        file_name=f"storyline1_outputs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
+                        mime="application/zip",
+                    )
+                    
+                    # Preview report in iframe
+                    if report_data:
+                        st.markdown("---")
+                        st.markdown("### Report Preview")
+                        with st.expander("View HTML Report", expanded=False):
+                            st.components.v1.html(report_data, height=800, scrolling=True)
+                        
+                except ImportError as e:
+                    st.error(f"❌ Failed to import storyline1 module: {e}")
+                    st.info("Make sure the storyline1_pipeline directory is in the correct location.")
+                except Exception as e:
+                    st.error(f"❌ Analysis failed: {e}")
+                    st.exception(e)
+

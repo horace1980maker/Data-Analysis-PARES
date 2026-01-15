@@ -1,0 +1,1 @@
+['fecha', 'admin0', 'paisaje', 'grupo', 'medio_de_vida', 'codigo_medio_de_vida', 'codigo_mapa', 'tamano', 'unidad', 'rango', 'porcentaje']

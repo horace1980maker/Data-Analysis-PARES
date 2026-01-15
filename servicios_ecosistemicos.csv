@@ -1,0 +1,18 @@
+Código,Nombre,Tipo de Servicio,Descripción
+P1,Alimentos,Provisión,"los ecosistemas proporcionan las condiciones necesarias para cultivar alimentos, en hábitats salvajes y en ecosistemas agrícolas gestionados."
+P2,Materias primas,Provisión,los ecosistemas proporcionan una gran diversidad de materiales para la construcción y su uso como combustibles.
+P3,Agua dulce,Provisión,los ecosistemas proporcionan aguas superficiales y subterráneas.
+P4,Recursos medicinales,Provisión,"muchas plantas se utilizan como medicamentos tradicionales, así como materias primas para el sector farmacéutico."
+R1,Regulación de la calidad del aire y el clima locales,Regulación,los árboles proporcionan sombra y eliminan los contaminantes de la atmósfera. Los bosques influyen sobre las precipitaciones.
+R2,Secuestro y almacenamiento de carbono,Regulación,"según van creciendo las plantas y los árboles, eliminan dióxido de carbono de la atmósfera, atrapándolo eficazmente dentro de sus tejidos."
+R3,Moderación de los desastres naturales,Regulación,"los ecosistemas y los organismos vivos crean amortiguadores frente a peligros naturales como inundaciones, tormentas y corrimientos de tierra."
+R4,Tratamiento de las aguas residuales,Regulación,los microorganismos del suelo y los humedales descomponen los desechos animales y humanos.
+R5,Prevención de la erosión y mantenimiento de la fertilidad del suelo,Regulación,la erosión del suelo es un factor clave en el proceso de degradación y desertificación del terreno.
+R6,Polinización,Regulación,"unos 87 de los 115 principales cultivos mundiales de alimentos dependen de la polinización animal, incluidas importantes cosechas económicas como el cacao y el café."
+R7,Control biológico,Regulación,los ecosistemas son importantes en la regulación de plagas y enfermedades de transmisión vectorial.
+A1,Hábitats para las especies,Apoyo,los hábitats facilitan todo lo que una planta o animal necesita para sobrevivir. Las especies migratorias necesitan hallar hábitats propicios durante sus rutas migratorias.
+A2,Mantenimiento de la diversidad genética,Apoyo,"la diversidad genética se traduce en distintas especies o razas, lo que forma la base de unos cultivos locales bien adaptados y crea la reserva de genes necesaria para desarrollar aún más las cosechas y el ganado comerciales."
+C1,Actividades recreativas y salud mental y física,Cultural,cada vez cobra más fuerza el papel que los paisajes naturales y las zonas verdes urbanas desempeñan en el mantenimiento de la salud física y mental.
+C2,Turismo,Cultural,el turismo de la naturaleza genera unos considerables beneficios económicos y es una fuente vital de ingresos en muchos países.
+C3,"Apreciación estética e inspiración para la cultura, el arte y el diseño",Cultural,"el lenguaje, el conocimiento y la apreciación del entorno natural son aspectos que han estado íntimamente relacionados durante toda la historia de la humanidad."
+C4,Experiencia espiritual y sentido de pertenencia,Cultural,la naturaleza es un elemento común a muchas religiones; los paisajes naturales también conforman la identidad local y crean un sentimiento de pertenencia a un lugar determinado.

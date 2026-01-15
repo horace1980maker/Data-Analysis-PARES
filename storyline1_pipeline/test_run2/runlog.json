@@ -1,0 +1,52 @@
+{
+  "pipeline": "storyline1",
+  "version": "1.0.0",
+  "input_path": "..\\test_output.xlsx",
+  "output_dir": "test_run2",
+  "execution": {
+    "start_time": "2026-01-14T12:02:48.117500",
+    "end_time": "2026-01-14T12:02:54.632519",
+    "duration_seconds": 6.515019
+  },
+  "warnings": [],
+  "qa_summary": {
+    "QA_INPUT_SCHEMA": 17,
+    "QA_PK_DUPLICATES": 40,
+    "QA_MISSING_IDS": 45,
+    "QA_FOREIGN_KEYS": 46
+  },
+  "outputs": {
+    "tables": [
+      "dim_context_geo",
+      "priority_by_mdv_overall",
+      "priority_by_mdv_group",
+      "threats_overall",
+      "threats_by_group",
+      "risk_by_mdv_overall",
+      "risk_by_mdv_group",
+      "top_threat_drivers_overall",
+      "top_threat_drivers_by_group",
+      "capacity_overall_by_mdv",
+      "capacity_by_group_by_mdv",
+      "capacity_overall_questions",
+      "capacity_by_group_questions",
+      "rankings_overall_balanced",
+      "rankings_overall_livelihood_first",
+      "rankings_overall_risk_first",
+      "rankings_by_group_balanced",
+      "rankings_by_group_livelihood_first",
+      "rankings_by_group_risk_first"
+    ],
+    "figures": [
+      "bar_api_overall_balanced",
+      "bar_api_by_group_balanced",
+      "bar_api_overall_livelihood_first",
+      "bar_api_by_group_livelihood_first",
+      "bar_api_overall_risk_first",
+      "bar_api_by_group_risk_first",
+      "quadrant_priority_risk",
+      "bar_threats_overall",
+      "bar_threats_by_group"
+    ]
+  }
+}

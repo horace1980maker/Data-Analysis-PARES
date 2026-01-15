@@ -1,0 +1,49 @@
+﻿grupo,rank,mdv_id,mdv_name,priority_norm,risk_norm,cap_gap_norm,api_score,scenario
+Zona  Media,1.0,fe112e9803bdc9d0,,0.5,0.5,0.5,0.5,balanced
+Zona Alta,1.0,55936d484bd77a2e,Maiz,1.0,1.0,0.5,0.9,balanced
+Zona Alta,2.0,52eec67a4b1b1678,,0.5,1.0,0.5,0.7000000000000001,balanced
+Zona Alta,3.0,649ffd9a1e7e4bae,Trigo,1.0,0.5,0.5,0.7000000000000001,balanced
+Zona Alta,4.0,fe112e9803bdc9d0,,0.5,0.5,1.0,0.6000000000000001,balanced
+Zona Alta,5.0,0cfdea4198388143,Arveja,0.6666666666666666,0.5,0.5,0.5666666666666667,balanced
+Zona Alta,6.0,56f3ca99dcf205bb,Gallinas,0.6666666666666666,0.5,0.5,0.5666666666666667,balanced
+Zona Alta,7.0,4d4b04f72c46a4f7,,0.5,0.5,0.0,0.4,balanced
+Zona Alta,8.0,b5dc8ed2897489e5,Ganaderia,0.3333333333333333,0.0,0.5,0.23333333333333334,balanced
+Zona Alta,9.0,df057dcc7783df9a,Borregos,0.0,0.0,0.5,0.1,balanced
+Zona Baja,1.0,063aa46094712d3c,Frejol,0.8888888888888888,1.0,0.5,0.8555555555555555,balanced
+Zona Baja,2.0,b0b0df395857af5c,Pimiento,0.6666666666666666,1.0,0.5,0.7666666666666667,balanced
+Zona Baja,3.0,3a2a0a042c5f8024,,0.5,1.0,0.5,0.7000000000000001,balanced
+Zona Baja,4.0,ab4a1bf8f0cce44a,Jamaica,0.7777777777777778,0.5,0.5,0.611111111111111,balanced
+Zona Baja,5.0,4fe67704a3aa4d3b,,0.5,0.5,1.0,0.6000000000000001,balanced
+Zona Baja,6.0,8b8417ec15fc238d,,0.5,0.5,0.8772277227722776,0.5754455445544555,balanced
+Zona Baja,7.0,c70cff416a1116c0,Agucate y limon,0.6666666666666666,0.5,0.5,0.5666666666666667,balanced
+Zona Baja,8.0,edf96190569e69a8,Mango y limon,1.0,0.0,0.5,0.5,balanced
+Zona Baja,9.0,49f36bd98101ad75,,0.5,0.5,0.0,0.4,balanced
+Zona Baja,10.0,87bfb742b7f50199,Turismo comunitario y artesanias,0.0,0.5,0.5,0.30000000000000004,balanced
+Zona Media,1.0,1c9d6ba988a9e794,Aguacate,1.0,1.0,0.5,0.9,balanced
+Zona Media,2.0,56f3ca99dcf205bb,Gallinas,1.0,0.5,0.5,0.7000000000000001,balanced
+Zona Media,3.0,33c37fad737a885a,Limon,0.3333333333333333,1.0,0.5,0.6333333333333333,balanced
+Zona Media,4.0,7e39c69878677c9c,Turismo comunitario,0.6666666666666666,0.5,0.5,0.5666666666666667,balanced
+Zona Media,5.0,7ca5e5320e5fccd7,Mango,0.6666666666666666,0.0,0.5,0.3666666666666667,balanced
+Zona Media,6.0,dd88a3d7bc660826,Ovo,0.0,0.5,0.5,0.30000000000000004,balanced
+Zona alta,1.0,e472394ad177913b,,0.5,0.5,1.0,0.6000000000000001,balanced
+Zona alta,2.0,8693bf64d31bd4a3,,0.5,0.5,0.0,0.4,balanced
+Zona baja,1.0,063aa46094712d3c,Frejol,0.8888888888888888,1.0,0.5,0.8555555555555555,balanced
+Zona baja,2.0,b0b0df395857af5c,Pimiento,0.6666666666666666,1.0,0.5,0.7666666666666667,balanced
+Zona baja,3.0,3a2a0a042c5f8024,,0.5,1.0,0.5,0.7000000000000001,balanced
+Zona baja,4.0,ab4a1bf8f0cce44a,Jamaica,0.7777777777777778,0.5,0.5,0.611111111111111,balanced
+Zona baja,5.0,cff8a547c93863c6,,0.5,0.5,1.0,0.6000000000000001,balanced
+Zona baja,6.0,c70cff416a1116c0,Agucate y limon,0.6666666666666666,0.5,0.5,0.5666666666666667,balanced
+Zona baja,7.0,edf96190569e69a8,Mango y limon,1.0,0.0,0.5,0.5,balanced
+Zona baja,8.0,989ad5a8bb02a734,,0.5,0.5,0.0,0.4,balanced
+Zona baja,9.0,87bfb742b7f50199,Turismo comunitario y artesanias,0.0,0.5,0.5,0.30000000000000004,balanced
+Zona baja,10.0,b98917cbf88a37e4,,0.5,0.0,0.5,0.30000000000000004,balanced
+Zona media,1.0,1c9d6ba988a9e794,Aguacate,1.0,1.0,0.5,0.9,balanced
+Zona media,2.0,56f3ca99dcf205bb,Gallinas,1.0,0.5,0.5,0.7000000000000001,balanced
+Zona media,3.0,33c37fad737a885a,Limon,0.3333333333333333,1.0,0.5,0.6333333333333333,balanced
+Zona media,4.0,9853724dac79cecf,,0.5,0.5,1.0,0.6000000000000001,balanced
+Zona media,5.0,7e39c69878677c9c,Turismo comunitario,0.6666666666666666,0.5,0.5,0.5666666666666667,balanced
+Zona media,6.0,989ad5a8bb02a734,,0.5,0.5,0.6854875608640126,0.5370975121728025,balanced
+Zona media,7.0,cff8a547c93863c6,,0.5,0.5,0.33514986376021766,0.46702997275204355,balanced
+Zona media,8.0,895c62174a32c6c4,,0.5,0.5,0.0,0.4,balanced
+Zona media,9.0,7ca5e5320e5fccd7,Mango,0.6666666666666666,0.0,0.5,0.3666666666666667,balanced
+Zona media,10.0,dd88a3d7bc660826,Ovo,0.0,0.5,0.5,0.30000000000000004,balanced
