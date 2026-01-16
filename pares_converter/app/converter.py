@@ -219,7 +219,14 @@ def normalize_columns(df: pd.DataFrame, sheet_name: str = "") -> pd.DataFrame:
             rename_map[col] = COLUMN_ALIASES[col_str]
     
     if rename_map:
-        df = df.rename(columns=rename_map)
+        # Only rename if target column doesn't already exist to avoid collision
+        safe_map = {}
+        existing = set(df.columns)
+        for old, new in rename_map.items():
+            if new not in existing:
+                safe_map[old] = new
+        if safe_map:
+            df = df.rename(columns=safe_map)
     return df
 
 def read_workbook(path: str) -> Dict[str, pd.DataFrame]:
@@ -228,9 +235,14 @@ def read_workbook(path: str) -> Dict[str, pd.DataFrame]:
     for sh in SHEETS:
         if sh in xls.sheet_names:
             df = pd.read_excel(xls, sh, dtype=object)
+            # Deduplicate columns (keep first)
+            df = df.loc[:, ~df.columns.duplicated()]
             # Normalize column names (sheet-aware)
             df = normalize_columns(df, sheet_name=sh)
+            # Deduplicate again in case normalization caused collisions
+            df = df.loc[:, ~df.columns.duplicated()]
             raw[sh] = df
+    return raw
     return raw
 
 def write_workbook(path: str, tables: Dict[str, pd.DataFrame]) -> None:
@@ -243,6 +255,11 @@ def write_workbook(path: str, tables: Dict[str, pd.DataFrame]) -> None:
 # ---------------------------
 # VALIDATION
 # ---------------------------
+
+class ValidationError(ValueError):
+    def __init__(self, message, df):
+        super().__init__(message)
+        self.df = df
 
 def validate_input(raw: Dict[str, pd.DataFrame], strict: bool = True) -> pd.DataFrame:
     rows = []
@@ -257,7 +274,8 @@ def validate_input(raw: Dict[str, pd.DataFrame], strict: bool = True) -> pd.Data
     out = pd.DataFrame(rows)
     if strict and (out["status"] != "ok").any():
         bad = out[out["status"] != "ok"]
-        raise ValueError("Input validation failed:\n" + bad.to_string(index=False))
+        # Convert bad rows to string logic is preserved for CLI msg
+        raise ValidationError("Input validation failed:\n" + bad.to_string(index=False), bad)
     return out
 
 
@@ -573,7 +591,10 @@ def build_lookup_ca_questions(raw: Dict[str,pd.DataFrame]) -> pd.DataFrame:
             qtext = text
         qid = sha1_short("ca_q", order if order==order else "", qtext)
         rows.append({"question_id": qid, "question_order": order, "question_text": qtext, "column_name": text})
-    out = pd.DataFrame(rows)
+    if not rows:
+        out = pd.DataFrame(columns=["question_id","question_order","question_text","column_name"])
+    else:
+        out = pd.DataFrame(rows)
     # stable order: numeric then others
     out = out.sort_values(by=["question_order","question_text"], na_position="last").reset_index(drop=True)
     return out[["question_id","question_order","question_text","column_name"]]

@@ -16,7 +16,7 @@ from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from .converter import compile_workbook, write_workbook
+from .converter import compile_workbook, write_workbook, ValidationError
 
 # Add storylines to path
 storyline1_path = os.path.join(os.path.dirname(__file__), "..", "..", "storyline1_pipeline")
@@ -141,10 +141,25 @@ async def validate_file(
     try:
         xl = pd.ExcelFile(io.BytesIO(content), engine="openpyxl")
         available_sheets = set(xl.sheet_names)
+    except ValueError as e:
+        # Capture validation errors
+        error_msg = str(e)
+        if "Input validation failed" in error_msg:
+            # Try to return the raw message which contains the table
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "Validación fallida. Revise las columnas faltantes.",
+                    "details": error_msg
+                }
+            )
+        return JSONResponse(status_code=400, content={"error": f"Error de validación: {str(e)}"})
     except Exception as e:
-        return JSONResponse(content={
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={
             "valid": False,
-            "error": f"Cannot read Excel file: {str(e)}",
+            "error": f"Error interno del servidor: {str(e)}",
             "available_sheets": [],
             "missing_required": [],
             "missing_recommended": [],
@@ -211,6 +226,17 @@ async def convert(
             input_path=input_buffer,
             strict=strict,
             copy_raw=copy_raw,
+        )
+    except ValidationError as e:
+        # Structured validation error
+        issues = e.df.to_dict(orient="records")
+        return JSONResponse(
+            status_code=400,
+            content={
+                "error": "Validación fallida. Se detectaron problemas en el archivo.",
+                "issues": issues,
+                "details": str(e)
+            }
         )
     except ValueError as e:
         return JSONResponse(

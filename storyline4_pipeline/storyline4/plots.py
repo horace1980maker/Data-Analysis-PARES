@@ -376,6 +376,7 @@ def bar_top_conflicts(
         desc_col = conflict_col # Fallback to ID
         
     y_pos = range(len(df))
+    fig, ax = plt.subplots(figsize=(10, 6))
     bars = ax.barh(y_pos, df[events_col], color=COLORS["warning"], edgecolor="white")
     
     ax.set_yticks(y_pos)

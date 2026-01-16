@@ -91,8 +91,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 let errorMessage = `Conversion failed (${response.status})`;
                 try {
                     const errData = await response.json();
+
+                    // Handle key validation issues
+                    if (errData.issues) {
+                        showValidationErrors(errData.issues);
+                        throw new Error("Validación fallida. Revise la lista de problemas detectados abajo.");
+                    }
+
                     errorMessage = errData.detail || errData.error || errorMessage;
                 } catch (e) {
+                    if (e.message.startsWith("Validación")) throw e;
                     try {
                         const text = await response.text();
                         if (text) errorMessage = `Error ${response.status}: ${text.substring(0, 100)}`;
@@ -100,6 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 throw new Error(errorMessage);
             }
+
+            // Clear errors on success
+            const errDiv = document.getElementById('validation-errors');
+            if (errDiv) errDiv.style.display = 'none';
 
             convertedBlob = await response.blob();
 
@@ -144,6 +156,59 @@ document.addEventListener('DOMContentLoaded', () => {
         convertBtn.disabled = isLoading;
         loader.style.display = isLoading ? 'block' : 'none';
         btnText.style.display = isLoading ? 'none' : 'block';
+    }
+
+    function showValidationErrors(issues) {
+        let container = document.getElementById('validation-errors');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'validation-errors';
+            // Insert after convert button container
+            convertBtn.parentNode.parentNode.insertBefore(container, resultCard);
+            // Apply base styles
+            container.style.marginTop = '20px';
+            container.style.padding = '15px';
+            container.style.background = '#fff0f0';
+            container.style.border = '1px solid #ffcdcd';
+            container.style.borderRadius = '8px';
+            container.style.color = '#d8000c';
+        }
+
+        container.innerHTML = '<h3>Problemas Detectados:</h3>';
+
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginTop = '10px';
+        table.style.fontSize = '0.9em';
+
+        // Header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr style="background: #ffdbdb; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #ffcdcd;">Hoja</th>
+                <th style="padding: 8px; border: 1px solid #ffcdcd;">Estado</th>
+                <th style="padding: 8px; border: 1px solid #ffcdcd;">Falta</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+
+        // Body
+        const tbody = document.createElement('tbody');
+        issues.forEach(issue => {
+            if (issue.status === 'ok') return;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding: 8px; border: 1px solid #ffcdcd;">${issue.sheet}</td>
+                <td style="padding: 8px; border: 1px solid #ffcdcd;">${issue.status}</td>
+                <td style="padding: 8px; border: 1px solid #ffcdcd; font-family: monospace;">${issue.missing_cols || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        container.appendChild(table);
+        container.style.display = 'block';
     }
 
     function showToast(message, type = 'info') {

@@ -119,7 +119,7 @@ def pick_first_existing_col(
         return None
     
     # Normalize column names for comparison
-    df_cols_lower = {c.lower(): c for c in df.columns}
+    df_cols_lower = {str(c).lower(): c for c in df.columns}
     
     for candidate in candidates:
         candidate_lower = candidate.lower()
