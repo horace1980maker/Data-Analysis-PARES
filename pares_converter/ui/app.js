@@ -88,13 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                let errorMessage = 'Conversion failed';
+                let errorMessage = `Conversion failed (${response.status})`;
                 try {
                     const errData = await response.json();
                     errorMessage = errData.detail || errData.error || errorMessage;
                 } catch (e) {
                     try {
-                        errorMessage = await response.text() || errorMessage;
+                        const text = await response.text();
+                        if (text) errorMessage = `Error ${response.status}: ${text.substring(0, 100)}`;
                     } catch (e2) { }
                 }
                 throw new Error(errorMessage);
