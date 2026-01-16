@@ -98,9 +98,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error("Validación fallida. Revise la lista de problemas detectados abajo.");
                     }
 
+                    // Handle Internal Server Error (500) with detail
+                    if (errData.detail) {
+                        // Display the traceback in the error box
+                        showErrorDetails(errData.error, errData.detail);
+                        throw new Error(errData.error || "Error interno del servidor");
+                    }
+
                     errorMessage = errData.detail || errData.error || errorMessage;
                 } catch (e) {
-                    if (e.message.startsWith("Validación")) throw e;
+                    if (e.message.startsWith("Validación") || e.message.startsWith("Error interno")) throw e;
                     try {
                         const text = await response.text();
                         if (text) errorMessage = `Error ${response.status}: ${text.substring(0, 100)}`;
@@ -208,6 +215,37 @@ document.addEventListener('DOMContentLoaded', () => {
         table.appendChild(tbody);
 
         container.appendChild(table);
+        container.style.display = 'block';
+    }
+
+    function showErrorDetails(title, detail) {
+        let container = document.getElementById('validation-errors');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'validation-errors';
+            convertBtn.parentNode.parentNode.insertBefore(container, resultCard);
+            container.style.marginTop = '20px';
+            container.style.padding = '15px';
+            container.style.background = '#fff0f0';
+            container.style.border = '1px solid #ffcdcd';
+            container.style.borderRadius = '8px';
+            container.style.color = '#d8000c';
+        }
+
+        container.innerHTML = `<h3>${title || 'Error'}</h3>`;
+
+        const pre = document.createElement('pre');
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.marginTop = '10px';
+        pre.style.fontSize = '0.85em';
+        pre.style.fontFamily = 'monospace';
+        pre.style.color = '#333';
+        pre.style.background = '#f8f8f8';
+        pre.style.padding = '10px';
+        pre.style.overflowX = 'auto';
+        pre.textContent = detail;
+
+        container.appendChild(pre);
         container.style.display = 'block';
     }
 

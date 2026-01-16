@@ -243,6 +243,15 @@ async def convert(
             status_code=400,
             content={"error": str(e)},
         )
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": f"Error interno inesperado: {str(e)}",
+                "detail": traceback.format_exc()
+            }
+        )
 
     output_buffer = io.BytesIO()
     write_workbook(output_buffer, tables)
