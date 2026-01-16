@@ -240,7 +240,7 @@ def quadrant_priority_vs_risk(
     top_items = data.nlargest(10, "priority_norm")
     for _, row in top_items.iterrows():
         ax.annotate(
-            row["mdv_name"][:25] + ("..." if len(str(row["mdv_name"])) > 25 else ""),
+            str(row["mdv_name"])[:25] + ("..." if len(str(row["mdv_name"])) > 25 else ""),
             (row["priority_norm"], row["risk_norm"]),
             xytext=(5, 5),
             textcoords="offset points",

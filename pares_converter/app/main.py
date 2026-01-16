@@ -706,7 +706,7 @@ async def analyze_storyline3(
         # Step 4: Generate report
         report_html = None
         if include_report:
-            report_html = generate_report(metrics_tables, figures, tables)
+            report_html = generate_report(metrics_tables, figures, str(input_path), tables)
         
         # Step 5: Write outputs
         end_time = datetime.now()
