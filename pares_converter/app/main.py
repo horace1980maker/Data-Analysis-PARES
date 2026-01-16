@@ -46,6 +46,11 @@ def read_index():
     ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "index.html")
     return FileResponse(ui_path)
 
+@app.get("/converter")
+def read_converter():
+    ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "converter.html")
+    return FileResponse(ui_path)
+
 @app.get("/analyzer")
 def read_analyzer():
     ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "analyzer.html")
