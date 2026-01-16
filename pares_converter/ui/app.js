@@ -88,32 +88,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                let errorMessage = `Conversion failed (${response.status})`;
+                let errData = {};
                 try {
-                    const errData = await response.json();
-
-                    // Handle key validation issues
-                    if (errData.issues) {
-                        showValidationErrors(errData.issues);
-                        throw new Error("Validación fallida. Revise la lista de problemas detectados abajo.");
-                    }
-
-                    // Handle Internal Server Error (500) with detail
-                    if (errData.detail) {
-                        // Display the traceback in the error box
-                        showErrorDetails(errData.error, errData.detail);
-                        throw new Error(errData.error || "Error interno del servidor");
-                    }
-
-                    errorMessage = errData.detail || errData.error || errorMessage;
+                    errData = await response.json();
                 } catch (e) {
-                    if (e.message.startsWith("Validación") || e.message.startsWith("Error interno")) throw e;
-                    try {
-                        const text = await response.text();
-                        if (text) errorMessage = `Error ${response.status}: ${text.substring(0, 100)}`;
-                    } catch (e2) { }
+                    const text = await response.text();
+                    errData = { error: `Error ${response.status}: ${text.substring(0, 100)}` };
                 }
-                throw new Error(errorMessage);
+
+                // 1. Validation Issues
+                if (errData.issues) {
+                    showValidationErrors(errData.issues);
+                    throw new Error("Validación fallida. Revise la lista de problemas detectados abajo.");
+                }
+
+                // 2. Internal Server Error with Traceback
+                if (errData.detail) {
+                    showErrorDetails(errData.error || "Error Interno", errData.detail);
+                    throw new Error(errData.error || "Error interno del servidor");
+                }
+
+                // 3. Generic Error
+                const msg = errData.detail || errData.error || `Conversion failed (${response.status})`;
+                throw new Error(msg);
             }
 
             // Clear errors on success
