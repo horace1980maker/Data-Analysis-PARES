@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let convertedBlob = null;
     let outputFilename = 'converted.xlsx';
 
+    // Set default API URL to current origin
+    const apiUrlInput = document.getElementById('api-url');
+    if (apiUrlInput) {
+        apiUrlInput.value = window.location.origin;
+    }
+
     // Drag and Drop
     dropZone.addEventListener('click', () => fileInput.click());
 
