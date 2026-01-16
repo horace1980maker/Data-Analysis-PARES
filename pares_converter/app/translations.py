@@ -88,7 +88,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     # ===== STORYLINE 2 =====
     "s2.title": {
         "en": "Storyline 2: Ecosystem-Service Lifelines",
-        "es": "Storyline 2: Líneas de Vida Ecosistema-Servicio"
+        "es": "Storyline 2: Líneas críticas de servicios ecosistémicos para los medios de vida"
     },
     "s2.subtitle": {
         "en": "Diagnostic Report - Nature-Based Security Analysis",

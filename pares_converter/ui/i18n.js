@@ -152,7 +152,7 @@ const translations = {
     },
     'storyline.2.title': {
         en: 'Ecosystem-Service Lifelines',
-        es: 'Líneas de Vida Ecosistema-Servicio'
+        es: 'Líneas críticas de servicios ecosistémicos para los medios de vida'
     },
     'storyline.2.desc': {
         en: 'Critical services and ecosystem leverage points',
