@@ -1,5 +1,5 @@
-Errors: 3
-Warnings: 12
+Errors: 4
+Warnings: 13
 
 === ERRORS ===
   [3.1. Lluvia MdV&SE] La primera columna tiene un valor de fecha '2025-06-05 00:00:00' en lugar del encabezado 'fecha'
@@ -8,13 +8,15 @@ Warnings: 12
     -> Agregue la columna 'fecha' a la hoja '3.1. Lluvia MdV&SE'
   [3.3. Car_C ] Falta la columna 'tamano'
     -> Agregue la columna 'tamano' a la hoja '3.3. Car_C '
+  [3.5. SE y MdV ] Falta la columna 'acceso'
+    -> Agregue la columna 'acceso' a la hoja '3.5. SE y MdV '
 
 === WARNINGS ===
-  [3.3. Car_C ] La hoja '3.3. Car_C ' tiene espacios al inicio o final
-  [3.5. SE y MdV ] La hoja '3.5. SE y MdV ' tiene espacios al inicio o final
-  [4.2.2. Amenazas_SE (2)] La hoja '4.2.2. Amenazas_SE (2)' parece ser un duplicado (contiene '(2)')
   [6.1. Evolución_conflict (2)] La hoja '6.1. Evolución_conflict (2)' parece ser un duplicado (contiene '(2)')
+  [4.2.2. Amenazas_SE (2)] La hoja '4.2.2. Amenazas_SE (2)' parece ser un duplicado (contiene '(2)')
   [4.1. Amenazas ] La hoja '4.1. Amenazas ' tiene espacios al inicio o final
+  [3.5. SE y MdV ] La hoja '3.5. SE y MdV ' tiene espacios al inicio o final
+  [3.3. Car_C ] La hoja '3.3. Car_C ' tiene espacios al inicio o final
   [variables] Falta la hoja 'variables'
   [3.3. Car_C] La hoja '3.3. Car_C' existe como '3.3. Car_C '
   [3.5. SE y MdV] La hoja '3.5. SE y MdV' existe como '3.5. SE y MdV '
@@ -22,3 +24,4 @@ Warnings: 12
   [4.2.2. Amenazas_SE] Falta la hoja '4.2.2. Amenazas_SE'
   [6.1. Evolución_conflict] Falta la hoja '6.1. Evolución_conflict'
   [7.1. Encuesta CA] Falta la hoja '7.1. Encuesta CA'
+  [3.2. Priorización] Columna 'mdv ' debería ser 'mdv' (diferencia de mayúsculas/minúsculas)

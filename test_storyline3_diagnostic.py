@@ -45,7 +45,7 @@ try:
     print(f"SUCCESS: Generated {len(plots)} plots.")
     
     print("Testing report...")
-    report = generate_report(metrics, plots, tables)
+    report = generate_report(metrics, plots, "dummy_input.xlsx", tables)
     print("SUCCESS: Report generated.")
     
 except Exception as e:
