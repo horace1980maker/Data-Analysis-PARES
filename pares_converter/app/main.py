@@ -16,7 +16,7 @@ from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from .converter import compile_workbook, write_workbook, ValidationError
+from .converter import compile_workbook, write_workbook, ValidationError, diagnose_file, format_diagnostic_report
 
 # Add storylines to path
 storyline1_path = os.path.join(os.path.dirname(__file__), "..", "..", "storyline1_pipeline")
@@ -127,7 +127,62 @@ STORYLINE_REQUIREMENTS = {
     }
 }
 
+@app.post("/diagnose")
+async def diagnose_upload(
+    file: UploadFile = File(...),
+    lang: str = Form("es"),
+):
+    """
+    Diagnose an uploaded Excel file for common issues before conversion.
+    
+    - **file**: The input Excel file
+    - **lang**: Language for descriptions (es/en, default: es)
+    
+    Returns a JSON object with:
+    - issues: List of detected issues with descriptions and suggested fixes
+    - error_count: Number of critical errors
+    - warning_count: Number of warnings
+    - can_convert: Whether file can be converted (no critical errors)
+    """
+    content = await file.read()
+    input_buffer = io.BytesIO(content)
+    
+    try:
+        issues = diagnose_file(input_buffer)
+        formatted = format_diagnostic_report(issues, lang=lang)
+        
+        error_count = sum(1 for i in issues if i.severity == "error")
+        warning_count = sum(1 for i in issues if i.severity == "warning")
+        
+        # Group issues by severity
+        errors = [i for i in formatted if i["severity"] == "error"]
+        warnings = [i for i in formatted if i["severity"] == "warning"]
+        
+        return JSONResponse(content={
+            "success": True,
+            "can_convert": error_count == 0,
+            "error_count": error_count,
+            "warning_count": warning_count,
+            "errors": errors,
+            "warnings": warnings,
+            "all_issues": formatted,
+            "message_es": f"Se encontraron {error_count} errores y {warning_count} advertencias" if error_count + warning_count > 0 else "El archivo está listo para convertir",
+            "message_en": f"Found {error_count} errors and {warning_count} warnings" if error_count + warning_count > 0 else "File is ready to convert",
+        })
+        
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            }
+        )
+
 @app.post("/validate")
+
 async def validate_file(
     file: UploadFile = File(...),
     storyline: int = Form(1),
@@ -291,6 +346,7 @@ async def analyze_storyline1(
     include_figures: bool = Form(True),
     include_report: bool = Form(True),
     lang: str = Form("es"),
+    org_name: str = Form("Organización"),
 ):
     """
     Run Storyline 1 analysis: "Where to Act First?"
@@ -343,7 +399,8 @@ async def analyze_storyline1(
         report_html = None
         if include_report:
             report_html = generate_report(
-                metrics_tables, figures, str(input_path), warnings
+                metrics_tables, figures, str(input_path), warnings,
+                org_name=org_name
             )
         
         # Step 5: Write outputs
@@ -425,6 +482,7 @@ async def analyze_storyline4(
     include_figures: bool = Form(True),
     include_report: bool = Form(True),
     lang: str = Form("es"),
+    org_name: str = Form("Organización"),
 ):
     """
     Run Storyline 4 analysis: "Feasibility, Governance & Conflict Risk"
@@ -481,7 +539,8 @@ async def analyze_storyline4(
         report_html = None
         if include_report:
             report_html = generate_report(
-                metrics_tables, figures, str(input_path), warnings, tables
+                metrics_tables, figures, str(input_path), warnings, tables,
+                org_name=org_name
             )
         
         # Step 5: Write outputs
@@ -567,6 +626,7 @@ async def analyze_storyline2(
     include_figures: bool = Form(True),
     include_report: bool = Form(True),
     lang: str = Form("es"),
+    org_name: str = Form("Organización"),
 ):
     """
     Run Storyline 2 analysis: "Ecosystem-service lifelines"
@@ -609,7 +669,8 @@ async def analyze_storyline2(
         report_html = None
         if include_report:
             report_html = generate_report(
-                metrics_tables, figures, str(input_path), warnings, tables=tables
+                metrics_tables, figures, str(input_path), warnings, tables=tables,
+                org_name=org_name
             )
         
         # Step 5: Write outputs
@@ -698,6 +759,7 @@ async def analyze_storyline3(
     include_figures: bool = Form(True),
     include_report: bool = Form(True),
     lang: str = Form("es"),
+    org_name: str = Form("Organización"),
 ):
     """
     Run Storyline 3 analysis: "Equity & Differentiated Vulnerability"
@@ -741,7 +803,7 @@ async def analyze_storyline3(
         # Step 4: Generate report
         report_html = None
         if include_report:
-            report_html = generate_report(metrics_tables, figures, str(input_path), tables)
+            report_html = generate_report(metrics_tables, figures, str(input_path), tables, org_name=org_name)
         
         # Step 5: Write outputs
         end_time = datetime.now()
@@ -825,6 +887,7 @@ async def analyze_storyline5(
     include_figures: bool = Form(True),
     include_report: bool = Form(True),
     lang: str = Form("es"),
+    org_name: str = Form("Organización"),
 ):
     """
     Run Storyline 5 analysis: "SbN Portfolio Design + Monitoring Plan"
@@ -891,7 +954,8 @@ async def analyze_storyline5(
         report_html = None
         if include_report:
             report_html = generate_report(
-                portfolio_tables, monitoring_tables, figures, str(input_path), warnings, tables
+                portfolio_tables, monitoring_tables, figures, str(input_path), warnings, tables,
+                org_name=org_name
             )
         
         # Step 7: Write outputs
@@ -974,6 +1038,97 @@ async def analyze_storyline5(
         figures = None
         gc.collect()
         
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
+
+
+# ============================================================
+# DASHBOARD ENDPOINT
+# ============================================================
+
+@app.get("/dashboard")
+def read_dashboard():
+    ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "dashboard.html")
+    return FileResponse(ui_path)
+
+
+@app.post("/api/dashboard")
+async def generate_dashboard_api(
+    file: UploadFile = File(...),
+    org_name: str = Form("Organización"),
+):
+    """
+    Generate an interactive SES dashboard from an analysis-ready workbook.
+    
+    - **file**: Analysis-ready Excel workbook (with LOOKUP_* and TIDY_* sheets)
+    - **org_name**: Organization name for display
+    
+    Returns a ZIP containing: dashboard.html, bundle.json, qa_dashboard.json
+    """
+    try:
+        from .dashboard_generator import generate_dashboard
+    except ImportError as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to import dashboard_generator module: {e}"},
+        )
+    
+    content = await file.read()
+    tmpdir = tempfile.mkdtemp()
+    
+    try:
+        # Save uploaded file
+        input_path = Path(tmpdir) / file.filename
+        input_path.write_bytes(content)
+        
+        outdir = Path(tmpdir) / "output"
+        outdir.mkdir()
+        
+        start_time = datetime.now()
+        
+        # Generate dashboard
+        html_path, bundle_path, qa_path = generate_dashboard(
+            str(input_path),
+            str(outdir),
+            org_name=org_name
+        )
+        
+        end_time = datetime.now()
+        duration = f"{(end_time - start_time).total_seconds():.1f}s"
+        
+        # Read outputs
+        html_content = None
+        if Path(html_path).exists():
+            with open(html_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+        
+        # Create ZIP
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for root, dirs, files in os.walk(outdir):
+                for file_name in files:
+                    file_path = Path(root) / file_name
+                    arcname = file_path.relative_to(outdir)
+                    zf.write(file_path, arcname)
+        zip_base64 = base64.b64encode(zip_buffer.getvalue()).decode("utf-8")
+        
+        return JSONResponse(content={
+            "success": True,
+            "duration": duration,
+            "html_content": html_content,
+            "zip_base64": zip_base64,
+        })
+        
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "traceback": traceback.format_exc()},
+        )
+    finally:
+        gc.collect()
         try:
             shutil.rmtree(tmpdir, ignore_errors=True)
         except Exception:

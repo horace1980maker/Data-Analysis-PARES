@@ -22,7 +22,7 @@ A partir de estas tablas, cada Storyline calcula métricas específicas y genera
 ## Los 5 Storylines: De los Datos a la Decisión
 
 ### Storyline 1: "¿Dónde actuar primero?"
-**Pregunta Clave**: *¿Qué medios de vida y zonas deben priorizarse para las acciones de SbN/adaptación, y por qué?*
+**Pregunta Clave**: *¿Qué medios de vida y grupos deben priorizarse para las acciones de SbN/adaptación, y por qué?*
 
 | Análisis | Fuente de Datos |
 | :--- | :--- |

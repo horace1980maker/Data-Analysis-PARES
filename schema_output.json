@@ -1,0 +1,885 @@
+{
+  "variables": {
+    "columns": [
+      "Herramienta/variable",
+      "definicion",
+      "Unnamed: 2",
+      "Unnamed: 3",
+      "Drop-down menus:",
+      "Unnamed: 5",
+      "admin0",
+      "elemento_SES",
+      "uso_fin_mdv",
+      "tamaño",
+      "cv_mercado",
+      "elemento_se",
+      "tipo_amenaza",
+      "tipo_conflicto",
+      "nivel_conflicto",
+      "tipo",
+      "incidencia",
+      "impactos_conflictos"
+    ],
+    "rows": 131
+  },
+  "3.1. Lluvia MdV&SE": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "elemento_SES",
+      "nombre",
+      "uso_fin_mdv"
+    ],
+    "rows": 33
+  },
+  "3.2. Priorización": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "mdv ",
+      "producto_principal",
+      "i_seg_alim",
+      "i_area",
+      "i_des_loc",
+      "i_ambiente",
+      "i_inclusion",
+      "i_total"
+    ],
+    "rows": 6
+  },
+  "3.3. Car_A": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "mdv",
+      "codigo_mdv",
+      "codigo_mapa",
+      "sistema",
+      "uso_final",
+      "cv_importancia",
+      "cv_producto",
+      "cv_mercado"
+    ],
+    "rows": 17
+  },
+  "3.3. Car_B": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "mdv",
+      "codigo_mapa",
+      "tenencia",
+      "tenencia_descripcion"
+    ],
+    "rows": 18
+  },
+  "3.3. Car_C": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "mdv",
+      "codigo_mdv",
+      "codigo_mapa",
+      "tamano",
+      "unidad",
+      "rango",
+      "porcentaje"
+    ],
+    "rows": 18
+  },
+  "3.3. Car_D": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "mdv",
+      "codigo_mdv",
+      "codigo_mapa",
+      "tenencia",
+      "tamano",
+      "porcentaje"
+    ],
+    "rows": 54
+  },
+  "3.4. Ecosistemas": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "ecosistema",
+      "tipo",
+      "mdv_relacionado",
+      "es_salud",
+      "servicio_ecosistemico",
+      "causas_deg",
+      "cod_es"
+    ],
+    "rows": 3
+  },
+  "3.5. SE y MdV": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "cod_es_se",
+      "mdv_relacionado",
+      "elemento_se",
+      "accesso",
+      "barreras",
+      "nr_usuarios",
+      "mes_contrib",
+      "mes_falta",
+      "inclusion",
+      "incl_descripcion"
+    ],
+    "rows": 9
+  },
+  "4.1. Amenazas": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "tipo_amenaza",
+      "amenaza",
+      "magnitud",
+      "frequencia",
+      "tendencia",
+      "suma",
+      "sitios_afect",
+      "cod_mapa"
+    ],
+    "rows": 3
+  },
+  "4.2.1. Amenazas_MdV": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "tipo_amenaza",
+      "amenaza",
+      "mdv",
+      "i_economia",
+      "i_econ_coment",
+      "i_alimentaria",
+      "i_aliment_coment",
+      "i_sanitaria",
+      "i_sanit_coment",
+      "i_ambiental",
+      "i_amb_coment",
+      "i_personal",
+      "i_pers_coment",
+      "i_comunitaria",
+      "i_comun_coment",
+      "i_politica",
+      "i_polit_coment",
+      "nr_familias",
+      "i_diferenciado",
+      "tipo_conflicto",
+      "nivel_conflicto",
+      "mapeo_conflicto"
+    ],
+    "rows": 4
+  },
+  "4.2.2. Amenazas_SE": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "tipo_amenaza",
+      "amenaza",
+      "cod_se",
+      "i_economia",
+      "i_econ_coment",
+      "i_alimentaria",
+      "i_aliment_coment",
+      "i_sanitaria",
+      "i_sanit_coment",
+      "i_ambiental",
+      "i_amb_coment",
+      "i_personal",
+      "i_pers_coment",
+      "i_comunitaria",
+      "i_comun_coment",
+      "i_politica",
+      "i_polit_coment",
+      "nr_familias",
+      "i_diferenciado",
+      "tipo_conflicto",
+      "nivel_conflicto",
+      "mapeo_conflicto"
+    ],
+    "rows": 8
+  },
+  "5.1. Actores": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "nombre_actor",
+      "tipo_actor",
+      "rol_paisaje",
+      "conflicto_con",
+      "colabor_con",
+      "poder",
+      "interes"
+    ],
+    "rows": 25
+  },
+  "5.2. Diálogo": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "nombre_espacio",
+      "tipo",
+      "alcance",
+      "actores_invol",
+      "funcion",
+      "incidencia",
+      "fortalezas",
+      "debilidades"
+    ],
+    "rows": 6
+  },
+  "6.1. Evolución_conflict": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "cod_conflict",
+      "evento",
+      "ano_evento",
+      "diferencias",
+      "dif_factor",
+      "cooperacion",
+      "coop_factor",
+      "suma"
+    ],
+    "rows": 4
+  },
+  "6.2. Actores_conflict": {
+    "columns": [
+      "fecha",
+      "admin0",
+      "paisaje",
+      "grupo",
+      "cod_conflict",
+      "actor",
+      "i_en_actor",
+      "iea_factor",
+      "i_en_conflicto",
+      "iec_factor"
+    ],
+    "rows": 8
+  },
+  "7.1. Encuesta CA": {
+    "columns": [
+      "País",
+      "Grupo",
+      "Medio de vida",
+      "Tamaño de propiedad",
+      "1. … depende totalmente de este sistema productivo para sostener sus ingresos?",
+      "2. … tiene ingresos estables y suficientes durante todo el año?",
+      "3. … tiene mujeres empleadas con remuneración en este sistema productivo?",
+      "4. … tiene jóvenes [15-24 años] empleados con remuneración en este sistema productivo?",
+      "5. … tiene una vivienda permanente? [con título de propiedad]",
+      "6. … tiene vivienda construida con materiales duraderos (techo firme, paredes de ladrillo, suelo de cemento)?",
+      "7. … tiene vivienda una habitación específica para cada integrante de la familia?",
+      "8 …tiene seguridad alimentaria durante todo el año? (todas las personas tienen acceso constante a tres tiempos de comida con alimentos suficientes, seguros y nutritivos para una vida saludable)",
+      "9 …tiene instalaciones de saneamiento adecuados? (aquellas que separan higiénicamente los desechos humanos del contacto humano)",
+      "10 …tiene acceso a servicios de salud y atención médica? (todas las personas y las comunidades tienen acceso a servicios integrales de salud, adecuados, oportunos y de calidad)",
+      "11. … tiene acceso a agua limpia y potable durante todo el año?",
+      "12 …usa leña como principal fuente de energía en la casa?",
+      "13. … tiene acceso a leña/energía durante todo el año para uso en la casa?",
+      "14. … tiene acceso a la electricidad?",
+      "15. … tiene acceso a internet?",
+      "16. … envía a los niños a finalizar la enseñanza primaria?",
+      "17. … envía a los jóvenes a terminar la enseñanza secundaria?",
+      "18. … tiene a todas las personas mayores de 15 años que saben leer y escribir?",
+      "19. … está encabezada por mujeres? (jefaturas de hogar)",
+      "20. ¿En qué proporción de familias las mujeres pueden llevar a cabo sus propias decisiones sobre la gestión del hogar?",
+      "21 …ha tenido problemas en los ultimos cinco años por deforestación, incendios o algún otro proceso que afecto su medio de vida principal? (específica cuál proceso)",
+      "22. … usa conocimiento local o indígena para enfrentar amenazas climáticas?",
+      "23 …fue parte de la organización para dar apoyo entre ellas en casos de desastres o amenazas climáticas (en forma de apoyo laboral, compartir comida, cuidado los niños/mayores, otros ejemplos - especificar)?",
+      "24. … confía en miembros de la familia y la comunidad en casos de desastres o amenazas climáticas?",
+      "25 …confía en instituciones locales (iglesia, organizaciones humanitarias, otras) en casos de desastres o amenazas climáticas?",
+      "26. … confía en organizaciones gubernamentales en casos de desastres o amenazas climáticas?",
+      "27 …tiene problemas de seguridad en sus fincas? (p.ej., robos, agresiones)",
+      "28. … puede transitar libremente sin problemas de seguridad?",
+      "29. … si tiene problema de seguridad, confía a mecanismos de estado para resolver sus problemas de seguridad?",
+      "30. … las mujeres pueden transitar libremente sin problemas de seguridad?",
+      "31 …tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado dentro del país?*",
+      "32 …tiene algún miembro del núcleo familiar (padres-hijos) qué ha migrado fuera del país?",
+      "33. … tiene remesas que representan más del 60% de sus ingresos?",
+      "34. … son familias las que migraron a este paisaje desde el extranjero o desde otras partes del país?",
+      "35. … experimenta discriminación por ser migrante en este paisaje?",
+      "36 …experimenta discriminación o tensiones basadas en la etnia, la religión, el género u otra categoría de identidad? Especificar.",
+      "37 …tiene derechos de tenencia de la tierra (o de los bienes inmuebles clave para el medio de vida o sistema productivo)?",
+      "38 Sobre la pregunta anterior: De la proporción de familias que tiene derechos de tenencia, ¿cuántas cuentan con documentación legal que sustente estos derechos?",
+      "39 …tiene acceso a fuentes cercanas de agua para este medio de vida (sistema productivo)?",
+      "40 … tiene acceso a otros insumos necesarios para este medio de vida o sistema productivo (por ejemplo, semillas, animales, maquinaria)?",
+      "41 …dispone con diversidad tecnológica para la implementación de prácticas?",
+      "42 …dispone de mano de obra (familiar o contratada) cuando la necesita?",
+      "43. … tiene acceso a créditos para la producción?",
+      "44. … tiene acceso a seguros para la producción?",
+      "45 …dispone de instalaciones o infraestructuras para almacenar productos (por ejemplo, centros de acopio)?",
+      "46. … dispone de carreteras adecuadas para distribuir los productos?",
+      "47. … dispone de sus propios medios de transporte para comercializar sus productos?",
+      "48. … añade valor a sus productos?",
+      "49. … vende sus productos a través de un intermediario?",
+      "50. ¿En qué proporción de familias o unidades productivas las mujeres toman decisiones sobre cambios en sus sistemas productivos?",
+      "51 ¿En qué proporción de familias o unidades productivas participan las mujeres en el proceso de transformación (valor añadido) de los productos?",
+      "52. ¿En qué proporción de familias o unidades productivas las mujeres toman decisiones en el proceso de comercialización de los productos?",
+      "53. … recibe asistencia técnica y/o formación de instituciones gubernamentales, ONG, empresas, cooperativas u otro tipo de instituciones?",
+      "54 Sobre la pregunta anterior: ¿Cuál es la fuente de información en la que más confia para tomar decisiones de producción? a) servicios de gobierno, b) proveedores de insumos, c) vecinos, d) otros (especificar)",
+      "55. … recibe información climática para su sistema productivo?",
+      "56. … accede a información del mercado?",
+      "57 De las familias que reciben información agroclimática y/o de mercados, ¿cuántas pueden implementar las recomendaciones?",
+      "58. … estaría dispuesta a cambiar su manera de producir ante acontecimientos adversos?",
+      "59. … ya ha hecho cambios en su manera de producir como respuestas a cambios del mercado, efectos del cambio climático, etc.?",
+      "60. … tenía antes otro medio de vida y lo cambió como respuesta a cambio del mercado, efectos del cambio climático, etc.?",
+      "61 …participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?",
+      "62. … participa en plataformas/espacios de toma de decisiones comunitarias?"
+    ],
+    "rows": 4
+  },
+  "LOOKUP_GEO": {
+    "columns": [
+      "geo_id",
+      "admin0",
+      "paisaje",
+      "grupo"
+    ],
+    "rows": 2
+  },
+  "LOOKUP_CONTEXT": {
+    "columns": [
+      "context_id",
+      "geo_id",
+      "fecha_iso"
+    ],
+    "rows": 4
+  },
+  "LOOKUP_SURVEY_CONTEXT": {
+    "columns": [
+      "survey_context_id",
+      "admin0",
+      "grupo",
+      "paisaje_inferido"
+    ],
+    "rows": 2
+  },
+  "LOOKUP_MDV": {
+    "columns": [
+      "mdv_id",
+      "mdv_name"
+    ],
+    "rows": 30
+  },
+  "LOOKUP_ECOSISTEMA": {
+    "columns": [
+      "ecosistema_id",
+      "cod_es",
+      "ecosistema"
+    ],
+    "rows": 6
+  },
+  "LOOKUP_SE": {
+    "columns": [
+      "se_id",
+      "cod_se"
+    ],
+    "rows": 13
+  },
+  "LOOKUP_ELEMENTO_SE": {
+    "columns": [
+      "elemento_se_id",
+      "elemento_se"
+    ],
+    "rows": 3
+  },
+  "LOOKUP_AMENAZA": {
+    "columns": [
+      "amenaza_id",
+      "tipo_amenaza",
+      "amenaza"
+    ],
+    "rows": 3
+  },
+  "LOOKUP_ACTOR": {
+    "columns": [
+      "actor_id",
+      "nombre_actor"
+    ],
+    "rows": 43
+  },
+  "LOOKUP_ESPACIO": {
+    "columns": [
+      "espacio_id",
+      "nombre_espacio"
+    ],
+    "rows": 6
+  },
+  "LOOKUP_CONFLICTO": {
+    "columns": [
+      "conflicto_id",
+      "cod_conflict"
+    ],
+    "rows": 9
+  },
+  "LOOKUP_CA_QUESTIONS": {
+    "columns": [
+      "question_id",
+      "question_order",
+      "question_text",
+      "column_name"
+    ],
+    "rows": 62
+  },
+  "TIDY_3_1_BRAINSTORM": {
+    "columns": [
+      "brainstorm_id",
+      "context_id",
+      "elemento_SES",
+      "nombre",
+      "uso_fin_mdv",
+      "mdv_id",
+      "ecosistema_id"
+    ],
+    "rows": 33
+  },
+  "TIDY_3_2_PRIORIZACION": {
+    "columns": [
+      "priorizacion_id",
+      "context_id",
+      "mdv_id",
+      "mdv_name",
+      "producto_principal",
+      "i_seg_alim",
+      "i_area",
+      "i_des_loc",
+      "i_ambiente",
+      "i_inclusion",
+      "i_total"
+    ],
+    "rows": 6
+  },
+  "TIDY_3_3_CAR_A": {
+    "columns": [
+      "car_a_id",
+      "context_id",
+      "mdv_id",
+      "mdv",
+      "codigo_mdv",
+      "codigo_mapa",
+      "sistema",
+      "uso_final",
+      "cv_importancia",
+      "cv_producto",
+      "cv_mercado"
+    ],
+    "rows": 17
+  },
+  "TIDY_3_3_CAR_B": {
+    "columns": [
+      "car_b_id",
+      "context_id",
+      "mdv_id",
+      "mdv",
+      "codigo_mapa",
+      "tenencia",
+      "tenencia_descripcion"
+    ],
+    "rows": 18
+  },
+  "TIDY_3_3_CAR_C": {
+    "columns": [
+      "car_c_id",
+      "context_id",
+      "mdv_id",
+      "mdv",
+      "codigo_mdv",
+      "codigo_mapa",
+      "tamano",
+      "unidad",
+      "rango",
+      "porcentaje"
+    ],
+    "rows": 18
+  },
+  "TIDY_3_3_CAR_D": {
+    "columns": [
+      "car_d_id",
+      "context_id",
+      "mdv_id",
+      "mdv",
+      "codigo_mdv",
+      "codigo_mapa",
+      "tenencia",
+      "tamano",
+      "porcentaje"
+    ],
+    "rows": 54
+  },
+  "TIDY_3_3_CAR_LONG": {
+    "columns": [
+      "car_long_id",
+      "module",
+      "record_id",
+      "context_id",
+      "mdv_id",
+      "mdv",
+      "codigo_mapa",
+      "codigo_mdv",
+      "field",
+      "value"
+    ],
+    "rows": 355
+  },
+  "TIDY_3_4_ECOSISTEMAS": {
+    "columns": [
+      "ecosistema_obs_id",
+      "context_id",
+      "ecosistema_id",
+      "cod_es",
+      "ecosistema",
+      "tipo",
+      "es_salud",
+      "causas_deg"
+    ],
+    "rows": 3
+  },
+  "TIDY_3_4_ECO_SE": {
+    "columns": [
+      "eco_se_id",
+      "ecosistema_obs_id",
+      "se_id",
+      "cod_se"
+    ],
+    "rows": 28
+  },
+  "TIDY_3_4_ECO_MDV": {
+    "columns": [
+      "eco_mdv_id",
+      "ecosistema_obs_id",
+      "mdv_id",
+      "mdv_name"
+    ],
+    "rows": 25
+  },
+  "TIDY_3_5_SE_MDV": {
+    "columns": [
+      "se_mdv_id",
+      "context_id",
+      "ecosistema_id",
+      "se_id",
+      "cod_es_se",
+      "cod_es",
+      "cod_se",
+      "elemento_se_id",
+      "elemento_se",
+      "mdv_id",
+      "mdv_name",
+      "accesso",
+      "barreras",
+      "nr_usuarios",
+      "impactos_cruzados",
+      "incl_descripcion"
+    ],
+    "rows": 39
+  },
+  "TIDY_3_5_SE_MONTHS": {
+    "columns": [
+      "se_month_id",
+      "se_mdv_id",
+      "month_label",
+      "month_num",
+      "month_type"
+    ],
+    "rows": 1404
+  },
+  "TIDY_3_5_SE_INCLUSION": {
+    "columns": [
+      "se_inclusion_id",
+      "se_mdv_id",
+      "group_label"
+    ],
+    "rows": 468
+  },
+  "TIDY_4_1_AMENAZAS": {
+    "columns": [
+      "amenaza_obs_id",
+      "context_id",
+      "amenaza_id",
+      "tipo_amenaza",
+      "amenaza",
+      "magnitud",
+      "frequencia",
+      "tendencia",
+      "suma",
+      "sitios_afect",
+      "cod_mapa"
+    ],
+    "rows": 3
+  },
+  "TIDY_4_2_1_AMENAZA_MDV": {
+    "columns": [
+      "amenaza_mdv_id",
+      "context_id",
+      "amenaza_id",
+      "tipo_amenaza",
+      "amenaza",
+      "mdv_id",
+      "mdv_name",
+      "i_economia",
+      "i_econ_coment",
+      "i_alimentaria",
+      "i_aliment_coment",
+      "i_sanitaria",
+      "i_sanit_coment",
+      "i_ambiental",
+      "i_amb_coment",
+      "i_personal",
+      "i_pers_coment",
+      "i_comunitaria",
+      "i_comun_coment",
+      "i_politica",
+      "i_polit_coment",
+      "nr_familias",
+      "tipo_conflicto",
+      "nivel_conflicto",
+      "mapeo_conflicto"
+    ],
+    "rows": 8
+  },
+  "TIDY_4_2_1_DIFERENCIADO": {
+    "columns": [
+      "dif_id",
+      "amenaza_mdv_id",
+      "group_label"
+    ],
+    "rows": 26
+  },
+  "TIDY_4_2_1_MAPEO_CONFLICTO": {
+    "columns": [
+      "map_id",
+      "amenaza_mdv_id",
+      "cod_conflict",
+      "conflicto_id"
+    ],
+    "rows": 18
+  },
+  "TIDY_4_2_2_AMENAZA_SE": {
+    "columns": [
+      "amenaza_se_id",
+      "context_id",
+      "amenaza_id",
+      "tipo_amenaza",
+      "amenaza",
+      "se_id",
+      "cod_se",
+      "i_economia",
+      "i_econ_coment",
+      "i_alimentaria",
+      "i_aliment_coment",
+      "i_sanitaria",
+      "i_sanit_coment",
+      "i_ambiental",
+      "i_amb_coment",
+      "i_personal",
+      "i_pers_coment",
+      "i_comunitaria",
+      "i_comun_coment",
+      "i_politica",
+      "i_polit_coment",
+      "nr_familias",
+      "tipo_conflicto",
+      "nivel_conflicto",
+      "mapeo_conflicto"
+    ],
+    "rows": 8
+  },
+  "TIDY_4_2_2_DIFERENCIADO": {
+    "columns": [
+      "dif_id",
+      "amenaza_se_id",
+      "group_label"
+    ],
+    "rows": 32
+  },
+  "TIDY_4_2_2_MAPEO_CONFLICTO": {
+    "columns": [
+      "map_id",
+      "amenaza_se_id",
+      "cod_conflict",
+      "conflicto_id"
+    ],
+    "rows": 18
+  },
+  "TIDY_5_1_ACTORES": {
+    "columns": [
+      "actor_obs_id",
+      "context_id",
+      "actor_id",
+      "nombre_actor",
+      "tipo_actor",
+      "rol_paisaje",
+      "poder",
+      "interes"
+    ],
+    "rows": 25
+  },
+  "TIDY_5_1_RELACIONES": {
+    "columns": [
+      "rel_id",
+      "context_id",
+      "actor_id",
+      "other_actor_id",
+      "other_actor_name",
+      "rel_type"
+    ],
+    "rows": 73
+  },
+  "TIDY_5_2_DIALOGO": {
+    "columns": [
+      "dialogo_id",
+      "context_id",
+      "espacio_id",
+      "nombre_espacio",
+      "tipo",
+      "alcance",
+      "funcion",
+      "incidencia",
+      "fortalezas",
+      "debilidades"
+    ],
+    "rows": 6
+  },
+  "TIDY_5_2_DIALOGO_ACTOR": {
+    "columns": [
+      "bridge_id",
+      "dialogo_id",
+      "actor_id",
+      "actor_name"
+    ],
+    "rows": 18
+  },
+  "TIDY_6_1_CONFLICT_EVENTS": {
+    "columns": [
+      "event_id",
+      "context_id",
+      "conflicto_id",
+      "cod_conflict",
+      "evento",
+      "ano_evento",
+      "diferencias",
+      "dif_factor",
+      "cooperacion",
+      "coop_factor",
+      "suma"
+    ],
+    "rows": 8
+  },
+  "TIDY_6_2_CONFLICTO_ACTOR": {
+    "columns": [
+      "conflict_actor_id",
+      "context_id",
+      "conflicto_id",
+      "cod_conflict",
+      "actor_id",
+      "actor",
+      "i_en_actor",
+      "iea_factor",
+      "i_en_conflicto",
+      "iec_factor"
+    ],
+    "rows": 8
+  },
+  "TIDY_7_1_RESPONDENTS": {
+    "columns": [
+      "respondent_id",
+      "survey_context_id",
+      "admin0",
+      "grupo",
+      "paisaje_inferido",
+      "mdv_id",
+      "mdv_name",
+      "tamano_propiedad"
+    ],
+    "rows": 4
+  },
+  "TIDY_7_1_RESPONSES": {
+    "columns": [
+      "response_id",
+      "respondent_id",
+      "question_id",
+      "question_order",
+      "response_raw",
+      "response_numeric"
+    ],
+    "rows": 248
+  },
+  "QA_INPUT_SCHEMA": {
+    "columns": [
+      "sheet",
+      "status",
+      "missing_cols"
+    ],
+    "rows": 17
+  },
+  "QA_TABLE_SUMMARY": {
+    "columns": [
+      "table",
+      "rows",
+      "cols"
+    ],
+    "rows": 58
+  },
+  "QA_PK_DUPLICATES": {
+    "columns": [
+      "table",
+      "pk",
+      "duplicate_rows",
+      "note"
+    ],
+    "rows": 40
+  },
+  "QA_MISSING_IDS": {
+    "columns": [
+      "table",
+      "col",
+      "missing",
+      "note"
+    ],
+    "rows": 45
+  },
+  "QA_FOREIGN_KEYS": {
+    "columns": [
+      "table",
+      "fk",
+      "lookup",
+      "missing_fk",
+      "note"
+    ],
+    "rows": 46
+  }
+}

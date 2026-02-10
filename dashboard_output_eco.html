@@ -1,0 +1,5134 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interactivo PARES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #383838;
+        }
+
+        .nav-active {
+            border-bottom: 2px solid #D97706;
+            color: #D97706;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: #D97706;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+            transform: translateY(-2px);
+        }
+
+        .info-box {
+            background-color: #FFFBEB;
+            border-left: 4px solid #FBBF24;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #92400E;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: #78350F;
+        }
+
+        .cascade-item {
+            background-color: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+            width: 100%;
+        }
+
+        .cascade-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #9CA3AF;
+            margin: 0.5rem 0;
+        }
+
+        @media (min-width: 1024px) {
+            .cascade-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .cascade-item {
+                flex: 1;
+                margin: 0 0.5rem;
+            }
+
+            .cascade-arrow {
+                margin: 0;
+                transform: rotate(0deg);
+            }
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #D1D5DB;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 15px;
+            width: 12px;
+            height: 12px;
+            background: #D97706;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            width: calc(50% - 20px);
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            left: 0;
+            margin-right: calc(50% + 20px);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            left: calc(50% + 20px);
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item::before {
+                left: 20px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 60px);
+                left: 60px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+        }
+
+        .threat-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .threat-btn:hover {
+            opacity: 0.8;
+        }
+
+        .threat-btn.active {
+            background-color: #D97706 !important;
+            color: white !important;
+        }
+
+        .heatmap-cell {
+            min-width: 40px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .no-data-card {
+            background-color: #F3F4F6;
+            border: 2px dashed #D1D5DB;
+            color: #6B7280;
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    <script>
+        const BUNDLE = {
+  "meta": {
+    "title": "Análisis Interactivo del Paisaje de Parque regional municipal Esquipulas Palo Gordo",
+    "subtitle": "Una exploración visual de las dinámicas socioecológicas y la capacidad adaptativa.",
+    "org": "Organización ECO",
+    "landscape": "Parque regional municipal Esquipulas Palo Gordo",
+    "admin0": "Guatemala",
+    "export_date": "2026-01-29",
+    "workbook_name": "FINAL_ECO_EPG_analysis_ready.xlsx"
+  },
+  "contexts": [
+    {
+      "context_id": "5b63aa948f0dbd6e",
+      "geo_id": "e2430ab4a6423dff",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional municipal Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "5b63aa948f0dbd6e",
+      "geo_id": "e2430ab4a6423dff",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional  municipal Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional  municipal Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "5b63aa948f0dbd6e",
+      "geo_id": "e2430ab4a6423dff",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal  Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional municipal  Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "geo_id": "1c6d46bc35b3466b",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal Esquipulas Palo Gordo",
+      "grupo": "2.0",
+      "grupo_normalized": "2.0",
+      "label": "Parque regional municipal Esquipulas Palo Gordo — 2.0 — 2025-05"
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "geo_id": "1c6d46bc35b3466b",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal  Esquipulas Palo Gordo",
+      "grupo": "2.0",
+      "grupo_normalized": "2.0",
+      "label": "Parque regional municipal  Esquipulas Palo Gordo — 2.0 — 2025-05"
+    },
+    {
+      "context_id": "d5cf318044bf4d7a",
+      "geo_id": "cb61540b784835cf",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal Esquipulas Palo Gordo",
+      "grupo": "3.0",
+      "grupo_normalized": "3.0",
+      "label": "Parque regional municipal Esquipulas Palo Gordo — 3.0 — 2025-05"
+    },
+    {
+      "context_id": "23b40c174b655e51",
+      "geo_id": "0c4b70b64b7f3531",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "f7815de73b71564e",
+      "geo_id": "913fada52fcbcd86",
+      "fecha_iso": "2025-05-26",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional Esquipulas Palo Gordo",
+      "grupo": "2.0",
+      "grupo_normalized": "2.0",
+      "label": "Parque regional Esquipulas Palo Gordo — 2.0 — 2025-05"
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "geo_id": "e2430ab4a6423dff",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional municipal Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "geo_id": "e2430ab4a6423dff",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional  municipal Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional  municipal Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "geo_id": "e2430ab4a6423dff",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal  Esquipulas Palo Gordo",
+      "grupo": "1.0",
+      "grupo_normalized": "1.0",
+      "label": "Parque regional municipal  Esquipulas Palo Gordo — 1.0 — 2025-05"
+    },
+    {
+      "context_id": "ac3f8e899b3c8208",
+      "geo_id": "1c6d46bc35b3466b",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal Esquipulas Palo Gordo",
+      "grupo": "2.0",
+      "grupo_normalized": "2.0",
+      "label": "Parque regional municipal Esquipulas Palo Gordo — 2.0 — 2025-05"
+    },
+    {
+      "context_id": "ac3f8e899b3c8208",
+      "geo_id": "1c6d46bc35b3466b",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regional municipal  Esquipulas Palo Gordo",
+      "grupo": "2.0",
+      "grupo_normalized": "2.0",
+      "label": "Parque regional municipal  Esquipulas Palo Gordo — 2.0 — 2025-05"
+    },
+    {
+      "context_id": "0818f8324e2b798c",
+      "geo_id": "c65f37b2cb1ae26c",
+      "fecha_iso": "",
+      "admin0": "nan",
+      "paisaje": "nan",
+      "grupo": "",
+      "grupo_normalized": "Sin especificar",
+      "label": "nan — Sin especificar"
+    },
+    {
+      "context_id": "d88d9cdc56c1334c",
+      "geo_id": "65a3a2daff9daa72",
+      "fecha_iso": "2025-05-27",
+      "admin0": "Guatemala",
+      "paisaje": "Parque regionalmunicipal municipal  Esquipulas Palo Gordo",
+      "grupo": "2.0",
+      "grupo_normalized": "2.0",
+      "label": "Parque regionalmunicipal municipal  Esquipulas Palo Gordo — 2.0 — 2025-05"
+    }
+  ],
+  "kpis": {
+    "5b63aa948f0dbd6e": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "7b87e572b9c2da40": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "d5cf318044bf4d7a": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "23b40c174b655e51": {
+      "n_services": 3,
+      "n_livelihoods": 3,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "f7815de73b71564e": {
+      "n_services": 3,
+      "n_livelihoods": 8,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "f7e73979e5cce01f": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 14,
+      "n_actors": 15
+    },
+    "ac3f8e899b3c8208": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 15,
+      "n_actors": 0
+    },
+    "0818f8324e2b798c": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "d88d9cdc56c1334c": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    }
+  },
+  "lifelines": {
+    "se_mdv": [
+      {
+        "se_mdv_id": "33917cba08ba2179",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "provisión",
+        "mdv_name": "Aprovechamiento madera y leña",
+        "nr_usuarios": 3000,
+        "accesso": "Disminuido",
+        "barreras": "Aumento de población"
+      },
+      {
+        "se_mdv_id": "e1fe7e9064d54f61",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "flujo",
+        "mdv_name": "Aprovechamiento madera y leña",
+        "nr_usuarios": 3000,
+        "accesso": "Complicado",
+        "barreras": "Mayor control legal"
+      },
+      {
+        "se_mdv_id": "35e708adde1b8edf",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "demanda",
+        "mdv_name": "Aprovechamiento madera y leña",
+        "nr_usuarios": 3000,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "provisión",
+        "mdv_name": "Sistema agroforestal con granos básicos",
+        "nr_usuarios": 3000,
+        "accesso": "Disminuido",
+        "barreras": "Aumento de población"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "flujo",
+        "mdv_name": "Sistema agroforestal con granos básicos",
+        "nr_usuarios": 3000,
+        "accesso": "Complicado",
+        "barreras": "Desperfectos en el sistema"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "demanda",
+        "mdv_name": "Sistema agroforestal con granos básicos",
+        "nr_usuarios": 3000,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "33a6f22f21d1881c",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "provisión",
+        "mdv_name": "Sistemas agroforestales con forestales",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "9e73ab43777f3d0e",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "flujo",
+        "mdv_name": "Sistemas agroforestales con forestales",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "89dbb39da4cc3b5a",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "demanda",
+        "mdv_name": "Sistemas agroforestales con forestales",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "provisión",
+        "mdv_name": "Sistema agroforestal con granos básicos",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "flujo",
+        "mdv_name": "Sistema agroforestal con granos básicos",
+        "nr_usuarios": 3000,
+        "accesso": "Es facil",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "context_id": "23b40c174b655e51",
+        "elemento_se": "demanda",
+        "mdv_name": "Sistema agroforestal con granos básicos",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "Granos básicos (maíz",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "frijol",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "ayote",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "haba)",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "Granos básicos (maíz",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "frijol",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "ayote",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "haba)",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "Granos básicos (maíz",
+        "nr_usuarios": 3000,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "frijol",
+        "nr_usuarios": 3000,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "ayote",
+        "nr_usuarios": 3000,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "haba)",
+        "nr_usuarios": 3000,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "Hortalizas a campo abierto",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "Hortalizas a campo abierto",
+        "nr_usuarios": 3000,
+        "accesso": "Complicado",
+        "barreras": "Aumento de población"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "Hortalizas a campo abierto",
+        "nr_usuarios": 3000,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "Hortalizas en invernadero",
+        "nr_usuarios": 900,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "Hortalizas en invernadero",
+        "nr_usuarios": 900,
+        "accesso": "Fácil",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "Hortalizas en invernadero",
+        "nr_usuarios": 900,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "Apiarios grupales",
+        "nr_usuarios": 800,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "Apiarios grupales",
+        "nr_usuarios": 800,
+        "accesso": "Complicado",
+        "barreras": "Cambio climático"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "Apiarios grupales",
+        "nr_usuarios": 800,
+        "accesso": "Se mantiene",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "provisión",
+        "mdv_name": "Sistema de riego",
+        "nr_usuarios": 500,
+        "accesso": "Aumenta",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "flujo",
+        "mdv_name": "Sistema de riego",
+        "nr_usuarios": 500,
+        "accesso": "Complicado",
+        "barreras": "Recurso económico limitado"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "context_id": "f7815de73b71564e",
+        "elemento_se": "demanda",
+        "mdv_name": "Sistema de riego",
+        "nr_usuarios": 500,
+        "accesso": "Aumenta",
+        "barreras": ""
+      }
+    ],
+    "se_months": [
+      {
+        "se_mdv_id": "33917cba08ba2179",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "33917cba08ba2179",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "33917cba08ba2179",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e1fe7e9064d54f61",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e1fe7e9064d54f61",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e1fe7e9064d54f61",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "35e708adde1b8edf",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "35e708adde1b8edf",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "35e708adde1b8edf",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "53914e60804d20a9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "4a154e05d590787a",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "3874d0e531d4dbb9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "33a6f22f21d1881c",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "33a6f22f21d1881c",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "33a6f22f21d1881c",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "9e73ab43777f3d0e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "9e73ab43777f3d0e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "9e73ab43777f3d0e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "89dbb39da4cc3b5a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "89dbb39da4cc3b5a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "89dbb39da4cc3b5a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "24fd4443050b04ff",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "adf86e9f45fbae08",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "5b98da14153a8bb4",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "708f4d6319916fb5",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8592958ac3c335d2",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "1836adcb23f35c4a",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "d0cba41b6cdf67cb",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f8d0f0865af1658b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44d6f6bb0035b568",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ab699ae0c40acab9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "4f03869ff9d4c3f5",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "6d9eb50edfc0f864",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7d34cb63d7088f0c",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "71097ba1316a2523",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d6036f714dbd7a4",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "b0a953a96d99f719",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "7bf067a4907bf548",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "0d9ba02cea21a9c3",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c8108f997efac899",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8be9f903acab062e",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a75bc4444a09ea6b",
+        "month_num": 12.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8a11de2fcc741fc6",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a0a33fc9e1970d8f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "052a2f00232ca70d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "5f2d9d876ed79578",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a72a754a55072ef0",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e0e830658cd88974",
+        "month_num": "",
+        "month_type": "falta"
+      }
+    ]
+  },
+  "threats": {
+    "amenazas": [
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Vientos fuertes",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Vientos fuertes",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Vientos fuertes",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Vientos fuertes",
+        "tipo_amenaza": "climática",
+        "nr_familias": 3000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Contaminación uso de agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.7142857142857142
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Contaminación uso de agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.7142857142857142
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Contaminación uso de agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.7142857142857142
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Disposición inadecuada de los desechos y residuos solidos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 3,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 2.2857142857142856
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Disposición inadecuada de los desechos y residuos solidos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 3,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 2.2857142857142856
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Disposición inadecuada de los desechos y residuos solidos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 3,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 2.2857142857142856
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Tala inmoderada",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Tala inmoderada",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Tala inmoderada",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 3000,
+        "i_economia": 1,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Erosión de suelos",
+        "tipo_amenaza": "climática",
+        "nr_familias": 2300,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Erosión de suelos",
+        "tipo_amenaza": "climática",
+        "nr_familias": 2300,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Erosión de suelos",
+        "tipo_amenaza": "climática",
+        "nr_familias": 2300,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 1450,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.8571428571428572
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 1450,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.8571428571428572
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "nr_familias": 1450,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.8571428571428572
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Granizo",
+        "tipo_amenaza": "climática",
+        "nr_familias": 1450,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.8571428571428572
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Granizo",
+        "tipo_amenaza": "climática",
+        "nr_familias": 1450,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.8571428571428572
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Granizo",
+        "tipo_amenaza": "climática",
+        "nr_familias": 1450,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.8571428571428572
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Plagas y enfermedades",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1450,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Plagas y enfermedades",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1450,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Plagas y enfermedades",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1450,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Cambio de uso de suelo",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1800,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Cambio de uso de suelo",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1800,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Cambio de uso de suelo",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1800,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Uso agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1450,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Uso agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1450,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Uso agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 1450,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      }
+    ],
+    "threat_scores": [
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sequías",
+        "mean_score": 2.142857142857143,
+        "total_familias": 12000
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Heladas",
+        "mean_score": 2.142857142857143,
+        "total_familias": 12000
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Vientos fuertes",
+        "mean_score": 2.142857142857143,
+        "total_familias": 12000
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Contaminación uso de agroquímicos",
+        "mean_score": 1.7142857142857142,
+        "total_familias": 9000
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Disposición inadecuada de los desechos y residuos solidos",
+        "mean_score": 2.2857142857142856,
+        "total_familias": 9000
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Tala inmoderada",
+        "mean_score": 1.5714285714285714,
+        "total_familias": 9000
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Erosión de suelos",
+        "mean_score": 1.5714285714285714,
+        "total_familias": 6900
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Heladas",
+        "mean_score": 1.857142857142857,
+        "total_familias": 4350
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Granizo",
+        "mean_score": 1.857142857142857,
+        "total_familias": 4350
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Plagas y enfermedades",
+        "mean_score": 1.4285714285714286,
+        "total_familias": 4350
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Cambio de uso de suelo",
+        "mean_score": 1.4285714285714286,
+        "total_familias": 5400
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Uso agroquímicos",
+        "mean_score": 1.5714285714285714,
+        "total_familias": 4350
+      }
+    ],
+    "amenazas_meta": [
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Tormenta (temporales de lluvi)",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 1,
+        "tendencia": -1
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Exceso de humedad",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 1,
+        "tendencia": -1
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "magnitud": 4,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Vientos fuertes",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "magnitud": 4,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Granizo",
+        "tipo_amenaza": "climática",
+        "magnitud": 2,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Sismos y terremotos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 2,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Disposición inadecuada de los desechos y residuos sólidos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Quemas",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 3,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Contaminación fuentes de agua",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 3,
+        "frequencia": 3,
+        "tendencia": 1
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Erosión de suelos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Urbanización",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 2,
+        "tendencia": 2
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Uso de agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "amenaza": "Contaminación uso de agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 5,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 2,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Heladas",
+        "tipo_amenaza": "climática",
+        "magnitud": 4,
+        "frequencia": 2,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 2,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Vientos fuertes",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 2,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Granizo",
+        "tipo_amenaza": "climática",
+        "magnitud": 4,
+        "frequencia": 2,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Olas de calor ",
+        "tipo_amenaza": "climática",
+        "magnitud": 2,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Tormenta (temporales de lluvia)",
+        "tipo_amenaza": "climática",
+        "magnitud": 2,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Erosión de suelos",
+        "tipo_amenaza": "climática",
+        "magnitud": 3,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Cambio de uso de suelo",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Contaminación uso de agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Disposición inadecuada de los desechos y residuos sólidos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Incendios forestales",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 1,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Extracción de leña y madera",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 1
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Sismos y terremotos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 1,
+        "frequencia": 1,
+        "tendencia": 0
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Plagas y enfermedades",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "ac3f8e899b3c8208",
+        "amenaza": "Indiferencia del ser humano por el cuidado de recusos naturales",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 2,
+        "frequencia": 3,
+        "tendencia": 2
+      }
+    ]
+  },
+  "actors": [
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "c2d5727f8c28b55c",
+      "nombre_actor": "UDEM  EPG",
+      "tipo_actor": "Municipal",
+      "rol_paisaje": "Institucional, asistencia técnica y apoyo con proyectos",
+      "poder": 6,
+      "interes": 10
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "f8c404f75e350d88",
+      "nombre_actor": "ASODIME",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Grupo organizado que promueve proyectos para sus socios",
+      "poder": 5,
+      "interes": 10
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "96be6a1b0bb3eea9",
+      "nombre_actor": "ASABRICAP",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Grupo organizado que promueve proyectos para sus socios",
+      "poder": 3,
+      "interes": 7
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "683be77c18642c37",
+      "nombre_actor": "CADER POJOPOM",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Centro de aprendiza, grupo organizado que promueve proyectos para sus socios",
+      "poder": 7,
+      "interes": 8
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "24e636ac456e40ad",
+      "nombre_actor": "COCODE LA LUCHA 1",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Organización comunitaria que gestona proyectos para su comunidad",
+      "poder": 8,
+      "interes": 8
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "92c417dabf40b073",
+      "nombre_actor": "DAPMA EPG",
+      "tipo_actor": "Municipal",
+      "rol_paisaje": "Asistencia técnica y apoyo con proyectos",
+      "poder": 8,
+      "interes": 10
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "14e0920fd260cf66",
+      "nombre_actor": "AMER MAGA EPG",
+      "tipo_actor": "Gubernamental",
+      "rol_paisaje": "Asistencia técnica y apoyo con proyectos, fortalece la gobernanza",
+      "poder": 7,
+      "interes": 10
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "948d53ee79a859e6",
+      "nombre_actor": "MARN SM",
+      "tipo_actor": "Gubernamental",
+      "rol_paisaje": "Ente rector que vela por el resguado de los recursos naturales",
+      "poder": 6,
+      "interes": 10
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "89e5f241b39dedf6",
+      "nombre_actor": "GUARDARECURSOS EPG",
+      "tipo_actor": "Municipal",
+      "rol_paisaje": "Empleados municipales y del CONAP que cuidan los recursos existentes en el bosque declarado área protegida",
+      "poder": 1,
+      "interes": 7
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "21a693d5f708941b",
+      "nombre_actor": "CADER OJO DE AGUA",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Centro de aprendizaje, grupo organizado que promueve proyectos para sus socios",
+      "poder": 4,
+      "interes": 6
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "964df1a41e3613e8",
+      "nombre_actor": "ADIFERT",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Grupo organizado que promueve proyectos para sus socios",
+      "poder": 5,
+      "interes": 7
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "d9be1df538eeff13",
+      "nombre_actor": "COP KAYROS",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Grupo organizado que promueve proyectos para sus socios",
+      "poder": 5,
+      "interes": 7
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "f04ef4b87339ac75",
+      "nombre_actor": "COMITÉ AGUA C-BARRIOS",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Organización comunitatia responsable de proveer agua a la comunidad, dandole mantenimiento al sistema de agua",
+      "poder": 10,
+      "interes": 9
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "dc16e79fdd2198e6",
+      "nombre_actor": "AUX-COCODE BARRIOS",
+      "tipo_actor": "Comunitaria",
+      "rol_paisaje": "Gobernanza, organización comunitaria que gestona proyectos para su comunidad",
+      "poder": 10,
+      "interes": 9
+    },
+    {
+      "context_id": "f7e73979e5cce01f",
+      "actor_id": "22d61d459ce29741",
+      "nombre_actor": "DMM EPG",
+      "tipo_actor": "Municipal",
+      "rol_paisaje": "Asistencia técnica y apoyo con proyectos",
+      "poder": 7,
+      "interes": 10
+    }
+  ],
+  "ecosystems": [
+    {
+      "context_id": "5b63aa948f0dbd6e",
+      "ecosistema": "Bosques mixtos",
+      "tipo": "Forestal",
+      "es_salud": "2",
+      "causas_deg": "Tala inmoderada, contaminación ambiental por basura, enfermedades del bosque"
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "ecosistema": "Bosques mixtos",
+      "tipo": "Forestal",
+      "es_salud": "2",
+      "causas_deg": "Deforestación, cambios de uso de suelos"
+    },
+    {
+      "context_id": "5b63aa948f0dbd6e",
+      "ecosistema": "Sistema agroforestales",
+      "tipo": "Agrícola ",
+      "es_salud": "2",
+      "causas_deg": "Tala inmoderada, contaminación ambiental por basura, contaminación por uso de productos químicos."
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "ecosistema": "Sistemas agrícolas",
+      "tipo": "Agrícola ",
+      "es_salud": "2",
+      "causas_deg": "Erosión, avance de frontera agrícola"
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "ecosistema": "Sistemas agrícolas",
+      "tipo": "Agrícola ",
+      "es_salud": "3",
+      "causas_deg": "Erosión, malas prácticas agrícolas"
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "ecosistema": "Sistemas agrícolas",
+      "tipo": "Agrícola ",
+      "es_salud": "3",
+      "causas_deg": "Degradación de suelo"
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "ecosistema": "Sistemas agrícolas",
+      "tipo": "Agrícola ",
+      "es_salud": "3",
+      "causas_deg": "Explotación de sistemas de riego"
+    },
+    {
+      "context_id": "5b63aa948f0dbd6e",
+      "ecosistema": "Sistemas pecuarios",
+      "tipo": "Pecuario",
+      "es_salud": "2",
+      "causas_deg": "Falta de espacios físicos adecuados, poca inversión. "
+    },
+    {
+      "context_id": "7b87e572b9c2da40",
+      "ecosistema": "Sistemas pecuarios",
+      "tipo": "Pecuario",
+      "es_salud": "2",
+      "causas_deg": "Disminución de la floración, exceso de lluvias en algunas épocas"
+    }
+  ],
+  "livelihoods": [
+    {
+      "mdv_id": "e44079c48960e1ff",
+      "mdv_name": "Hortalizas a campo abierto",
+      "sistema": "Agrícola",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 3,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "6042bfc544bbe087",
+      "mdv_name": "Infraestructura turística"
+    },
+    {
+      "mdv_id": "98eebd0b8837c68b",
+      "mdv_name": "Aprovechamientos Madera / leña"
+    },
+    {
+      "mdv_id": "09d3534d5b3a6986",
+      "mdv_name": "Arte y oficios Corte y Confección"
+    },
+    {
+      "mdv_id": "fa87f27eb879a03b",
+      "mdv_name": "Artes y oficios albañilería"
+    },
+    {
+      "mdv_id": "94a270b0e640b2b9",
+      "mdv_name": "Hortalizas de invernadero"
+    },
+    {
+      "mdv_id": "5cd6dea8b01c9d27",
+      "mdv_name": "Arte y oficios otros, mecánica, estructura metálica"
+    },
+    {
+      "mdv_id": "e841ae5853d20b0e",
+      "mdv_name": "Apiarios grupales",
+      "sistema": "Pecuario",
+      "uso_final": "comercial",
+      "cv_importancia": 1,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "6ff088968f97c187",
+      "mdv_name": "Ganado ovino - caprino establados"
+    },
+    {
+      "mdv_id": "6d82a46d7fc86098",
+      "mdv_name": "Ganado vacuno engorde"
+    },
+    {
+      "mdv_id": "1211056ea405f50f",
+      "mdv_name": "Artes, oficios tejidos"
+    },
+    {
+      "mdv_id": "86965c0dcd21e8aa",
+      "mdv_name": "Artes, oficios telares"
+    },
+    {
+      "mdv_id": "4e2efb625122a4b3",
+      "mdv_name": "Granjas avícolas de postura"
+    },
+    {
+      "mdv_id": "bdaa0ea2e6f58357",
+      "mdv_name": "Papa"
+    },
+    {
+      "mdv_id": "f52b746d0cc7ef40",
+      "mdv_name": "Granos básicos maíz",
+      "sistema": "Agrícola",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 2,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "1041ee99f2300c23",
+      "mdv_name": "Granos básicos maíz, frijol, ayote, haba"
+    },
+    {
+      "mdv_id": "ae0edcbaf8d85044",
+      "mdv_name": "Aves de traspatio",
+      "sistema": "Pecuario",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 2,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "b016f4e9ebb419f9",
+      "mdv_name": "Ganado vacuno lechero"
+    },
+    {
+      "mdv_id": "e3996ddbda4b9197",
+      "mdv_name": "Ganado ovino - caprino en pastoreo"
+    },
+    {
+      "mdv_id": "0213138e3029bfed",
+      "mdv_name": "Apiarios individuales"
+    },
+    {
+      "mdv_id": "92a04af58b4c2041",
+      "mdv_name": "Arboles frutales"
+    },
+    {
+      "mdv_id": "1a374c785c2b0fd5",
+      "mdv_name": "Hojas de mashan"
+    },
+    {
+      "mdv_id": "7dfd5ee2afdb40bd",
+      "mdv_name": "Sistemas de riego"
+    },
+    {
+      "mdv_id": "2c29808b2aae198b",
+      "mdv_name": "Plantación forestal"
+    },
+    {
+      "mdv_id": "849297d1e3d8a90b",
+      "mdv_name": "Hortlaizas de invernadero"
+    },
+    {
+      "mdv_id": "f1d9a4f2e76f7f70",
+      "mdv_name": "Granjas de engorde"
+    },
+    {
+      "mdv_id": "eaf2f6cfafc46c43",
+      "mdv_name": "Granjas avicolas de postura"
+    },
+    {
+      "mdv_id": "cfb977f1a121006d",
+      "mdv_name": "GB-m"
+    },
+    {
+      "mdv_id": "06fdda50d87ac85c",
+      "mdv_name": "H-ca"
+    },
+    {
+      "mdv_id": "976fb3ad8a183c09",
+      "mdv_name": "SE-P1"
+    },
+    {
+      "mdv_id": "bf0e91b9336485da",
+      "mdv_name": "A-tp"
+    },
+    {
+      "mdv_id": "8a48cc9c9b3e9867",
+      "mdv_name": "AD-a1"
+    },
+    {
+      "mdv_id": "fb505bf492e3320e",
+      "mdv_name": "H-iv"
+    },
+    {
+      "mdv_id": "61742a8d1c4257f9",
+      "mdv_name": "AB-ml"
+    },
+    {
+      "mdv_id": "4f31732cae67202e",
+      "mdv_name": "GB-mfah"
+    },
+    {
+      "mdv_id": "e45d84c47528b145",
+      "mdv_name": "SAF-m"
+    },
+    {
+      "mdv_id": "93ee622f37ac6042",
+      "mdv_name": "PB-na"
+    },
+    {
+      "mdv_id": "913360ae8ed4ca3f",
+      "mdv_name": "P-ag"
+    },
+    {
+      "mdv_id": "6166c0f21db73f05",
+      "mdv_name": "Ap-g"
+    },
+    {
+      "mdv_id": "4b164b49cdc7b870",
+      "mdv_name": "Granos básicos (Maíz, frijol, ayote, haba)",
+      "sistema": "Agrícola",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 2,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "78b85e8d25b9692c",
+      "mdv_name": "Hortalizas en invernadero",
+      "sistema": "Agrícola",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 1,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "dba397f9d2222f3d",
+      "mdv_name": "Aprovechamiento de madera y leña",
+      "sistema": "Forestal",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 1,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "230f594870694016",
+      "mdv_name": "Bosques naturales"
+    },
+    {
+      "mdv_id": "8ef1b8bfab2e79e9",
+      "mdv_name": "Aprovechamiento de madera"
+    },
+    {
+      "mdv_id": "bd6ef2c34bb13527",
+      "mdv_name": "Granos básicos"
+    },
+    {
+      "mdv_id": "17fe26efbbfd852f",
+      "mdv_name": "Producción de granos básicos"
+    },
+    {
+      "mdv_id": "66957916f9edc25a",
+      "mdv_name": "Sistema de riego"
+    },
+    {
+      "mdv_id": "9f28914ecb14a1bd",
+      "mdv_name": "Producción de miel y sus derivados"
+    },
+    {
+      "mdv_id": "8ca8f07102ae50f5",
+      "mdv_name": "Aprovechamiento madera y leña"
+    },
+    {
+      "mdv_id": "c0ec4c60e82f03da",
+      "mdv_name": "Sistema agroforestal con granos básicos"
+    },
+    {
+      "mdv_id": "76abce7cd72a7838",
+      "mdv_name": "Sistemas agroforestales con forestales"
+    },
+    {
+      "mdv_id": "bcb1e17b5179bc78",
+      "mdv_name": "Granos básicos (maíz"
+    },
+    {
+      "mdv_id": "23474cbc97ff4abb",
+      "mdv_name": "frijol"
+    },
+    {
+      "mdv_id": "20827a3d15af2701",
+      "mdv_name": "ayote"
+    },
+    {
+      "mdv_id": "b2851fed6ce7ed54",
+      "mdv_name": "haba)"
+    }
+  ],
+  "conflicts": {
+    "events": [
+      {
+        "event_id": "e5576c1748801053",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Necesidad de los vecinos para obtener recursos energéticos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "5d4e3f5583ccd1e6",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Necesidad de los vecinos para obtener recursos energéticos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "64e49965d6dc37bf",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Necesidad de los vecinos para obtener recursos energéticos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "a45af4a2f6db22a9",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Necesidad de los vecinos para obtener recursos energéticos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "29e664e9e35f3ed6",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Comunidades solicitan intervención de autoridades municiaples, autoridades no cumplen con los compromisos, obsequian árboles con fines políticos",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "e5f1a13fe730e067",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Comunidades solicitan intervención de autoridades municiaples, autoridades no cumplen con los compromisos, obsequian árboles con fines políticos",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "52fc50fbf8f9f001",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Comunidades solicitan intervención de autoridades municiaples, autoridades no cumplen con los compromisos, obsequian árboles con fines políticos",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "afa50b6ab3fba032",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Comunidades solicitan intervención de autoridades municiaples, autoridades no cumplen con los compromisos, obsequian árboles con fines políticos",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "21701514c3782d50",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2022,
+        "diferencias": "0",
+        "dif_factor": "Parque regional se convierte en área protegida",
+        "cooperacion": "0",
+        "coop_factor": "Se inicia con la coordinación inter institucional.",
+        "suma": 0
+      },
+      {
+        "event_id": "200e70c8c35bc360",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2022,
+        "diferencias": "0",
+        "dif_factor": "Parque regional se convierte en área protegida",
+        "cooperacion": "0",
+        "coop_factor": "Se inicia con la coordinación inter institucional.",
+        "suma": 0
+      },
+      {
+        "event_id": "3d51a16bd5f357eb",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2022,
+        "diferencias": "0",
+        "dif_factor": "Parque regional se convierte en área protegida",
+        "cooperacion": "0",
+        "coop_factor": "Se inicia con la coordinación inter institucional.",
+        "suma": 0
+      },
+      {
+        "event_id": "d6ee7c6c4f60a20f",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2022,
+        "diferencias": "0",
+        "dif_factor": "Parque regional se convierte en área protegida",
+        "cooperacion": "0",
+        "coop_factor": "Se inicia con la coordinación inter institucional.",
+        "suma": 0
+      },
+      {
+        "event_id": "c3da5e1772942ef3",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2023,
+        "diferencias": "1",
+        "dif_factor": "Mayor involucramiento de comunidades. Inician campañas de reforestación. \nParticipación activa de medios de comunicación.",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria, voluntad política",
+        "suma": 2
+      },
+      {
+        "event_id": "c0f2c4516a5f6026",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2023,
+        "diferencias": "1",
+        "dif_factor": "Mayor involucramiento de comunidades. Inician campañas de reforestación. \nParticipación activa de medios de comunicación.",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria, voluntad política",
+        "suma": 2
+      },
+      {
+        "event_id": "757bd29e917de8da",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2023,
+        "diferencias": "1",
+        "dif_factor": "Mayor involucramiento de comunidades. Inician campañas de reforestación. \nParticipación activa de medios de comunicación.",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria, voluntad política",
+        "suma": 2
+      },
+      {
+        "event_id": "6aad0002570a8bf2",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2023,
+        "diferencias": "1",
+        "dif_factor": "Mayor involucramiento de comunidades. Inician campañas de reforestación. \nParticipación activa de medios de comunicación.",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria, voluntad política",
+        "suma": 2
+      },
+      {
+        "event_id": "6e592b84be27f7ae",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2024,
+        "diferencias": "1",
+        "dif_factor": "Se establecen guardabosques, aunque sigue la tala, se promueven jornadas de reforestación. \nConflictos contínuan aunque en menor escala, el diálogo no se ha logrado establecer. ",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria e interinstitucional",
+        "suma": 2
+      },
+      {
+        "event_id": "3bd43ed740b308e1",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2024,
+        "diferencias": "1",
+        "dif_factor": "Se establecen guardabosques, aunque sigue la tala, se promueven jornadas de reforestación. \nConflictos contínuan aunque en menor escala, el diálogo no se ha logrado establecer. ",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria e interinstitucional",
+        "suma": 2
+      },
+      {
+        "event_id": "392e49b6300be7de",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2024,
+        "diferencias": "1",
+        "dif_factor": "Se establecen guardabosques, aunque sigue la tala, se promueven jornadas de reforestación. \nConflictos contínuan aunque en menor escala, el diálogo no se ha logrado establecer. ",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria e interinstitucional",
+        "suma": 2
+      },
+      {
+        "event_id": "83c36c56a10f70d1",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Tala inmoderada",
+        "ano_evento": 2024,
+        "diferencias": "1",
+        "dif_factor": "Se establecen guardabosques, aunque sigue la tala, se promueven jornadas de reforestación. \nConflictos contínuan aunque en menor escala, el diálogo no se ha logrado establecer. ",
+        "cooperacion": "1",
+        "coop_factor": "Mayor participación comunitaria e interinstitucional",
+        "suma": 2
+      },
+      {
+        "event_id": "d92ef890a6499775",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Desinterés de las cominidades, poca participación.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "0e65edbed39b47c9",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Desinterés de las cominidades, poca participación.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "7d5e5aa00125e5b2",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Desinterés de las cominidades, poca participación.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "d70a5a7c3a15e785",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2020,
+        "diferencias": "-1",
+        "dif_factor": "Desinteres de la municipalidad. Desinterés de las cominidades, poca participación.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "b98b57b480b058a9",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Poca participación comunitaria y de la municipalidad, inicia la organización de comisiones de agua. ",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "5abcd7c8574b7b33",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Poca participación comunitaria y de la municipalidad, inicia la organización de comisiones de agua. ",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "3ff8f8ebbb595a6e",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Poca participación comunitaria y de la municipalidad, inicia la organización de comisiones de agua. ",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "205b1e930b95cc7d",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2021,
+        "diferencias": "-1",
+        "dif_factor": "Poca participación comunitaria y de la municipalidad, inicia la organización de comisiones de agua. ",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "e7897181e5fc13a3",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2022,
+        "diferencias": "-1",
+        "dif_factor": "Se inician evaluaciones y reflexiones, se concluye que por la altura de las comunidades se dificulta obtener agua de nacimientos mas bajos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "d5a933e9d724d001",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2022,
+        "diferencias": "-1",
+        "dif_factor": "Se inician evaluaciones y reflexiones, se concluye que por la altura de las comunidades se dificulta obtener agua de nacimientos mas bajos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "568df7acd371b5bf",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2022,
+        "diferencias": "-1",
+        "dif_factor": "Se inician evaluaciones y reflexiones, se concluye que por la altura de las comunidades se dificulta obtener agua de nacimientos mas bajos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "c996ebfeaa4f859a",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2022,
+        "diferencias": "-1",
+        "dif_factor": "Se inician evaluaciones y reflexiones, se concluye que por la altura de las comunidades se dificulta obtener agua de nacimientos mas bajos.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "36665d10ba7957bc",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "Se concientizan las comisiones de agua y participan de mejor manera.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "b751c5830298895d",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "Se concientizan las comisiones de agua y participan de mejor manera.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "f5b16bcbff21e0ea",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "Se concientizan las comisiones de agua y participan de mejor manera.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "4b2795b61e61cc5c",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "Se concientizan las comisiones de agua y participan de mejor manera.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "704bd4b06e2461d8",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Municipalidad inicia la perforación de pozos de agua para abastecer a las comundiades.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "b557317a387170a5",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C3",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Municipalidad inicia la perforación de pozos de agua para abastecer a las comundiades.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "f57676785df8317b",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Municipalidad inicia la perforación de pozos de agua para abastecer a las comundiades.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      },
+      {
+        "event_id": "9464ec33d8a00e42",
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "4",
+        "evento": "Deficiencia de agua",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Municipalidad inicia la perforación de pozos de agua para abastecer a las comundiades.",
+        "cooperacion": "-1",
+        "coop_factor": "Falta de conciencia ambiental y social",
+        "suma": -2
+      }
+    ],
+    "actors": [
+      {
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C1",
+        "actor": "Municipalidad",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "0818f8324e2b798c",
+        "cod_conflict": "",
+        "actor": "Pobladores",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "0818f8324e2b798c",
+        "cod_conflict": "",
+        "actor": "Comunidades ",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C,3",
+        "actor": "Municipalidad",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "0818f8324e2b798c",
+        "cod_conflict": "",
+        "actor": "Pobladores",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "0818f8324e2b798c",
+        "cod_conflict": "",
+        "actor": "Comunidades ",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "f7e73979e5cce01f",
+        "cod_conflict": "C,5",
+        "actor": "Municipalidad",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "0818f8324e2b798c",
+        "cod_conflict": "",
+        "actor": "Pobladores",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "0818f8324e2b798c",
+        "cod_conflict": "",
+        "actor": "Comunidades ",
+        "i_en_actor": "neutro",
+        "i_en_conflicto": "neutro"
+      }
+    ]
+  },
+  "dialogue": {
+    "spaces": [
+      {
+        "dialogo_id": "56bb60e4b5040bac",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "UDEM  EPG",
+        "tipo": "Municipal",
+        "alcance": "Municipal",
+        "funcion": "Promover el desarrollo económico local",
+        "incidencia": "Medio",
+        "fortalezas": "Institucionalidad municipal, base organizativa comunitaria y municipal ",
+        "debilidades": "Poco personal y presupuesto asignado."
+      },
+      {
+        "dialogo_id": "3002e6eec0c9efab",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "ASODIME",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Producción de hortalizas en invernadero. Generar desarrollo integral de sus asociadas",
+        "incidencia": "Bajo",
+        "fortalezas": "Son una organización consolidada en la parte productiva. Tienen capacidad de gestión.",
+        "debilidades": "Poca funcionalidad administrativa financiera"
+      },
+      {
+        "dialogo_id": "a4305b295b91b307",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "ASABRICAP",
+        "tipo": "Comunitaria",
+        "alcance": "Municipal",
+        "funcion": "Promover la producción apícola y la protección del bosque",
+        "incidencia": "Bajo",
+        "fortalezas": "Poseen conocimiento y experiencia apícola",
+        "debilidades": "Bajo nivel educativo de los socios"
+      },
+      {
+        "dialogo_id": "8a2e4ab36421ffaf",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "CADER POJOPOM",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Promover el desarrollo agropecuario local",
+        "incidencia": "Medio",
+        "fortalezas": "Poseen liderazgo, experiencia y conocimiento en actividades agropecuarias",
+        "debilidades": "Baja disponibilidad de recursos"
+      },
+      {
+        "dialogo_id": "7451907239643458",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "COCODE LA LUCHA 1",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Gestión de proyectos,  promoción de la participación y representación de la comunidad",
+        "incidencia": "Alto",
+        "fortalezas": "Estructura organizativa funcional, Respaldo comunitario",
+        "debilidades": ""
+      },
+      {
+        "dialogo_id": "3dd6eb738476e438",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "DAPMA EPG",
+        "tipo": "Municipal",
+        "alcance": "Municipal",
+        "funcion": "",
+        "incidencia": "Medio",
+        "fortalezas": "Entidad formal, posee personal técnico capacitado, entidad comprometida con la protección y conservación de la cobertura forestal",
+        "debilidades": "La poca disponibilidad de recursos para realizar las actividades"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "AMER MAGA EPG",
+        "tipo": "Gubernamental",
+        "alcance": "Municipal",
+        "funcion": "Promover el desarrollo agropecuario del municipio",
+        "incidencia": "Medio",
+        "fortalezas": "La institucionalidad , personal profesional con experiencia",
+        "debilidades": "Baja asignación presupuestaria, poco personal para campo"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "MARN SM",
+        "tipo": "Gubernamental",
+        "alcance": "Departamental",
+        "funcion": "Promoción y cumplimiento de las políticas y normas relacionadas al medio ambiente",
+        "incidencia": "Medio",
+        "fortalezas": "La institucionalidad; disponibilidad de un marco legal",
+        "debilidades": "Baja asignación presupuestaria, poco personal para campo"
+      },
+      {
+        "dialogo_id": "39218b8ca344b922",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "GUARDARECURSOS EPG",
+        "tipo": "Municipal",
+        "alcance": "Municipal",
+        "funcion": "Control y vigilancia del bosque municipal, apoyar actividades de protección, conservación y recuperación del bosque",
+        "incidencia": "Bajo",
+        "fortalezas": "Personal con experiencia y conocimiento de su trabajo",
+        "debilidades": "No cuentan con equipo y herramienta básica para sus actividades"
+      },
+      {
+        "dialogo_id": "7b7738e2e6e83d2d",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "CADER OJO DE AGUA",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Capacitar a los comunitarios asociados en temas agropecuarios",
+        "incidencia": "Bajo",
+        "fortalezas": "Mujeres con experiencia de campo en producción agropecuaria",
+        "debilidades": "Disponibilidad de recursos y apoyo es limitada"
+      },
+      {
+        "dialogo_id": "bea234896dc56f92",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "ADIFERT",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Producción de hortalizas con sus asociados y la comercialización de estos con empresas exportadoras",
+        "incidencia": "Bajo",
+        "fortalezas": "Socios con experiencia en la producción agrícola; manejan acuerdos de comercialización",
+        "debilidades": "Estructura organizativa con baja funcionalidad"
+      },
+      {
+        "dialogo_id": "8222ce51608dc6b2",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "COP KAYROS",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Producción agrícola bajo invernaderos, apicultura, otras",
+        "incidencia": "Bajo",
+        "fortalezas": "Socios con conocimientos y experiencia en la producción agrícola y apícola",
+        "debilidades": "Estructura organizativa con baja funcionalidad administrativa"
+      },
+      {
+        "dialogo_id": "030b99c575dedce7",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "COMITÉ AGUA C-BARRIOS",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Administrar el proyecto de agua potable en la comunidad",
+        "incidencia": "Medio",
+        "fortalezas": "Estructura organizativa comunitaria",
+        "debilidades": "Las limitaciones para dar cobertura del servicio al total a la población"
+      },
+      {
+        "dialogo_id": "48ab21b7b8240480",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "AUX-COCODE CBARRIOS",
+        "tipo": "Comunitaria",
+        "alcance": "Comunitario",
+        "funcion": "Promover el desarrollo de la comunidad",
+        "incidencia": "Medio",
+        "fortalezas": "Estructura organizativa comunitaria",
+        "debilidades": ""
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "context_id": "f7e73979e5cce01f",
+        "nombre_espacio": "DMM EPG",
+        "tipo": "Municipal",
+        "alcance": "Municipal",
+        "funcion": "Fomentar el desarrollo integral de la mujer",
+        "incidencia": "Medio",
+        "fortalezas": "Institucionalidad municipal, base organizativa comunitaria y municipal ",
+        "debilidades": "Poco personal y presupuesto asignado."
+      }
+    ],
+    "actors": [
+      {
+        "dialogo_id": "56bb60e4b5040bac",
+        "actor_id": "91fa002b2b78c85c",
+        "actor_name": "Comunitarios"
+      },
+      {
+        "dialogo_id": "56bb60e4b5040bac",
+        "actor_id": "53c59441651b80b0",
+        "actor_name": "Autoridades municipales"
+      },
+      {
+        "dialogo_id": "56bb60e4b5040bac",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "56bb60e4b5040bac",
+        "actor_id": "11f289eb0d1b7afd",
+        "actor_name": "MIDES"
+      },
+      {
+        "dialogo_id": "3002e6eec0c9efab",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "3002e6eec0c9efab",
+        "actor_id": "87e4facf6552eb74",
+        "actor_name": "ONGS"
+      },
+      {
+        "dialogo_id": "a4305b295b91b307",
+        "actor_id": "87e4facf6552eb74",
+        "actor_name": "ONGS"
+      },
+      {
+        "dialogo_id": "8a2e4ab36421ffaf",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "7451907239643458",
+        "actor_id": "6bacc63ed7f446bb",
+        "actor_name": "Municipalidad"
+      },
+      {
+        "dialogo_id": "7451907239643458",
+        "actor_id": "91fa002b2b78c85c",
+        "actor_name": "Comunitarios"
+      },
+      {
+        "dialogo_id": "3dd6eb738476e438",
+        "actor_id": "01acec90d731c2c9",
+        "actor_name": "INAB"
+      },
+      {
+        "dialogo_id": "3dd6eb738476e438",
+        "actor_id": "142e57a496603f58",
+        "actor_name": "CONAP"
+      },
+      {
+        "dialogo_id": "3dd6eb738476e438",
+        "actor_id": "ebc96a1521a0e7a0",
+        "actor_name": "MARN"
+      },
+      {
+        "dialogo_id": "3dd6eb738476e438",
+        "actor_id": "aeea1144e4a69bff",
+        "actor_name": "MP"
+      },
+      {
+        "dialogo_id": "3dd6eb738476e438",
+        "actor_id": "87e4facf6552eb74",
+        "actor_name": "ONGS"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "f35d0aeae2d556db",
+        "actor_name": "MAGA DEPARTAMENTAL"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "654fe48620af3513",
+        "actor_name": "CENTRAL y sus Dependencias"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "97fce5e078a4442e",
+        "actor_name": "Municipalidades"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "cd89a9c84b67f000",
+        "actor_name": "UDEM"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "e3fbe166670315d0",
+        "actor_name": "DMM"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "4a95a326da768fa0",
+        "actor_name": "CADERS"
+      },
+      {
+        "dialogo_id": "ae8dcf36d141b4c2",
+        "actor_id": "826811803f7e6c77",
+        "actor_name": "COCODES"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "c791e3f7dd37f1cf",
+        "actor_name": "CODEDE"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "97fce5e078a4442e",
+        "actor_name": "Municipalidades"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "8ff22ffd4709fac5",
+        "actor_name": "SEGEPLAN"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "142e57a496603f58",
+        "actor_name": "CONAP"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "01acec90d731c2c9",
+        "actor_name": "INAB"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "aeea1144e4a69bff",
+        "actor_name": "MP"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "826811803f7e6c77",
+        "actor_name": "COCODES"
+      },
+      {
+        "dialogo_id": "3b7061b8ae1b4751",
+        "actor_id": "a81f07e10950fa24",
+        "actor_name": "Usuarios en general"
+      },
+      {
+        "dialogo_id": "39218b8ca344b922",
+        "actor_id": "448d83d925c59724",
+        "actor_name": "DAPMA"
+      },
+      {
+        "dialogo_id": "39218b8ca344b922",
+        "actor_id": "8b48b212c832a5b4",
+        "actor_name": "Concejo Municipal"
+      },
+      {
+        "dialogo_id": "39218b8ca344b922",
+        "actor_id": "91fa002b2b78c85c",
+        "actor_name": "Comunitarios"
+      },
+      {
+        "dialogo_id": "7b7738e2e6e83d2d",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "7b7738e2e6e83d2d",
+        "actor_id": "91fa002b2b78c85c",
+        "actor_name": "Comunitarios"
+      },
+      {
+        "dialogo_id": "bea234896dc56f92",
+        "actor_id": "87e4facf6552eb74",
+        "actor_name": "ONGS"
+      },
+      {
+        "dialogo_id": "bea234896dc56f92",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "bea234896dc56f92",
+        "actor_id": "c9a3a68c8a7e9bf2",
+        "actor_name": "Empresas agroexportadoras"
+      },
+      {
+        "dialogo_id": "8222ce51608dc6b2",
+        "actor_id": "39f8acfca1766b6b",
+        "actor_name": "ONG"
+      },
+      {
+        "dialogo_id": "8222ce51608dc6b2",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "8222ce51608dc6b2",
+        "actor_id": "6bacc63ed7f446bb",
+        "actor_name": "Municipalidad"
+      },
+      {
+        "dialogo_id": "8222ce51608dc6b2",
+        "actor_id": "ed74781f68ecc734",
+        "actor_name": "Dependencias del Estado"
+      },
+      {
+        "dialogo_id": "030b99c575dedce7",
+        "actor_id": "e04886c6930cdbdd",
+        "actor_name": "DEAGUAS"
+      },
+      {
+        "dialogo_id": "030b99c575dedce7",
+        "actor_id": "91d4fb62a580f570",
+        "actor_name": "COCODE"
+      },
+      {
+        "dialogo_id": "030b99c575dedce7",
+        "actor_id": "6bacc63ed7f446bb",
+        "actor_name": "Municipalidad"
+      },
+      {
+        "dialogo_id": "030b99c575dedce7",
+        "actor_id": "058ec7e3d8f363db",
+        "actor_name": "otros."
+      },
+      {
+        "dialogo_id": "48ab21b7b8240480",
+        "actor_id": "6bacc63ed7f446bb",
+        "actor_name": "Municipalidad"
+      },
+      {
+        "dialogo_id": "48ab21b7b8240480",
+        "actor_id": "91fa002b2b78c85c",
+        "actor_name": "Comunitarios"
+      },
+      {
+        "dialogo_id": "48ab21b7b8240480",
+        "actor_id": "1fdb56b3694264d6",
+        "actor_name": "entidades del gobierno"
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "actor_id": "8b48b212c832a5b4",
+        "actor_name": "Concejo Municipal"
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "actor_id": "1d2022838ad01a6b",
+        "actor_name": "MAGA"
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "actor_id": "11f289eb0d1b7afd",
+        "actor_name": "MIDES"
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "actor_id": "41f12e21ed7599b7",
+        "actor_name": "MINEDUC"
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "actor_id": "2f933fa5062fd419",
+        "actor_name": "SEPREM"
+      },
+      {
+        "dialogo_id": "e6fbe8e52c59e691",
+        "actor_id": "87e4facf6552eb74",
+        "actor_name": "ONGs"
+      }
+    ]
+  },
+  "qa": {
+    "missing_optional": [],
+    "available_sheets": [
+      "LOOKUP_CONTEXT",
+      "LOOKUP_GEO",
+      "TIDY_3_5_SE_MDV",
+      "TIDY_3_5_SE_MONTHS",
+      "TIDY_4_1_AMENAZAS",
+      "TIDY_4_2_1_AMENAZA_MDV",
+      "TIDY_5_1_ACTORES",
+      "TIDY_3_4_ECOSISTEMAS",
+      "TIDY_6_1_CONFLICT_EVENTS",
+      "TIDY_5_2_DIALOGO",
+      "TIDY_7_1_RESPONDENTS",
+      "TIDY_7_1_RESPONSES"
+    ],
+    "data_quality_notes": []
+  }
+};
+    </script>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 id="dashboard-title" class="text-3xl md:text-4xl font-bold text-gray-800"></h1>
+            <p id="dashboard-subtitle" class="mt-2 text-lg text-gray-600"></p>
+        </header>
+
+        <!-- Executive Summary -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Resumen Ejecutivo</h2>
+            <p id="executive-summary" class="text-gray-600 text-sm md:text-base"></p>
+        </div>
+
+        <!-- Context Selector + KPI Strip -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row gap-4 items-start md:items-center mb-4">
+                <div class="flex-1">
+                    <label for="context-selector" class="block mb-2 text-sm font-medium text-gray-700">Seleccionar
+                        Contexto:</label>
+                    <select id="context-selector"
+                        class="w-full md:w-auto min-w-[300px] p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                    </select>
+                </div>
+            </div>
+
+            <!-- KPI Strip -->
+            <div id="kpi-strip" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-services">-</div>
+                    <div class="kpi-label">Servicios Ecosistémicos</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-livelihoods">-</div>
+                    <div class="kpi-label">Medios de Vida</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-threats">-</div>
+                    <div class="kpi-label">Amenazas</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-actors">-</div>
+                    <div class="kpi-label">Actores</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex justify-center border-b border-gray-200 mb-8 flex-wrap">
+            <div class="nav-item nav-active" onclick="showSection('paisaje')">Paisaje y Ecosistemas</div>
+            <div class="nav-item" onclick="showSection('medios-vida')">Medios de Vida</div>
+            <div class="nav-item" onclick="showSection('amenazas')">Amenazas y Conflictos</div>
+            <div class="nav-item" onclick="showSection('gobernanza')">Gobernanza y Capacidad</div>
+        </nav>
+
+        <!-- Content Sections -->
+        <main>
+            <!-- Section A: Paisaje y Ecosistemas -->
+            <section id="paisaje" class="content-section active">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Vistazo General del Paisaje</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">El bienestar del paisaje depende de varios sistemas
+                        ecológicos clave. Esta sección resume su estado de salud y su papel fundamental.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card col-span-1 lg:col-span-2">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Sistemas Ecológicos</h3>
+                        <div id="ecosystems-list" class="space-y-4 text-gray-600">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Estado de Salud de Ecosistemas</h3>
+                        <div id="ecosystem-health-container" class="chart-container">
+                            <canvas id="ecosystemHealthChart"></canvas>
+                        </div>
+                        <p class="text-center mt-4 text-sm text-gray-500">Distribución de la funcionalidad de los
+                            ecosistemas evaluados.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section B: Medios de Vida -->
+            <section id="medios-vida" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Análisis de los Medios de Vida</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">Los medios de vida en este paisaje son diversos.
+                        Esta sección explora las dependencias críticas entre servicios ecosistémicos y medios de vida.
+                    </p>
+                </div>
+
+                <!-- Lifelines Heatmap -->
+                <div class="card mb-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Matriz de Dependencia: Servicios Ecosistémicos
+                        → Medios de Vida</h3>
+                    <p class="text-sm text-gray-500 mb-4">La intensidad del color indica el número de usuarios. Haga
+                        clic en una celda para ver la estacionalidad.</p>
+                    <div id="heatmap-container" class="overflow-x-auto">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Seasonality Chart -->
+                <div class="card mb-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Estacionalidad del Servicio Seleccionado</h3>
+                    <div id="seasonality-container" class="chart-container">
+                        <canvas id="seasonalityChart"></canvas>
+                    </div>
+                    <p id="seasonality-hint" class="text-center mt-4 text-sm text-gray-500">Seleccione una celda del
+                        heatmap para ver la estacionalidad.</p>
+                </div>
+
+                <!-- Livelihoods List -->
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Medios de Vida Identificados</h3>
+                    <div id="livelihoods-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section C: Amenazas y Conflictos -->
+            <section id="amenazas" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Amenazas, Impactos y Conflictos</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">El paisaje enfrenta amenazas climáticas y no
+                        climáticas que degradan los ecosistemas e impactan los medios de vida. Esta sección visualiza
+                        esa cascada de impactos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Threat Ranking -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Ranking de Amenazas</h3>
+                        <div class="chart-container" style="height: 280px;">
+                            <canvas id="threatRankingChart"></canvas>
+                        </div>
+                        <p class="text-center mt-4 text-sm text-gray-500">Ordenado por severidad de impacto promedio.
+                        </p>
+                    </div>
+
+                    <!-- Threat Impact Radar -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Impacto Multidimensional</h3>
+                        <p class="text-sm text-gray-600 mb-4">Seleccione una amenaza para ver su impacto:</p>
+                        <div id="threat-buttons" class="flex flex-wrap gap-2 mb-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="threatRadarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conflicts Timeline -->
+                <div class="card mb-8">
+                    <h3 class="font-semibold text-lg mb-4 text-center text-gray-700">Evolución de Conflictos</h3>
+                    <div id="conflicts-timeline" class="timeline">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div id="no-conflicts" class="no-data-card" style="display: none;">
+                        <p>No hay datos de conflictos disponibles para este contexto.</p>
+                    </div>
+                </div>
+
+                <!-- Impact Cascade -->
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4 text-center text-gray-700">La Cascada del Impacto: Del
+                        Ecosistema a la Tensión Social</h3>
+                    <p class="text-sm text-gray-600 mb-4 text-center">Las amenazas degradan los ecosistemas, impactan
+                        los servicios esenciales y generan conflictos.</p>
+                    <div class="cascade-container flex-col lg:flex-row">
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">🏔️</div>
+                            <h4 class="font-semibold">Ecosistema</h4>
+                            <p id="cascade-ecosystem" class="text-sm text-gray-600">Ecosistemas bajo estrés</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">💧</div>
+                            <h4 class="font-semibold">Servicio Afectado</h4>
+                            <p id="cascade-service" class="text-sm text-gray-600">Servicios ecosistémicos reducidos</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">📉</div>
+                            <h4 class="font-semibold">Impacto en Medios de Vida</h4>
+                            <p id="cascade-livelihood" class="text-sm text-gray-600">Pérdidas económicas y alimentarias
+                            </p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">⚠️</div>
+                            <h4 class="font-semibold">Conflicto Social</h4>
+                            <p id="cascade-conflict" class="text-sm text-gray-600">Competencia por recursos</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section D: Gobernanza y Capacidad -->
+            <section id="gobernanza" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Gobernanza y Capacidad Adaptativa</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">La capacidad de respuesta depende de la confianza,
+                        la organización y el acceso a recursos. Esta sección explora el panorama de actores y la
+                        capacidad de adaptación.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Actor Power-Interest Scatter -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Mapa de Actores (Poder/Interés)</h3>
+                        <div class="chart-container">
+                            <canvas id="actorScatterChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-600">La posición indica el poder e interés de cada actor en el
+                            paisaje.</p>
+                    </div>
+
+                    <!-- Actor List -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Lista de Actores</h3>
+                        <div id="actor-list" class="max-h-96 overflow-y-auto space-y-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dialogue Spaces -->
+                <div class="card mb-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Espacios de Diálogo</h3>
+                    <div id="dialogue-spaces" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div id="no-dialogue" class="no-data-card" style="display: none;">
+                        <p>No hay datos de espacios de diálogo disponibles para este contexto.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>Generado por PARES Dashboard • <span id="export-date"></span></p>
+            <p class="mt-1"><span id="workbook-name"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        // ========== INITIALIZATION ==========
+        let currentContext = null;
+        let charts = {};
+
+        function init() {
+            if (typeof BUNDLE === 'undefined') {
+                console.error('Bundle data not loaded');
+                return;
+            }
+
+            // Set header
+            document.getElementById('dashboard-title').textContent = BUNDLE.meta.title;
+            document.getElementById('dashboard-subtitle').textContent = BUNDLE.meta.subtitle;
+            document.getElementById('export-date').textContent = BUNDLE.meta.export_date;
+            document.getElementById('workbook-name').textContent = BUNDLE.meta.workbook_name;
+
+            // Generate executive summary
+            generateExecutiveSummary();
+
+            // Populate context selector
+            const selector = document.getElementById('context-selector');
+            BUNDLE.contexts.forEach((ctx, i) => {
+                const option = document.createElement('option');
+                option.value = ctx.context_id;
+                option.textContent = ctx.label;
+                selector.appendChild(option);
+            });
+
+            selector.addEventListener('change', (e) => {
+                currentContext = e.target.value;
+                updateAllSections();
+            });
+
+            // Set initial context
+            if (BUNDLE.contexts.length > 0) {
+                currentContext = BUNDLE.contexts[0].context_id;
+                selector.value = currentContext;
+            }
+
+            // Initialize charts
+            initCharts();
+
+            // Initial update
+            updateAllSections();
+        }
+
+        function generateExecutiveSummary() {
+            const totalContexts = BUNDLE.contexts.length;
+            const totalActors = BUNDLE.actors.length;
+            const totalThreats = BUNDLE.threats.threat_scores.length;
+
+            let ecosystemNote = "";
+            if (BUNDLE.ecosystems.length > 0) {
+                ecosystemNote = `Se identificaron ${BUNDLE.ecosystems.length} ecosistemas principales.`;
+            }
+
+            const summary = `Este paisaje cuenta con ${totalContexts} contexto(s) de análisis documentados, ` +
+                `involucrando ${totalActors} actores clave y ${totalThreats} amenazas principales. ` +
+                ecosystemNote + ` Este panel interactivo permite explorar las interconexiones entre el ecosistema, ` +
+                `la economía y la sociedad local, facilitando la toma de decisiones informadas para ` +
+                `intervenciones de Soluciones basadas en la Naturaleza (SbN).`;
+
+            document.getElementById('executive-summary').textContent = summary;
+        }
+
+        // ========== NAVIGATION ==========
+        function showSection(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+
+            document.getElementById(id).classList.add('active');
+            document.querySelector(`.nav-item[onclick*="${id}"]`).classList.add('nav-active');
+        }
+
+        // ========== KPI UPDATE ==========
+        function updateKPIs() {
+            const kpis = BUNDLE.kpis[currentContext] || { n_services: 0, n_livelihoods: 0, n_threats: 0, n_actors: 0 };
+            document.getElementById('kpi-services').textContent = kpis.n_services;
+            document.getElementById('kpi-livelihoods').textContent = kpis.n_livelihoods;
+            document.getElementById('kpi-threats').textContent = kpis.n_threats;
+            document.getElementById('kpi-actors').textContent = kpis.n_actors;
+        }
+
+        // ========== ECOSYSTEMS ==========
+        function updateEcosystems() {
+            const container = document.getElementById('ecosystems-list');
+            const contextEcosystems = BUNDLE.ecosystems.filter(e => e.context_id === currentContext);
+
+            if (contextEcosystems.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No hay datos de ecosistemas disponibles para este contexto.</p>';
+                updateEcosystemHealthChart([]);
+                return;
+            }
+
+            // Build ecosystem cards
+            let html = '<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">';
+            contextEcosystems.forEach(eco => {
+                const healthLabel = eco.es_salud || 'No especificado';
+                html += `<div class="flex items-center space-x-2">
+                    <span class="text-xl">🌳</span>
+                    <span>${eco.ecosistema} (${healthLabel})</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            container.innerHTML = html;
+            updateEcosystemHealthChart(contextEcosystems);
+        }
+
+        function updateEcosystemHealthChart(ecosystems) {
+            const healthCounts = {};
+            ecosystems.forEach(e => {
+                const health = e.es_salud || 'No especificado';
+                healthCounts[health] = (healthCounts[health] || 0) + 1;
+            });
+
+            const labels = Object.keys(healthCounts);
+            const data = Object.values(healthCounts);
+            const colors = labels.map(l => {
+                if (l.toLowerCase().includes('buen') || l.toLowerCase().includes('alt')) return '#34D399';
+                if (l.toLowerCase().includes('moder')) return '#FBBF24';
+                if (l.toLowerCase().includes('pobr') || l.toLowerCase().includes('baj')) return '#F87171';
+                return '#9CA3AF';
+            });
+
+            if (charts.ecosystemHealth) {
+                charts.ecosystemHealth.data.labels = labels;
+                charts.ecosystemHealth.data.datasets[0].data = data;
+                charts.ecosystemHealth.data.datasets[0].backgroundColor = colors;
+                charts.ecosystemHealth.update();
+            }
+        }
+
+        // ========== LIFELINES HEATMAP ==========
+        function updateLifelinesHeatmap() {
+            const container = document.getElementById('heatmap-container');
+            const seMdv = BUNDLE.lifelines.se_mdv.filter(r => r.context_id === currentContext);
+
+            if (seMdv.length === 0) {
+                container.innerHTML = '<div class="no-data-card"><p>No hay datos de dependencias SE→MdV disponibles.</p></div>';
+                return;
+            }
+
+            // Get unique services and livelihoods
+            const services = [...new Set(seMdv.map(r => r.elemento_se).filter(Boolean))];
+            const livelihoods = [...new Set(seMdv.map(r => r.mdv_name).filter(Boolean))];
+
+            // Build matrix
+            const matrix = {};
+            const maxUsers = Math.max(...seMdv.map(r => r.nr_usuarios || 0), 1);
+            seMdv.forEach(r => {
+                const key = `${r.elemento_se}|${r.mdv_name}`;
+                matrix[key] = r;
+            });
+
+            // Build HTML table
+            let html = '<table class="min-w-full text-xs">';
+            html += '<thead><tr><th class="p-2 text-left bg-gray-100 sticky left-0">Servicio</th>';
+            livelihoods.forEach(l => {
+                html += `<th class="p-2 text-center bg-gray-100 max-w-[80px] truncate" title="${l}">${l.substring(0, 12)}${l.length > 12 ? '...' : ''}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            services.forEach(se => {
+                html += `<tr><td class="p-2 font-medium bg-gray-50 sticky left-0">${se}</td>`;
+                livelihoods.forEach(mdv => {
+                    const key = `${se}|${mdv}`;
+                    const record = matrix[key];
+                    if (record) {
+                        const users = record.nr_usuarios || 0;
+                        const intensity = Math.min(users / maxUsers, 1);
+                        const bgColor = `rgba(217, 119, 6, ${0.2 + intensity * 0.7})`;
+                        html += `<td class="p-1">
+                            <div class="heatmap-cell" style="background-color: ${bgColor};" 
+                                 data-se-mdv-id="${record.se_mdv_id}"
+                                 onclick="selectHeatmapCell('${record.se_mdv_id}', '${se}', '${mdv}')"
+                                 title="${se} → ${mdv}: ${users} usuarios">
+                                ${users}
+                            </div>
+                        </td>`;
+                    } else {
+                        html += '<td class="p-1"><div class="heatmap-cell bg-gray-100">-</div></td>';
+                    }
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+
+            container.innerHTML = html;
+        }
+
+        function selectHeatmapCell(seMdvId, service, livelihood) {
+            // Update seasonality chart
+            const monthData = BUNDLE.lifelines.se_months.filter(m => m.se_mdv_id === seMdvId);
+            updateSeasonalityChart(monthData, service, livelihood);
+            document.getElementById('seasonality-hint').textContent = `${service} → ${livelihood}`;
+        }
+
+        function updateSeasonalityChart(monthData, service, livelihood) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const contrib = new Array(12).fill(0);
+            const shortage = new Array(12).fill(0);
+
+            monthData.forEach(m => {
+                const idx = (m.month_num || 1) - 1;
+                if (m.month_type === 'contribucion' || m.month_type === 'contrib') {
+                    contrib[idx] = 1;
+                } else if (m.month_type === 'falta' || m.month_type === 'escasez') {
+                    shortage[idx] = 1;
+                }
+            });
+
+            if (charts.seasonality) {
+                charts.seasonality.data.labels = months;
+                charts.seasonality.data.datasets = [
+                    {
+                        label: 'Contribución',
+                        data: contrib,
+                        backgroundColor: '#34D399'
+                    },
+                    {
+                        label: 'Escasez',
+                        data: shortage,
+                        backgroundColor: '#F87171'
+                    }
+                ];
+                charts.seasonality.update();
+            }
+        }
+
+        // ========== LIVELIHOODS ==========
+        function updateLivelihoodsList() {
+            const container = document.getElementById('livelihoods-list');
+            const livelihoods = BUNDLE.livelihoods;
+
+            if (livelihoods.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-full">No hay datos de medios de vida disponibles.</p>';
+                return;
+            }
+
+            let html = '';
+            livelihoods.forEach(liv => {
+                html += `<div class="bg-gray-50 p-3 rounded-lg">
+                    <h4 class="font-semibold text-gray-800">${liv.mdv_name}</h4>
+                    ${liv.sistema ? `<p class="text-xs text-gray-500">Sistema: ${liv.sistema}</p>` : ''}
+                    ${liv.cv_mercado ? `<p class="text-xs text-gray-500">Mercado: ${liv.cv_mercado}</p>` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== THREATS ==========
+        function updateThreats() {
+            updateThreatRankingChart();
+            updateThreatButtons();
+        }
+
+        function updateThreatRankingChart() {
+            const scores = BUNDLE.threats.threat_scores.filter(t => t.context_id === currentContext);
+            scores.sort((a, b) => b.mean_score - a.mean_score);
+            const top10 = scores.slice(0, 10);
+
+            if (charts.threatRanking) {
+                charts.threatRanking.data.labels = top10.map(t => t.amenaza);
+                charts.threatRanking.data.datasets[0].data = top10.map(t => t.mean_score.toFixed(2));
+                charts.threatRanking.update();
+            }
+        }
+
+        function updateThreatButtons() {
+            const container = document.getElementById('threat-buttons');
+            const threats = BUNDLE.threats.amenazas.filter(t => t.context_id === currentContext);
+            const uniqueThreats = [...new Set(threats.map(t => t.amenaza))];
+
+            let html = '';
+            const colors = ['bg-blue-100 text-blue-800', 'bg-red-100 text-red-800', 'bg-green-100 text-green-800',
+                'bg-purple-100 text-purple-800', 'bg-yellow-100 text-yellow-800'];
+
+            uniqueThreats.forEach((threat, i) => {
+                html += `<button class="threat-btn ${colors[i % colors.length]} py-1 px-3 rounded-full text-sm" 
+                         data-threat="${threat}" onclick="selectThreat('${threat}')">${threat}</button>`;
+            });
+
+            container.innerHTML = html;
+
+            // Select first threat
+            if (uniqueThreats.length > 0) {
+                selectThreat(uniqueThreats[0]);
+            }
+        }
+
+        function selectThreat(threatName) {
+            // Update button states
+            document.querySelectorAll('.threat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.threat === threatName) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Get threat impacts
+            const threat = BUNDLE.threats.amenazas.find(t =>
+                t.context_id === currentContext && t.amenaza === threatName
+            );
+
+            if (threat && charts.threatRadar) {
+                const impactLabels = ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'];
+                const impactKeys = ['i_economia', 'i_alimentaria', 'i_sanitaria', 'i_ambiental',
+                    'i_personal', 'i_comunitaria', 'i_politica'];
+                const impactData = impactKeys.map(k => threat[k] || 0);
+
+                charts.threatRadar.data.labels = impactLabels;
+                charts.threatRadar.data.datasets[0].data = impactData;
+                charts.threatRadar.data.datasets[0].label = threatName;
+                charts.threatRadar.update();
+            }
+        }
+
+        // ========== CONFLICTS ==========
+        function updateConflicts() {
+            const timeline = document.getElementById('conflicts-timeline');
+            const noData = document.getElementById('no-conflicts');
+            const events = BUNDLE.conflicts.events.filter(e => e.context_id === currentContext);
+
+            if (events.length === 0) {
+                timeline.style.display = 'none';
+                noData.style.display = 'block';
+                return;
+            }
+
+            timeline.style.display = 'block';
+            noData.style.display = 'none';
+
+            // Sort by year
+            events.sort((a, b) => (a.ano_evento || 0) - (b.ano_evento || 0));
+
+            let html = '';
+            events.forEach(event => {
+                const year = event.ano_evento || 'Sin fecha';
+                const title = event.evento || 'Evento';
+                const diff = event.diferencias || '';
+                const coop = event.cooperacion || '';
+
+                html += `<div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 class="font-semibold text-md text-gray-800">${year}: ${title}</h4>
+                        ${diff ? `<p class="text-sm text-gray-600">Diferencias: ${diff}</p>` : ''}
+                        ${coop ? `<p class="text-sm text-gray-600">Cooperación: ${coop}</p>` : ''}
+                    </div>
+                </div>`;
+            });
+
+            timeline.innerHTML = html;
+        }
+
+        // ========== ACTORS ==========
+        function updateActors() {
+            updateActorScatterChart();
+            updateActorList();
+        }
+
+        function updateActorScatterChart() {
+            const actors = BUNDLE.actors.filter(a => a.context_id === currentContext);
+
+            // Group by type for different colors
+            const byType = {};
+            actors.forEach(a => {
+                const type = a.tipo_actor || 'Otro';
+                if (!byType[type]) byType[type] = [];
+                byType[type].push({
+                    x: a.interes || 0,
+                    y: a.poder || 0,
+                    name: a.nombre_actor
+                });
+            });
+
+            const colors = ['#34D399', '#FBBF24', '#F87171', '#60A5FA', '#A78BFA', '#F472B6'];
+            const datasets = Object.entries(byType).map(([type, data], i) => ({
+                label: type,
+                data: data,
+                backgroundColor: colors[i % colors.length],
+                pointRadius: 6
+            }));
+
+            if (charts.actorScatter) {
+                charts.actorScatter.data.datasets = datasets;
+                charts.actorScatter.update();
+            }
+        }
+
+        function updateActorList() {
+            const container = document.getElementById('actor-list');
+            const actors = BUNDLE.actors.filter(a => a.context_id === currentContext);
+
+            if (actors.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No hay actores registrados para este contexto.</p>';
+                return;
+            }
+
+            let html = '';
+            actors.forEach(actor => {
+                html += `<div class="bg-gray-50 p-2 rounded text-sm">
+                    <span class="font-medium">${actor.nombre_actor}</span>
+                    <span class="text-gray-500 text-xs ml-2">${actor.tipo_actor || ''}</span>
+                    <span class="text-xs text-amber-600 ml-2">P:${actor.poder || 0} I:${actor.interes || 0}</span>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== DIALOGUE ==========
+        function updateDialogue() {
+            const container = document.getElementById('dialogue-spaces');
+            const noData = document.getElementById('no-dialogue');
+            const spaces = BUNDLE.dialogue.spaces.filter(s => s.context_id === currentContext);
+
+            if (spaces.length === 0) {
+                container.style.display = 'none';
+                noData.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            noData.style.display = 'none';
+
+            let html = '';
+            spaces.forEach(space => {
+                html += `<div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800">${space.nombre_espacio}</h4>
+                    ${space.tipo ? `<p class="text-xs text-gray-500">Tipo: ${space.tipo}</p>` : ''}
+                    ${space.funcion ? `<p class="text-xs text-gray-600 mt-1">${space.funcion}</p>` : ''}
+                    ${space.fortalezas ? `<p class="text-xs text-green-600 mt-1">✓ ${space.fortalezas}</p>` : ''}
+                    ${space.debilidades ? `<p class="text-xs text-red-600 mt-1">✗ ${space.debilidades}</p>` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== CHART INITIALIZATION ==========
+        function initCharts() {
+            // Ecosystem Health Donut
+            const healthCtx = document.getElementById('ecosystemHealthChart').getContext('2d');
+            charts.ecosystemHealth = new Chart(healthCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: []
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Seasonality Bar
+            const seasonCtx = document.getElementById('seasonalityChart').getContext('2d');
+            charts.seasonality = new Chart(seasonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 1 } },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Threat Ranking Bar
+            const rankingCtx = document.getElementById('threatRankingChart').getContext('2d');
+            charts.threatRanking = new Chart(rankingCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Severidad',
+                        data: [],
+                        backgroundColor: '#D97706'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true, max: 3 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Threat Radar
+            const radarCtx = document.getElementById('threatRadarChart').getContext('2d');
+            charts.threatRadar = new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [],
+                        fill: true,
+                        backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                        borderColor: 'rgb(217, 119, 6)',
+                        pointBackgroundColor: 'rgb(217, 119, 6)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            suggestedMin: 0,
+                            suggestedMax: 3,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Actor Scatter
+            const scatterCtx = document.getElementById('actorScatterChart').getContext('2d');
+            charts.actorScatter = new Chart(scatterCtx, {
+                type: 'scatter',
+                data: { datasets: [] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Interés →' },
+                            min: 0, max: 10
+                        },
+                        y: {
+                            title: { display: true, text: 'Poder →' },
+                            min: 0, max: 10
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ctx.raw.name || ''
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ========== UPDATE ALL ==========
+        function updateAllSections() {
+            updateKPIs();
+            updateEcosystems();
+            updateLifelinesHeatmap();
+            updateLivelihoodsList();
+            updateThreats();
+            updateConflicts();
+            updateActors();
+            updateDialogue();
+        }
+
+        // Initialize on load
+        window.onload = init;
+    </script>
+</body>
+
+</html>

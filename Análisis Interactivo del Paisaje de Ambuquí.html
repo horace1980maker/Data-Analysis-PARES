@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Interactivo del Paisaje de Ambuquí</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Earth Tones -->
+    <!-- Application Structure Plan: La aplicación está diseñada como un panel de control temático de una sola página para guiar al usuario a través de una narrativa cohesiva, desde el contexto general hasta los detalles específicos. La estructura es la siguiente: 1) Un encabezado con un resumen ejecutivo. 2) Una barra de navegación temática (Paisaje, Medios de Vida, Amenazas, Gobernanza) para un acceso rápido y no lineal. 3) La sección 'Vistazo General del Paisaje' que presenta el contexto ecológico con tarjetas interactivas y un gráfico de estado de salud, estableciendo la base. 4) La sección 'Medios de Vida', que permite al usuario profundizar en los sistemas productivos mediante un selector, actualizando dinámicamente gráficos de tamaño, tenencia y un resumen cualitativo, facilitando la comparación, e incluye nuevas métricas de seguridad y migración. 5) La sección 'Amenazas y Conflictos', que utiliza un enfoque de "historia en cascada". Comienza con las amenazas clave (climáticas y no climáticas), muestra sus impactos multidimensionales con un gráfico de radar interactivo, incluye una línea de tiempo de conflictos y culmina en un diagrama de flujo de conflictos, conectando visualmente causas y efectos. 6) La sección 'Gobernanza y Capacidad Adaptativa', que evalúa la respuesta social. Muestra la confianza institucional (un gráfico de barras que destaca el déficit de confianza), un mapa de actores de poder/interés y los resultados de la capacidad adaptativa con más detalle. Esta estructura fue elegida para transformar un informe denso en una herramienta de exploración intuitiva, donde cada sección se basa en la anterior, permitiendo al usuario conectar los puntos entre el estado del ecosistema, las actividades humanas, las vulnerabilidades y las respuestas sociales, integrando toda la información cualitativa y cuantitativa del reporte. -->
+    <!-- Visualization & Content Choices: 1. Estado del Ecosistema: (Meta: Informar) Se utilizan tarjetas con iconos y un gráfico de dona de Chart.js para una rápida evaluación visual del estado de salud general (moderado/pobre), más atractivo que una tabla. 2. Medios de Vida: (Meta: Comparar/Explorar) Un menú desplegable permite al usuario seleccionar un medio de vida. Esta acción actualiza dinámicamente tres elementos: un resumen de texto, un gráfico de barras para la escala de producción y un gráfico de dona para la tenencia de la tierra. Se añaden tarjetas de resumen para seguridad y migración. 3. Impacto de Amenazas: (Meta: Relacionar/Comparar) Un gráfico de radar de Chart.js es ideal para mostrar los impactos multidimensionales (económico, salud, etc.) de una amenaza seleccionada. Permite a los usuarios ver instantáneamente la "forma" de la vulnerabilidad de cada amenaza. 4. Cascada de Impacto/Conflicto: (Meta: Organizar/Relacionar) Se utiliza un diagrama de flujo creado con HTML/Tailwind para visualizar la relación causal desde el ecosistema hasta el conflicto. 5. Confianza Institucional: (Meta: Comparar) Un gráfico de barras de Chart.js compara la confianza en la familia/comunidad frente a las instituciones gubernamentales, destacando visualmente la brecha de confianza. 6. Mapa de Actores: (Meta: Organizar) Un gráfico de dispersión de Chart.js (simulando un mapa de poder/interés) clasifica a los actores en cuadrantes. 7. Capacidad Adaptativa: (Meta: Informar) Se utilizan tarjetas clave con porcentajes para resumir rápidamente los hallazgos sobre la disposición a adaptarse frente a las barreras de acceso. 8. Evolución del Conflicto: (Meta: Cambiar) Se implementa una línea de tiempo interactiva con HTML/CSS para visualizar los eventos de conflicto a lo largo del tiempo. Todas las visualizaciones utilizan Chart.js (Canvas) y la diagramación utiliza HTML/CSS, cumpliendo con la restricción de NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #383838;
+        }
+        .nav-active {
+            border-bottom: 2px solid #D97706;
+            color: #D97706;
+            font-weight: 600;
+        }
+        .nav-item {
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+         @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                 max-height: 400px;
+            }
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+             transform: translateY(-2px);
+        }
+        .info-box {
+            background-color: #FFFBEB;
+            border-left: 4px solid #FBBF24;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .cascade-item {
+            background-color: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+            width: 100%;
+        }
+        .cascade-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #9CA3AF;
+            margin: 0.5rem 0;
+        }
+         /* Responsive cascade for larger screens */
+        @media (min-width: 1024px) {
+            .cascade-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .cascade-item {
+                flex: 1;
+                margin: 0 0.5rem;
+            }
+            .cascade-arrow {
+                margin: 0;
+                transform: rotate(0deg);
+            }
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #D1D5DB;
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 15px;
+            width: 12px;
+            height: 12px;
+            background: #D97706;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        .timeline-content {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            width: calc(50% - 20px);
+            position: relative;
+        }
+        .timeline-item:nth-child(odd) .timeline-content {
+            left: 0;
+            margin-right: calc(50% + 20px);
+        }
+        .timeline-item:nth-child(even) .timeline-content {
+            left: calc(50% + 20px);
+            margin-left: 0;
+        }
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+            .timeline-item::before {
+                left: 20px;
+            }
+            .timeline-content {
+                width: calc(100% - 60px);
+                left: 60px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Análisis Interactivo del Paisaje de Ambuquí</h1>
+            <p class="mt-2 text-lg text-gray-600">Una exploración visual de las dinámicas socioecológicas y la capacidad adaptativa.</p>
+        </header>
+
+        <div class="card mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Resumen Ejecutivo del Informe</h2>
+            <p class="text-gray-600 text-sm md:text-base">
+                El paisaje de Ambuquí enfrenta una notable degradación ambiental que impacta directamente una diversa gama de medios de vida, en su mayoría de pequeña escala. La inseguridad en la tenencia de la tierra, las amenazas climáticas como la sequía y los conflictos por recursos como el agua, agravados por un déficit de confianza en las instituciones, definen los desafíos clave. A pesar de una alta voluntad de adaptación, las comunidades enfrentan barreras significativas para acceder a financiamiento, asistencia técnica e información. Este panel interactivo desglosa estos hallazgos, permitiendo una exploración detallada de las interconexiones entre el ecosistema, la economía y la sociedad local.
+            </p>
+        </div>
+
+
+        <!-- Navigation -->
+        <nav class="flex justify-center border-b border-gray-200 mb-8 flex-wrap">
+            <div class="nav-item nav-active" onclick="showSection('paisaje')">🌿 Paisaje y Ecosistemas</div>
+            <div class="nav-item" onclick="showSection('medios-vida')">👨‍🌾 Medios de Vida</div>
+            <div class="nav-item" onclick="showSection('amenazas')">⚠️ Amenazas y Conflictos</div>
+            <div class="nav-item" onclick="showSection('gobernanza')">🏛️ Gobernanza y Capacidad</div>
+        </nav>
+
+        <!-- Content Sections -->
+        <main>
+            <!-- Paisaje y Ecosistemas Section -->
+            <section id="paisaje" class="content-section active">
+                 <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Vistazo General del Paisaje</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">El bienestar del paisaje de Ambuquí depende de varios sistemas ecológicos clave. Sin embargo, la mayoría muestra signos de estrés, lo que afecta directamente los servicios que proporcionan a las comunidades. Esta sección resume su estado de salud y su papel fundamental.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card col-span-1 lg:col-span-2">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Sistemas Ecológicos y su Importancia</h3>
+                        <div class="space-y-4 text-gray-600">
+                             <p>El paisaje se compone de cinco ecosistemas principales distribuidos en tres zonas (Alta, Media y Baja). Cada uno sustenta una sorprendente diversidad de medios de vida, desde agricultura y ganadería hasta turismo, lo que demuestra una profunda interdependencia entre la salud ambiental y la estabilidad económica local.</p>
+                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+                                <div class="flex items-center space-x-2"><span class="text-xl">🏔️</span><span>Bosque montano (Salud Moderada)</span></div>
+                                <div class="flex items-center space-x-2"><span class="text-xl">🌾</span><span>Páramo (Salud Moderada)</span></div>
+                                <div class="flex items-center space-x-2"><span class="text-xl">🌵</span><span>Matorral interandino (Salud Pobre)</span></div>
+                                <div class="flex items-center space-x-2"><span class="text-xl">🌳</span><span>Bosque espinozo (Salud Moderada)</span></div>
+                                <div class="flex items-center space-x-2"><span class="text-xl">🏞️</span><span>Riveras del río (Salud Moderada)</span></div>
+                            </div>
+                            <div class="info-box">
+                                <p><strong class="font-semibold text-gray-800">Conclusión Clave:</strong> La degradación de estos sistemas, especialmente del Matorral Interandino (pobre salud), no es un problema aislado; es una amenaza sistémica para la resiliencia socioeconómica de toda la región.</p>
+                                <p class="mt-2 text-sm">Los servicios ecosistémicos clave incluyen provisión (alimentos, agua), regulación (agua, fertilidad del suelo), soporte (ciclo de nutrientes) y cultural.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Estado de Salud General de los Ecosistemas</h3>
+                        <div class="chart-container">
+                            <canvas id="ecosystemHealthChart"></canvas>
+                        </div>
+                        <p class="text-center mt-4 text-sm text-gray-500">Distribución de la funcionalidad de los ecosistemas evaluados.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Medios de Vida Section -->
+            <section id="medios-vida" class="content-section">
+                 <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Análisis de los Medios de Vida</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">Los medios de vida en Ambuquí son diversos y operan en una economía mixta de subsistencia y comercio. Seleccione un sistema productivo para explorar su escala, la seguridad de la tenencia de la tierra y sus características principales, así como aspectos de seguridad y migración.</p>
+                </div>
+                <div class="card mb-6">
+                    <label for="livelihoodSelector" class="block mb-2 text-sm font-medium text-gray-700">Seleccione un Medio de Vida:</label>
+                    <select id="livelihoodSelector" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div id="livelihoodInfo" class="card lg:col-span-1">
+                        <h3 id="livelihoodTitle" class="font-bold text-xl mb-2 text-amber-700"></h3>
+                        <p id="livelihoodDescription" class="text-gray-600"></p>
+                        <p class="mt-4 text-sm text-gray-700 font-semibold">Uso Final: <span id="livelihoodUse" class="font-normal text-gray-600"></span></p>
+                        <p class="text-sm text-gray-700 font-semibold">Mercado: <span id="livelihoodMarket" class="font-normal text-gray-600"></span></p>
+                        <p class="text-sm text-gray-700 font-semibold">Importancia Ingresos (1-3): <span id="livelihoodIncome" class="font-normal text-gray-600"></span></p>
+                    </div>
+                    <div class="card lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                             <h3 class="font-semibold text-lg mb-4 text-gray-700">Escala de Producción</h3>
+                             <div class="chart-container" style="height:250px; max-height: 280px;">
+                                <canvas id="livelihoodScaleChart"></canvas>
+                             </div>
+                        </div>
+                         <div>
+                            <h3 class="font-semibold text-lg mb-4 text-gray-700">Tenencia de la Tierra</h3>
+                             <div class="chart-container" style="height:250px; max-height: 280px;">
+                                <canvas id="livelihoodTenureChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Niveles de Seguridad</h3>
+                        <p class="text-sm text-gray-600 mb-2">Problemas de seguridad en fincas: <span id="farmSecurity" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600 mb-2">Libre tránsito general: <span id="freeTransit" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600 mb-2">Libre tránsito de mujeres: <span id="womenTransit" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600">Confianza en mecanismos estatales de seguridad: <span id="stateTrust" class="font-semibold"></span></p>
+                        <div class="info-box text-sm">
+                            <p><strong class="font-semibold text-gray-800">Contexto:</strong> La seguridad es heterogénea, con puntos críticos localizados y disparidades de género en el tránsito.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Migración y Remesas</h3>
+                        <p class="text-sm text-gray-600 mb-2">Familias con migración interna: <span id="internalMigration" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600 mb-2">Familias con migración externa: <span id="externalMigration" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600 mb-2">Dependencia de remesas (>60% ingresos): <span id="remittanceDependency" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600">Discriminación como migrante: <span id="migrantDiscrimination" class="font-semibold"></span></p>
+                        <div class="info-box text-sm">
+                            <p><strong class="font-semibold text-gray-800">Contexto:</strong> La migración es una estrategia clave, pero genera dependencia y discriminación.</p>
+                        </div>
+                    </div>
+                     <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Equidad y Género</h3>
+                        <p class="text-sm text-gray-600 mb-2">Hogares encabezados por mujeres: <span id="femaleHeaded" class="font-semibold"></span></p>
+                        <p class="text-sm text-gray-600 mb-2">Inclusión en beneficios de servicios ecosistémicos: <span id="esInclusion" class="font-semibold"></span></p>
+                        <div class="info-box text-sm">
+                            <p><strong class="font-semibold text-gray-800">Contexto:</strong> Las mujeres son centrales en los hogares, pero la inclusión en ES puede tener matices de género y barreras regulatorias.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Amenazas y Conflictos Section -->
+            <section id="amenazas" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Amenazas, Impactos y Conflictos</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">El paisaje se enfrenta a una serie de amenazas climáticas y no climáticas que degradan los ecosistemas, impactan la seguridad humana y, en última instancia, alimentan los conflictos sociales. Esta sección visualiza esa cascada de impactos y la evolución de los conflictos.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Amenazas Clave y su Impacto</h3>
+                        <p class="text-sm text-gray-600 mb-4">Seleccione una amenaza para ver su impacto multidimensional en la seguridad humana y los ecosistemas.</p>
+                        <div class="flex flex-wrap gap-2">
+                             <button class="threat-btn bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-sm" data-threat="Sequía">Sequía</button>
+                             <button class="threat-btn bg-red-100 text-red-800 py-1 px-3 rounded-full text-sm" data-threat="Quema">Quemas</button>
+                             <button class="threat-btn bg-gray-100 text-gray-800 py-1 px-3 rounded-full text-sm" data-threat="Contaminación">Contaminación Basurero</button>
+                             <button class="threat-btn bg-green-100 text-green-800 py-1 px-3 rounded-full text-sm" data-threat="CambioUsoSuelo">Cambio Uso de Suelo</button>
+                             <button class="threat-btn bg-purple-100 text-purple-800 py-1 px-3 rounded-full text-sm" data-threat="DesbordamientoRío">Desbordamiento Río</button>
+                        </div>
+                        <div id="threat-info" class="mt-4 text-gray-600 text-sm"></div>
+                        <div class="info-box text-sm mt-4">
+                            <p><strong class="font-semibold text-gray-800">Impactos Difeenciados:</strong> Las amenazas afectan desproporcionadamente a grupos marginados, exacerbando las desigualdades existentes.</p>
+                            <p class="mt-1"><strong class="font-semibold text-gray-800">Ecosistemas Afectados:</strong> La sequía reduce el agua y la fertilidad del suelo. Las quemas contaminan el agua y erosionan el suelo. El cambio de uso de suelo afecta la provisión de alimentos silvestres y la fertilidad.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 id="threatImpactTitle" class="font-semibold text-lg mb-4 text-gray-700">Impacto Multidimensional de la Amenaza</h3>
+                         <div class="chart-container">
+                            <canvas id="threatImpactChart"></canvas>
+                         </div>
+                         <p class="text-center mt-4 text-sm text-gray-500">Escala de impacto: 1 (Leve) a 3 (Grave).</p>
+                    </div>
+                </div>
+
+                <div class="card mb-8">
+                    <h3 class="font-semibold text-lg mb-4 text-center text-gray-700">Evolución de Conflictos Clave</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h4 class="font-semibold text-md text-gray-800">2014: Organización Regional para la Gestión del Agua (Zona Alta)</h4>
+                                <p class="text-sm text-gray-600">Cooperación positiva impulsada por la necesidad de agua. Sin diferencias reportadas.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h4 class="font-semibold text-md text-gray-800">1975: 1era. Concesión de Agua de Riego (Zona Media)</h4>
+                                <p class="text-sm text-gray-600">Cooperación positiva por abundancia de agua y cultivos. Trabajo conjunto comunidad y Consejo Provincial.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h4 class="font-semibold text-md text-gray-800">2000: Conflicto en el Páramo por Contaminación y Distribución de Agua (Zona Media)</h4>
+                                <p class="text-sm text-gray-600">Conflicto neutral. Daño a fuentes hídricas por contaminación y deforestación. Incursión de instituciones.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h4 class="font-semibold text-md text-gray-800">2016: Paralización por Construcción de Basurero (Zona Baja)</h4>
+                                <p class="text-sm text-gray-600">Conflicto positivo. Poca seriedad de autoridades. Se firman acuerdos de compromiso.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h4 class="font-semibold text-md text-gray-800">2020: Rancho Chico Impide Entrada al Páramo (Zona Alta)</h4>
+                                <p class="text-sm text-gray-600">Conflicto negativo. Intereses en la administración del páramo. Organización regional disuelta.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h4 class="font-semibold text-md text-gray-800">2020: Separación Ambuquí y San Clemente por Agua (Zona Media)</h4>
+                                <p class="text-sm text-gray-600">Conflicto negativo. Conflictos entre directivas de juntas de agua. Intereses personales.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="info-box text-sm">
+                        <p><strong class="font-semibold text-gray-800">Patrones:</strong> Ciclos de cooperación y tensión. El apoyo externo es temporal. Las vulnerabilidades de medios de vida (ej. maíz, trigo por agua de páramo) se relacionan directamente con la escalada de conflictos por recursos compartidos.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4 text-center text-gray-700">La Cascada del Conflicto: Del Ecosistema a la Tensión Social</h3>
+                    <p class="text-sm text-gray-600 mb-4 text-center">Las amenazas climáticas (ej. sequía) y no climáticas (ej. contaminación) degradan los ecosistemas, impactan los servicios esenciales y, en última instancia, generan conflictos que afectan directamente a los medios de vida.</p>
+                    <div class="cascade-container flex-col lg:flex-row">
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">🏔️</div>
+                            <h4 class="font-semibold">Ecosistema</h4>
+                            <p class="text-sm text-gray-600">Páramo en salud moderada pero bajo estrés.</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">💧</div>
+                            <h4 class="font-semibold">Servicio Afectado</h4>
+                            <p class="text-sm text-gray-600">Disminución de la provisión de agua (por sequía, quemas, deforestación).</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                           <div class="text-2xl mb-2">📉</div>
+                           <h4 class="font-semibold">Impacto en Medios de Vida</h4>
+                           <p class="text-sm text-gray-600">Pérdida de cultivos (maíz, trigo), escasez de alimentos, gastos insostenibles.</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                           <div class="text-2xl mb-2">😠</div>
+                           <h4 class="font-semibold">Conflicto Social</h4>
+                           <p class="text-sm text-gray-600">Competencia grave por el agua, tensiones comunitarias, conflictos con autoridades por falta de atención.</p>
+                        </div>
+                    </div>
+                     <div class="info-box text-sm mt-4">
+                        <p><strong class="font-semibold text-gray-800">Conclusión Clave:</strong> La escasez de recursos y los déficits de gobernanza son los principales motores de conflicto. Livelihoods altamente dependientes de un solo recurso son más vulnerables a conflictos graves.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gobernanza y Capacidad Section -->
+            <section id="gobernanza" class="content-section">
+                 <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Gobernanza y Capacidad Adaptativa</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">La capacidad de respuesta de Ambuquí depende de la confianza, la organización y el acceso a recursos. Esta sección explora el capital social, el panorama de actores y la capacidad de la comunidad para adaptarse.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Brecha de Confianza Institucional</h3>
+                        <div class="chart-container">
+                            <canvas id="trustChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-600">El fuerte capital social a nivel comunitario contrasta con una baja confianza en las instituciones externas, lo que representa una barrera clave para la colaboración efectiva.</p>
+                    </div>
+                    <div class="card">
+                         <h3 class="font-semibold text-lg mb-4 text-gray-700">Mapa de Actores (Poder/Interés)</h3>
+                         <div class="chart-container">
+                             <canvas id="actorMapChart"></canvas>
+                         </div>
+                         <p class="mt-4 text-sm text-gray-600">La gestión eficaz requiere estrategias diferenciadas para cada tipo de actor, desde una estrecha colaboración hasta un seguimiento informativo.</p>
+                          <div class="info-box text-sm mt-4">
+                            <p><strong class="font-semibold text-gray-800">Actores y Conflicto:</strong> Actores gubernamentales (GAD, MAATE) son impactados negativamente por presión social y conflictos. Actores comunitarios (Juntas de Agua, Comunas) influyen positivamente a través de la acción colectiva.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Espacios de Diálogo y Redes de Actores</h3>
+                    <p class="text-gray-600 text-sm mb-4">Existen espacios formales (Asoprovalle, Unión de organizaciones campesinas) e informales (Comité local de salud, Asambleas del Agua, Presupuesto participativo). Algunos actores colaboran (Asoprovalle con Prefectura, MAG), mientras otros están en conflicto (Junta de Agua San Clemente vs. Pueblo Viejo).</p>
+                    <h4 class="font-semibold text-md text-gray-700 mb-2">Desafíos Comunes:</h4>
+                    <ul class="list-disc list-inside text-sm text-gray-600">
+                        <li>Falta de recursos económicos.</li>
+                        <li>Métodos de exigibilidad limitados.</li>
+                        <li>Participación voluntaria e incompleta.</li>
+                        <li>Incumplimiento de pagos y falta de rendición de cuentas.</li>
+                        <li>Problemas de comunicación.</li>
+                    </ul>
+                     <div class="info-box text-sm mt-4">
+                        <p><strong class="font-semibold text-gray-800">Conclusión Clave:</strong> La fragmentación y las debilidades en los espacios de diálogo limitan la gobernanza efectiva. Fortalecer estos espacios es crucial para la colaboración y la resolución de conflictos.</p>
+                    </div>
+                </div>
+                <div class="card mt-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Evaluación de la Capacidad Adaptativa</h3>
+                    <p class="text-gray-600 text-sm mb-4">La capacidad adaptativa es heterogénea. Hay una alta voluntad de adaptación, pero el acceso a recursos y conocimientos es limitado.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-amber-600">~90%</div>
+                            <p class="text-sm text-gray-600 mt-1">Disposición para Adaptar Métodos</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-amber-600">~40%</div>
+                            <p class="text-sm text-gray-600 mt-1">Acceso a Asistencia Técnica</p>
+                        </div>
+                         <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-amber-600">&lt;30%</div>
+                            <p class="text-sm text-gray-600 mt-1">Acceso a Crédito y Seguros</p>
+                        </div>
+                    </div>
+                    <div class="info-box text-sm">
+                        <p><strong class="font-semibold text-gray-800">Conclusión Clave:</strong> Existe una brecha crítica entre la alta voluntad de adaptación de las comunidades y su acceso real a los recursos (financieros, técnicos, informativos) necesarios para implementar cambios efectivos.</p>
+                        <p class="mt-2 text-sm">Alta confianza en familia/comunidad (60-100%) pero baja en organizaciones gubernamentales (0-40%).</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const sections = document.querySelectorAll('.content-section');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        function showSection(id) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === id) {
+                    section.classList.add('active');
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('nav-active');
+                if (item.getAttribute('onclick').includes(id)) {
+                    item.classList.add('nav-active');
+                }
+            });
+        }
+        
+        // Data from the report
+        const ecosystemHealthData = {
+            labels: ['Funcionalidad Moderada', 'Poco Funcional (Pobre)'],
+            datasets: [{
+                data: [4, 1],
+                backgroundColor: ['#FBBF24', '#F87171'],
+                hoverBackgroundColor: ['#F59E0B', '#EF4444']
+            }]
+        };
+
+        const livelihoodsData = {
+            'Maiz, Trigo, Arveja (Zona Alta)': {
+                description: 'Cultivos básicos en la Zona Alta. Alta importancia para ingresos y autoconsumo. La tenencia es mixta, con "Posesión" informal siendo significativa, lo que crea vulnerabilidad.',
+                use: 'Comercial y Autoconsumo',
+                market: 'Local, Regional',
+                income: '3 (Alta)',
+                scale: { labels: ['Pequeño', 'Mediano'], data: [50, 50] },
+                tenure: { labels: ['Propio', 'Posesión', 'Herencia', 'Arriendo'], data: [25, 50, 15, 10] },
+                security: { farm: '20-40%', free: '40-60%', women: '40-60%', state: '20-40%' },
+                migration: { internal: '20-40%', external: '60-80%', remittances: '20-40%', discrimination: 'N/A' },
+                equity: { femaleHeaded: '40-60%', esInclusion: 'Hombres, mujeres, jóvenes, grupos marginados' }
+            },
+            'Ganaderia, Borregos (Zona Alta)': {
+                description: 'Actividad importante en la Zona Alta para carne, lana y abono. Predominantemente de pequeña escala con tenencia de tierra mixta y sin un tipo dominante claro.',
+                use: 'Comercial y Autoconsumo',
+                market: 'Local, Regional',
+                income: '3 (Alta)',
+                scale: { labels: ['Pequeño', 'Mediano'], data: [50, 50] },
+                tenure: { labels: ['Propio', 'Posesión', 'Al Partir'], data: [40, 40, 20] },
+                security: { farm: '40-60%', free: '60-80%', women: '0-20%', state: '20-40%' },
+                migration: { internal: '0-20%', external: '80-100%', remittances: '40-60%', discrimination: '0-20%' },
+                equity: { femaleHeaded: '20-40%', esInclusion: 'N/A' }
+            },
+            'Turismo comunitario (Zona Media)': {
+                description: 'Sector emergente en la Zona Media. Se enfoca en la cultura y artesanías, con destino nacional e internacional. Es de pequeña escala y con tenencia de tierra segura ("Propio").',
+                use: 'Comercial y Autoconsumo',
+                market: 'Local, Nacional, Exportación',
+                income: '2 (Moderada)',
+                scale: { labels: ['Pequeño'], data: [100] },
+                tenure: { labels: ['Propio'], data: [100] },
+                security: { farm: '60-80%', free: '60-80%', women: '40-60%', state: '60-80%' },
+                migration: { internal: '80-100%', external: '60-80%', remittances: '40-60%', discrimination: '40-60%' },
+                equity: { femaleHeaded: '60-80%', esInclusion: 'N/A' }
+            },
+            'Mango, Limon (Zona Baja)': {
+                description: 'Cultivos comerciales clave en la Zona Baja, orientados al mercado nacional y de exportación. La escala es mayoritariamente mediana y la tierra es de propiedad segura.',
+                use: 'Comercial y Autoconsumo',
+                market: 'Nacional, Exportación',
+                income: '2 (Moderada)',
+                scale: { labels: ['Pequeño', 'Mediano', 'Grande'], data: [14, 57, 29] },
+                tenure: { labels: ['Propio'], data: [100] },
+                security: { farm: '20-40%', free: '40-60%', women: '20-40%', state: '0-20%' },
+                migration: { internal: '40-60%', external: '20-40%', remittances: '0-20%', discrimination: '60-80%' },
+                equity: { femaleHeaded: '40-60%', esInclusion: 'Hombres, mujeres, jóvenes, grupos marginados' }
+            },
+            'Aguacate, Limon (Zona Media)': {
+                description: 'Cultivos importantes en la Zona Media. Predominantemente de pequeña escala con tenencia de tierra segura ("Propio").',
+                use: 'Comercial y Autoconsumo',
+                market: 'Exportación, Nacional',
+                income: '2 (Moderada)',
+                scale: { labels: ['Pequeño'], data: [50] },
+                tenure: { labels: ['Propio'], data: [80] },
+                security: { farm: '0-20%', free: '20-40%', women: '20-40%', state: '40-60%' },
+                migration: { internal: '40-60%', external: '60-80%', remittances: '20-40%', discrimination: '20-40%' },
+                equity: { femaleHeaded: '40-60%', esInclusion: 'N/A' }
+            },
+            'Frejol (Zona Baja)': {
+                description: 'Cultivo importante en la Zona Baja. Predominantemente de gran escala con tenencia de tierra mixta.',
+                use: 'Comercial y Autoconsumo',
+                market: 'Local, Nacional',
+                income: '2 (Moderada)',
+                scale: { labels: ['Grande'], data: [50] },
+                tenure: { labels: ['Propio', 'Posesión', 'Arriendo'], data: [40, 30, 30] },
+                security: { farm: '20-40%', free: '40-60%', women: '20-40%', state: '20-40%' },
+                migration: { internal: '20-40%', external: '60-80%', remittances: '40-60%', discrimination: '20-40%' },
+                equity: { femaleHeaded: '80-100%', esInclusion: 'N/A' }
+            }
+        };
+
+        const threatsData = {
+            'Sequía': {
+                info: 'Amenaza climática sistémica y creciente que afecta a todas las zonas. Impacta gravemente la seguridad económica y alimentaria, y es un motor principal de conflictos por el agua.',
+                impacts: {
+                    labels: ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'],
+                    data: [3, 3, 1, 2, 1, 2, 1]
+                }
+            },
+            'Quema': {
+                info: 'Amenaza no climática común en la Zona Alta. Causa gastos insostenibles, problemas de salud respiratoria y pérdida directa de servicios ecosistémicos.',
+                impacts: {
+                    labels: ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'],
+                    data: [3, 2, 2, 3, 1, 1, 2]
+                }
+            },
+            'Contaminación': {
+                info: 'Amenaza no climática crítica en la Zona Baja (relleno sanitario). Genera graves impactos en la salud pública, el medio ambiente y la seguridad política debido a la falta de respuesta institucional.',
+                impacts: {
+                    labels: ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'],
+                    data: [2, 2, 3, 3, 2, 2, 3]
+                }
+            },
+            'CambioUsoSuelo': {
+                 info: 'Amenaza no climática en la Zona Media. Conduce a la pérdida de cultivos nativos y de servicios ecosistémicos como la fertilidad del suelo, generando tensiones por recursos.',
+                impacts: {
+                    labels: ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'],
+                    data: [1, 1, 1, 2, 1, 1, 1]
+                }
+            },
+            'DesbordamientoRío': {
+                info: 'Amenaza climática en la Zona Baja. Causa pérdidas parciales de cultivos y aumento de la erosión, con impactos leves en seguridad alimentaria y comunitaria.',
+                impacts: {
+                    labels: ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'],
+                    data: [2, 1, 1, 2, 1, 2, 1]
+                }
+            }
+        };
+
+        const trustData = {
+            labels: ['Familia / Comunidad', 'Instituciones Locales (ONG, Iglesia)', 'Organizaciones Gubernamentales'],
+            datasets: [{
+                label: 'Nivel de Confianza Promedio (%)',
+                data: [75, 45, 25],
+                backgroundColor: ['#6EE7B7', '#FBBF24', '#F87171'],
+                borderColor: ['#34D399', '#F59E0B', '#EF4444'],
+                borderWidth: 1
+            }]
+        };
+
+        const actorMapData = {
+            datasets: [{
+                label: 'Involucrar de Cerca (Alto Poder, Alto Interés)',
+                data: [{x: 8, y: 9, name: 'Prefectura de Imbabura'}, {x: 9, y: 10, name: 'Junta de Agua de Riego Rumipamba'}, {x: 8, y: 10, name: 'Junta de Agua de Consumo'}, {x: 8, y: 10, name: 'Junta de Agua de Consumo Rumipamba'}, {x: 8, y: 7, name: 'Aso. Ambuko'}, {x: 8, y: 8, name: 'Junta de Agua de Riego Chaguarpamba'}, {x: 8, y: 7, name: 'IEDECA'}, {x: 7, y: 8, name: 'Agrocalidad'}, {x: 7, y: 8, name: 'Junta de Agua La Yunguilla'}],
+                backgroundColor: '#34D399', // Green
+                pointRadius: 6
+            }, {
+                label: 'Mantener Informado (Bajo Poder, Alto Interés)',
+                data: [{x: 6, y: 7, name: 'Aso. de Guarango'}, {x: 5, y: 6, name: 'Aso. de Productores San Guillermo'}, {x: 3, y: 7, name: 'Junta de Agua San Clemente'}, {x: 3, y: 7, name: 'Junta de Agua Pueblo Viejo'}, {x: 3, y: 6, name: 'UCICMA'}],
+                backgroundColor: '#FBBF24', // Amber
+                pointRadius: 6
+            }, {
+                label: 'Consultar y Mantener Satisfecho (Alto Poder, Bajo Interés)',
+                data: [{x: 4, y: 7, name: 'Asoprovalle'}, {x: 3, y: 7, name: 'GAD Parroquial Ambuqui'}, {x: 5, y: 7, name: 'MAG'}, {x: 5, y: 7, name: 'EMAPA'}, {x: 5, y: 7, name: 'MAATE'}],
+                backgroundColor: '#F87171', // Red
+                pointRadius: 6
+            }, {
+                label: 'Monitorear (Bajo Poder, Bajo Interés)',
+                data: [{x: 5, y: 5, name: 'Aso. Tuneros de Juncal'}, {x: 4, y: 5, name: 'Union Cochapamba'}, {x: 3, y: 3, name: 'Coop. Agricola Ambuqui'}, {x: 4, y: 3, name: 'Coop. Agricola La Esperanza'}, {x: 2, y: 2, name: 'Infraestructura Hotelera'}],
+                backgroundColor: '#9CA3AF', // Gray
+                pointRadius: 6
+            }],
+        };
+        
+        let healthChart, scaleChart, tenureChart, threatChart, trustChart, actorChart;
+
+        function renderCharts() {
+            // Ecosystem Health Chart
+            const healthCtx = document.getElementById('ecosystemHealthChart').getContext('2d');
+            healthChart = new Chart(healthCtx, {
+                type: 'doughnut',
+                data: ecosystemHealthData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Livelihood Charts (initial render)
+            const scaleCtx = document.getElementById('livelihoodScaleChart').getContext('2d');
+            scaleChart = new Chart(scaleCtx, {
+                type: 'bar',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            const tenureCtx = document.getElementById('livelihoodTenureChart').getContext('2d');
+            tenureChart = new Chart(tenureCtx, {
+                type: 'doughnut',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } }
+                }
+            });
+
+            // Threat Impact Chart
+            const threatCtx = document.getElementById('threatImpactChart').getContext('2d');
+            threatChart = new Chart(threatCtx, {
+                type: 'radar',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 3,
+                             ticks: { stepSize: 1 }
+                        }
+                    },
+                     plugins: { legend: { display: false } }
+                }
+            });
+
+            // Trust Chart
+            const trustCtx = document.getElementById('trustChart').getContext('2d');
+            trustChart = new Chart(trustCtx, {
+                type: 'bar',
+                data: trustData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true, max: 100 } },
+                     plugins: { legend: { display: false } },
+                     tooltips: {
+                        callbacks: {
+                           label: function(tooltipItem, data) {
+                               return tooltipItem.xLabel + '%';
+                           }
+                        }
+                    }
+                }
+            });
+            
+            // Actor Map Chart
+            const actorCtx = document.getElementById('actorMapChart').getContext('2d');
+            actorChart = new Chart(actorCtx, {
+                type: 'scatter',
+                data: actorMapData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: { display: true, text: 'Interés →' },
+                            min: 0, max: 10,
+                            ticks: { stepSize: 1 }
+                        },
+                        y: {
+                            title: { display: true, text: 'Poder →' },
+                            min: 0, max: 10,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (context.raw.name) {
+                                        label += ': ' + context.raw.name;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateLivelihoodCharts(key) {
+            const data = livelihoodsData[key];
+            document.getElementById('livelihoodTitle').innerText = key;
+            document.getElementById('livelihoodDescription').innerText = data.description;
+            document.getElementById('livelihoodUse').innerText = data.use;
+            document.getElementById('livelihoodMarket').innerText = data.market;
+            document.getElementById('livelihoodIncome').innerText = data.income;
+            
+            scaleChart.data = {
+                labels: data.scale.labels,
+                datasets: [{
+                    label: 'Escala (%)',
+                    data: data.scale.data,
+                    backgroundColor: '#FBBF24'
+                }]
+            };
+            scaleChart.update();
+
+            tenureChart.data = {
+                labels: data.tenure.labels,
+                datasets: [{
+                    data: data.tenure.data,
+                    backgroundColor: ['#34D399', '#F87171', '#60A5FA', '#A78BFA']
+                }]
+            };
+            tenureChart.update();
+
+            // Update Security Metrics
+            document.getElementById('farmSecurity').innerText = data.security.farm;
+            document.getElementById('freeTransit').innerText = data.security.free;
+            document.getElementById('womenTransit').innerText = data.security.women;
+            document.getElementById('stateTrust').innerText = data.security.state;
+
+            // Update Migration Metrics
+            document.getElementById('internalMigration').innerText = data.migration.internal;
+            document.getElementById('externalMigration').innerText = data.migration.external;
+            document.getElementById('remittanceDependency').innerText = data.migration.remittances;
+            document.getElementById('migrantDiscrimination').innerText = data.migration.discrimination;
+
+            // Update Equity Metrics
+            document.getElementById('femaleHeaded').innerText = data.equity.femaleHeaded;
+            document.getElementById('esInclusion').innerText = data.equity.esInclusion;
+        }
+
+        function updateThreatChart(threatKey) {
+            const data = threatsData[threatKey];
+            document.getElementById('threatImpactTitle').innerText = `Impacto de: ${threatKey}`;
+            document.getElementById('threat-info').innerText = data.info;
+            threatChart.data = {
+                 labels: data.impacts.labels,
+                datasets: [{
+                    label: threatKey,
+                    data: data.impacts.data,
+                    fill: true,
+                    backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                    borderColor: 'rgb(217, 119, 6)',
+                    pointBackgroundColor: 'rgb(217, 119, 6)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(217, 119, 6)'
+                }]
+            };
+            threatChart.update();
+        }
+
+        window.onload = function() {
+            renderCharts();
+
+            const livelihoodSelector = document.getElementById('livelihoodSelector');
+            Object.keys(livelihoodsData).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.innerText = key;
+                livelihoodSelector.appendChild(option);
+            });
+            
+            livelihoodSelector.addEventListener('change', (e) => {
+                updateLivelihoodCharts(e.target.value);
+            });
+            // Set initial selection and update charts
+            livelihoodSelector.value = 'Maiz, Trigo, Arveja (Zona Alta)';
+            updateLivelihoodCharts(livelihoodSelector.value);
+
+            const threatButtons = document.querySelectorAll('.threat-btn');
+            threatButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    threatButtons.forEach(btn => btn.classList.remove('bg-amber-500', 'text-white'));
+                    // Add active class to clicked button
+                    button.classList.add('bg-amber-500', 'text-white');
+                    updateThreatChart(button.dataset.threat);
+                });
+            });
+            // Set initial active button and chart
+            document.querySelector('.threat-btn[data-threat="Sequía"]').classList.add('bg-amber-500', 'text-white');
+            updateThreatChart('Sequía');
+        };
+    </script>
+
+</body>
+</html>

@@ -154,7 +154,9 @@ def portfolio_matrix(
     figures_dir.mkdir(parents=True, exist_ok=True)
     
     if grupo:
-        filename = f"portfolio_matrix_{grupo.lower().replace(' ', '_')}_{scenario}.png"
+        # Ensure grupo is string and safe for filename
+        g_str = str(grupo).lower().strip()
+        filename = f"portfolio_matrix_{g_str.replace(' ', '_')}_{scenario}.png"
     else:
         filename = f"portfolio_matrix_overall_{scenario}.png"
     

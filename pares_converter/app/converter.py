@@ -54,7 +54,7 @@ SHEETS = [
 REQUIRED_COLUMNS = {
     "variables": ["Herramienta/variable"],
     "3.1. Lluvia MdV&SE": ["fecha","admin0","paisaje","grupo","elemento_SES","nombre","uso_fin_mdv"],
-    "3.2. Priorización": ["fecha","admin0","paisaje","grupo","mdv ","producto_principal","i_seg_alim","i_area","i_des_loc","i_ambiente","i_inclusion","i_total"],
+    "3.2. Priorización": ["fecha","admin0","paisaje","grupo","mdv","producto_principal","i_seg_alim","i_area","i_des_loc","i_ambiente","i_inclusion","i_total"],
 
     "3.3. Car_A": ["fecha","admin0","paisaje","grupo","mdv","codigo_mdv","codigo_mapa","sistema","uso_final","cv_importancia","cv_producto","cv_mercado"],
     "3.3. Car_B": ["fecha","admin0","paisaje","grupo","mdv","codigo_mapa","tenencia","tenencia_descripcion"],
@@ -62,7 +62,7 @@ REQUIRED_COLUMNS = {
     "3.3. Car_D": ["fecha","admin0","paisaje","grupo","mdv","codigo_mdv","codigo_mapa","tenencia","tamano","porcentaje"],
 
     "3.4. Ecosistemas": ["fecha","admin0","paisaje","grupo","ecosistema","tipo","mdv_relacionado","es_salud","servicio_ecosistemico","causas_deg","cod_es"],
-    "3.5. SE y MdV": ["fecha","admin0","paisaje","grupo","cod_es_se","mdv_relacionado","elemento_se","accesso","barreras","nr_usuarios","mes_contrib","mes_falta","inclusion","incl_descripcion"],
+    "3.5. SE y MdV": ["fecha","admin0","paisaje","grupo","cod_es_se","mdv_relacionado","elemento_se","acceso","barreras","nr_usuarios","mes_contrib","mes_falta","inclusion","incl_descripcion"],
 
     "4.1. Amenazas": ["fecha","admin0","paisaje","grupo","tipo_amenaza","amenaza","magnitud","frequencia","tendencia","suma","sitios_afect","cod_mapa"],
 
@@ -82,13 +82,26 @@ REQUIRED_COLUMNS = {
     "6.1. Evolución_conflict": ["fecha","admin0","paisaje","grupo","cod_conflict","evento","ano_evento","diferencias","dif_factor","cooperacion","coop_factor","suma"],
     "6.2. Actores_conflict": ["fecha","admin0","paisaje","grupo","cod_conflict","actor","i_en_actor","iea_factor","i_en_conflicto","iec_factor"],
 
-    "7.1. Encuesta CA": ["País","Grupo","Medio de vida","Tamaño de propiedad"],
+    "7.1. Encuesta CA": [],
 }
 
 
 # ---------------------------
 # UTILITIES
 # ---------------------------
+
+def robust_clean_col(s: Any) -> str:
+    """Removes accents, spaces, and converts to lowercase for comparisons."""
+    if s is None or pd.isna(s):
+        return ""
+    # Normalize to NFD to separate accents
+    s = str(s).strip().lower()
+    s = "".join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+    # Replace common characters just in case
+    s = s.replace("ú", "u").replace("é", "e").replace("á", "a").replace("í", "i").replace("ó", "o")
+    # Remove any non-alphanumeric except underscore
+    s = re.sub(r'[^a-z0-9_]', '', s.replace(" ", "_"))
+    return s
 
 def canonical_text(x: Any) -> str:
     if x is None:
@@ -188,6 +201,8 @@ COLUMN_ALIASES = {
     "codigo_medio_de_vida": "codigo_mdv",
     # 3.4 / 3.5
     "medio_de_vida_relacionado": "mdv_relacionado",
+    # 5.1 Actores - handle accented column names
+    "interés": "interes",
 }
 
 # Sheet-specific column mappings
@@ -202,31 +217,303 @@ SHEET_COLUMN_ALIASES = {
     "4.2.1. Amenazas_MdV": {"medio_de_vida": "mdv"},
 }
 
+# Known column name variants (wrong -> correct)
+KNOWN_COLUMN_VARIANTS = {
+    "interés": "interes",
+    "indice_seguridad_alimentaria": "i_seg_alim",
+    "imdice_area": "i_area",
+    "indice_area": "i_area",
+    "indice_desarrollo_local": "i_des_loc",
+    "indice_ambiente": "i_ambiente",
+    "indice_inlcusion": "i_inclusion",
+    "indice_inclusion": "i_inclusion",
+    "indice_total": "i_total",
+    "codigo_medio_de_vida": "codigo_mdv",
+    "medio_de_vida_relacionado": "mdv_relacionado",
+    "uso_fin_medio_de_vida": "uso_fin_mdv",
+    "medio_de_vida": "mdv",
+}
+
+@dataclass
+class DiagnosticIssue:
+    """A single diagnostic issue found in the file."""
+    sheet: str
+    issue_type: str  # missing_sheet, missing_column, wrong_column_name, corrupted_header, sheet_name_mismatch
+    severity: str    # error, warning
+    description_es: str
+    description_en: str
+    suggested_fix_es: str
+    suggested_fix_en: str
+    column: str = ""
+    found_value: str = ""
+    expected_value: str = ""
+
+def diagnose_file(path) -> List[DiagnosticIssue]:
+    """
+    Diagnose common issues in an Excel file before conversion.
+    Returns a list of DiagnosticIssue objects.
+    """
+    from datetime import datetime as dt
+    issues: List[DiagnosticIssue] = []
+    
+    try:
+        xls = pd.ExcelFile(path, engine="openpyxl")
+    except Exception as e:
+        issues.append(DiagnosticIssue(
+            sheet="",
+            issue_type="file_error",
+            severity="error",
+            description_es=f"No se pudo abrir el archivo: {str(e)}",
+            description_en=f"Could not open file: {str(e)}",
+            suggested_fix_es="Verifique que el archivo sea un Excel válido (.xlsx)",
+            suggested_fix_en="Verify the file is a valid Excel file (.xlsx)",
+        ))
+        return issues
+    
+    available_sheets = set(xls.sheet_names)
+    
+    # Build a map of trimmed sheet names for matching
+    trimmed_to_actual = {}
+    for sh in available_sheets:
+        trimmed = sh.strip()
+        if trimmed not in trimmed_to_actual:
+            trimmed_to_actual[trimmed] = sh
+    
+    # Check for sheet name issues (trailing spaces, wrong suffixes like "(2)")
+    for sh in available_sheets:
+        trimmed = sh.strip()
+        if sh != trimmed:
+            issues.append(DiagnosticIssue(
+                sheet=sh,
+                issue_type="sheet_name_spaces",
+                severity="warning",
+                description_es=f"La hoja '{sh}' tiene espacios al inicio o final",
+                description_en=f"Sheet '{sh}' has leading or trailing spaces",
+                suggested_fix_es=f"Renombre la hoja a '{trimmed}' (sin espacios extra)",
+                suggested_fix_en=f"Rename sheet to '{trimmed}' (without extra spaces)",
+                found_value=sh,
+                expected_value=trimmed,
+            ))
+        
+        # Check for "(2)" suffixes indicating duplicate sheets
+        if " (2)" in sh or "(2)" in sh:
+            base_name = sh.replace(" (2)", "").replace("(2)", "").strip()
+            issues.append(DiagnosticIssue(
+                sheet=sh,
+                issue_type="duplicate_sheet_suffix",
+                severity="warning",
+                description_es=f"La hoja '{sh}' parece ser un duplicado (contiene '(2)')",
+                description_en=f"Sheet '{sh}' appears to be a duplicate (contains '(2)')",
+                suggested_fix_es=f"Renombre la hoja a '{base_name}' si es la versión correcta",
+                suggested_fix_en=f"Rename sheet to '{base_name}' if it's the correct version",
+                found_value=sh,
+                expected_value=base_name,
+            ))
+    
+    # Check for missing required sheets
+    for required_sheet in SHEETS:
+        if required_sheet not in available_sheets:
+            # Check if it exists with trailing space or different case
+            found_variant = None
+            for actual in available_sheets:
+                if actual.strip().lower() == required_sheet.strip().lower():
+                    found_variant = actual
+                    break
+            
+            if found_variant:
+                issues.append(DiagnosticIssue(
+                    sheet=required_sheet,
+                    issue_type="sheet_name_mismatch",
+                    severity="warning",
+                    description_es=f"La hoja '{required_sheet}' existe como '{found_variant}'",
+                    description_en=f"Sheet '{required_sheet}' exists as '{found_variant}'",
+                    suggested_fix_es=f"Renombre '{found_variant}' a '{required_sheet}'",
+                    suggested_fix_en=f"Rename '{found_variant}' to '{required_sheet}'",
+                    found_value=found_variant,
+                    expected_value=required_sheet,
+                ))
+            else:
+                issues.append(DiagnosticIssue(
+                    sheet=required_sheet,
+                    issue_type="missing_sheet",
+                    severity="warning",
+                    description_es=f"Falta la hoja '{required_sheet}'",
+                    description_en=f"Missing sheet '{required_sheet}'",
+                    suggested_fix_es=f"Agregue la hoja '{required_sheet}' al archivo",
+                    suggested_fix_en=f"Add sheet '{required_sheet}' to the file",
+                ))
+    
+    # Check columns for each required sheet
+    for sheet_name, required_cols in REQUIRED_COLUMNS.items():
+        # Find the actual sheet (may have trailing spaces)
+        actual_sheet = None
+        for sh in available_sheets:
+            if sh.strip() == sheet_name.strip():
+                actual_sheet = sh
+                break
+        
+        if not actual_sheet:
+            continue
+        
+        try:
+            df = pd.read_excel(xls, actual_sheet, dtype=object, nrows=5)
+        except Exception as e:
+            issues.append(DiagnosticIssue(
+                sheet=actual_sheet,
+                issue_type="read_error",
+                severity="error",
+                description_es=f"Error al leer la hoja: {str(e)}",
+                description_en=f"Error reading sheet: {str(e)}",
+                suggested_fix_es="Verifique que la hoja no esté corrupta",
+                suggested_fix_en="Verify the sheet is not corrupted",
+            ))
+            continue
+        
+        actual_cols = set(df.columns)
+        actual_cols_lower = {str(c).strip().lower(): str(c) for c in df.columns}
+        
+        # Check for corrupted headers (date values instead of column names)
+        for col in df.columns:
+            col_str = str(col)
+            # Check if first column looks like a date instead of 'fecha'
+            if isinstance(col, dt) or (hasattr(col, 'timestamp')):
+                issues.append(DiagnosticIssue(
+                    sheet=actual_sheet,
+                    issue_type="corrupted_header",
+                    severity="error",
+                    column="fecha",
+                    description_es=f"La primera columna tiene un valor de fecha '{col_str[:20]}' en lugar del encabezado 'fecha'",
+                    description_en=f"First column has a date value '{col_str[:20]}' instead of header 'fecha'",
+                    suggested_fix_es="Cambie el valor de la celda A1 a 'fecha' (el encabezado está corrupto o faltante)",
+                    suggested_fix_en="Change cell A1 value to 'fecha' (header is corrupted or missing)",
+                    found_value=col_str[:30],
+                    expected_value="fecha",
+                ))
+                break
+        
+        # Check for missing required columns
+        for req_col in required_cols:
+            req_col_clean = req_col.strip()
+            
+            # Check exact match
+            if req_col in actual_cols or req_col_clean in actual_cols:
+                continue
+            
+            # Check case-insensitive match
+            if req_col_clean.lower() in actual_cols_lower:
+                found = actual_cols_lower[req_col_clean.lower()]
+                if found != req_col:
+                    issues.append(DiagnosticIssue(
+                        sheet=actual_sheet,
+                        issue_type="column_case_mismatch",
+                        severity="warning",
+                        column=req_col,
+                        description_es=f"Columna '{found}' debería ser '{req_col}' (diferencia de mayúsculas/minúsculas)",
+                        description_en=f"Column '{found}' should be '{req_col}' (case difference)",
+                        suggested_fix_es=f"Renombre la columna '{found}' a '{req_col}'",
+                        suggested_fix_en=f"Rename column '{found}' to '{req_col}'",
+                        found_value=found,
+                        expected_value=req_col,
+                    ))
+                continue
+            
+            # Check for known variants (accented versions, typos)
+            found_variant = None
+            for wrong, correct in KNOWN_COLUMN_VARIANTS.items():
+                if correct == req_col_clean and wrong in [str(c).strip() for c in actual_cols]:
+                    found_variant = wrong
+                    break
+            
+            # Also check in actual columns for any variant
+            for actual_col in actual_cols:
+                actual_clean = str(actual_col).strip()
+                if actual_clean in KNOWN_COLUMN_VARIANTS and KNOWN_COLUMN_VARIANTS[actual_clean] == req_col_clean:
+                    found_variant = actual_clean
+                    break
+            
+            if found_variant:
+                issues.append(DiagnosticIssue(
+                    sheet=actual_sheet,
+                    issue_type="wrong_column_name",
+                    severity="error",
+                    column=req_col,
+                    description_es=f"Columna '{found_variant}' debería ser '{req_col}' (nombre incorrecto)",
+                    description_en=f"Column '{found_variant}' should be '{req_col}' (wrong name)",
+                    suggested_fix_es=f"Renombre la columna '{found_variant}' a '{req_col}'",
+                    suggested_fix_en=f"Rename column '{found_variant}' to '{req_col}'",
+                    found_value=found_variant,
+                    expected_value=req_col,
+                ))
+            else:
+                issues.append(DiagnosticIssue(
+                    sheet=actual_sheet,
+                    issue_type="missing_column",
+                    severity="error",
+                    column=req_col,
+                    description_es=f"Falta la columna '{req_col}'",
+                    description_en=f"Missing column '{req_col}'",
+                    suggested_fix_es=f"Agregue la columna '{req_col}' a la hoja '{actual_sheet}'",
+                    suggested_fix_en=f"Add column '{req_col}' to sheet '{actual_sheet}'",
+                    expected_value=req_col,
+                ))
+    
+    return issues
+
+def format_diagnostic_report(issues: List[DiagnosticIssue], lang: str = "es") -> List[Dict[str, Any]]:
+    """Format diagnostic issues as a list of dicts for JSON response."""
+    results = []
+    for issue in issues:
+        results.append({
+            "sheet": issue.sheet,
+            "issue_type": issue.issue_type,
+            "severity": issue.severity,
+            "description": issue.description_es if lang == "es" else issue.description_en,
+            "suggested_fix": issue.suggested_fix_es if lang == "es" else issue.suggested_fix_en,
+            "column": issue.column,
+            "found_value": issue.found_value,
+            "expected_value": issue.expected_value,
+        })
+    return results
+
 def normalize_columns(df: pd.DataFrame, sheet_name: str = "") -> pd.DataFrame:
     """Apply column name aliases to normalize input data."""
+    if df is None or df.empty:
+        return df
+    
+    actual_cols = df.columns.tolist()
     rename_map = {}
     
-    # First apply sheet-specific mappings
+    # 1. Clean all existing columns
+    cleaned_to_original = {robust_clean_col(c): c for c in actual_cols}
+    
+    # 2. Check targets for this specific sheet
     sheet_aliases = SHEET_COLUMN_ALIASES.get(sheet_name, {})
+    for target_alias, target_norm in sheet_aliases.items():
+        c_alias = robust_clean_col(target_alias)
+        for c_orig, orig in cleaned_to_original.items():
+            if c_orig == c_alias:
+                rename_map[orig] = target_norm
     
-    for col in df.columns:
-        col_str = str(col).strip()
-        # Check sheet-specific alias first
-        if col_str in sheet_aliases:
-            rename_map[col] = sheet_aliases[col_str]
-        # Then check global aliases
-        elif col_str in COLUMN_ALIASES:
-            rename_map[col] = COLUMN_ALIASES[col_str]
-    
+    # 3. Check global aliases
+    for variant, target in COLUMN_ALIASES.items():
+        c_variant = robust_clean_col(variant)
+        c_target = robust_clean_col(target)
+        for c_orig, orig in cleaned_to_original.items():
+            if c_orig == c_variant or c_orig == c_target:
+                if orig not in rename_map:
+                    rename_map[orig] = target
+                    
+    # 4. Fallback: direct match on cleaned REQUIRED_COLUMNS names
+    if sheet_name in REQUIRED_COLUMNS:
+        for req in REQUIRED_COLUMNS[sheet_name]:
+            c_req = robust_clean_col(req)
+            for c_orig, orig in cleaned_to_original.items():
+                if c_orig == c_req:
+                    if orig not in rename_map:
+                        rename_map[orig] = req
+
     if rename_map:
-        # Only rename if target column doesn't already exist to avoid collision
-        safe_map = {}
-        existing = set(df.columns)
-        for old, new in rename_map.items():
-            if new not in existing:
-                safe_map[old] = new
-        if safe_map:
-            df = df.rename(columns=safe_map)
+        return df.rename(columns=rename_map)
     return df
 
 def read_workbook(path: str) -> Dict[str, pd.DataFrame]:
@@ -344,9 +631,36 @@ def infer_paisaje_for_country_group(raw: Dict[str,pd.DataFrame]) -> Dict[Tuple[s
 def build_lookup_survey_context(raw: Dict[str,pd.DataFrame]) -> pd.DataFrame:
     if "7.1. Encuesta CA" not in raw:
         return pd.DataFrame(columns=["survey_context_id","admin0","grupo","paisaje_inferido"])
-    df = raw["7.1. Encuesta CA"][["País","Grupo"]].copy().drop_duplicates()
-    df["admin0"] = df["País"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
-    df["grupo"]  = df["Grupo"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+    
+    raw_df = raw["7.1. Encuesta CA"]
+    
+    # Try finding country column (or fallback to empty)
+    country_candidates = ["País", "Pais", "admin0", "Country"]
+    country_col = next((c for c in country_candidates if c in raw_df.columns), None)
+    
+    # Try finding group column (or fallback to empty)
+    group_candidates = ["Grupo", "grupo", "Group"]
+    group_col = next((c for c in group_candidates if c in raw_df.columns), None)
+    
+    # Build base dataframe with available or empty data
+    if country_col:
+        s_admin0 = raw_df[country_col]
+    else:
+        s_admin0 = pd.Series([""] * len(raw_df), index=raw_df.index)
+
+    if group_col:
+        s_grupo = raw_df[group_col]
+    else:
+        s_grupo = pd.Series([""] * len(raw_df), index=raw_df.index)
+
+    df = pd.DataFrame({
+        "admin0": s_admin0,
+        "grupo": s_grupo
+    }).copy().drop_duplicates()
+
+    df["admin0"] = df["admin0"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+    df["grupo"]  = df["grupo"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+
     inf = infer_paisaje_for_country_group(raw)
     df["paisaje_inferido"] = df.apply(lambda r: inf.get((canonical_text(r["admin0"]), canonical_text(r["grupo"])), ""), axis=1)
     df["survey_context_id"] = df.apply(lambda r: sha1_short("survey", r["admin0"], r["grupo"], r["paisaje_inferido"]), axis=1)
@@ -606,10 +920,20 @@ def build_lookup_ca_questions(raw: Dict[str,pd.DataFrame]) -> pd.DataFrame:
 
 def attach_context_id(df: pd.DataFrame, cmap: Dict[Tuple[str,str,str,str], str]) -> pd.DataFrame:
     tmp = df.copy()
-    tmp["fecha_iso"] = tmp["fecha"].apply(coerce_date_iso)
+    # Safely get fecha_iso
+    if "fecha" in tmp.columns:
+        tmp["fecha_iso"] = tmp["fecha"].apply(coerce_date_iso)
+    else:
+        tmp["fecha_iso"] = "2024-01-01" # Safe fallback
+        
     def key(r):
-        return (canonical_text(r.get("admin0")), canonical_text(r.get("paisaje")), canonical_text(r.get("grupo")), str(r.get("fecha_iso")))
-    tmp["context_id"] = tmp.apply(lambda r: cmap.get(key(r), np.nan), axis=1)
+        return (
+            canonical_text(r.get("admin0", "N/A")), 
+            canonical_text(r.get("paisaje", "N/A")), 
+            canonical_text(r.get("grupo", "N/A")), 
+            str(r.get("fecha_iso", "2024-01-01"))
+        )
+    tmp["context_id"] = tmp.apply(lambda r: cmap.get(key(r), "ctx_unknown"), axis=1)
     return tmp
 
 def mdv_id_map(lookup_mdv: pd.DataFrame) -> Dict[str,str]:
@@ -668,7 +992,21 @@ def tidy_3_2_priorizacion(raw, geo, ctx, mdv_lk) -> pd.DataFrame:
     if sh not in raw:
         return pd.DataFrame(columns=["priorizacion_id","context_id","mdv_id","mdv_name","producto_principal","i_seg_alim","i_area","i_des_loc","i_ambiente","i_inclusion","i_total"])
     cmap = build_context_map(geo, ctx)
-    df = raw[sh].copy().rename(columns={"mdv ":"mdv_name"})
+    
+    df = raw[sh].copy()
+    
+    # Handle variable column names for mdv
+    if "mdv " in df.columns:
+        df = df.rename(columns={"mdv ": "mdv_name"})
+    elif "mdv" in df.columns:
+        df = df.rename(columns={"mdv": "mdv_name"})
+    elif "medio_de_vida" in df.columns:
+        df = df.rename(columns={"medio_de_vida": "mdv_name"})
+    
+    # Ensure mdv_name exists
+    if "mdv_name" not in df.columns:
+        return pd.DataFrame(columns=["priorizacion_id","context_id","mdv_id","mdv_name","producto_principal","i_seg_alim","i_area","i_des_loc","i_ambiente","i_inclusion","i_total"])
+
     df = attach_context_id(df, cmap)
 
     mdvmap = mdv_id_map(mdv_lk)
@@ -1116,8 +1454,27 @@ def tidy_7_1_ca(raw, survey_ctx_lk, mdv_lk, ca_q_lk) -> Tuple[pd.DataFrame,pd.Da
             pd.DataFrame(columns=["response_id","respondent_id","question_id","question_order","response_raw","response_numeric"]),
         )
     df = raw[sh].copy()
-    fixed = ["País","Grupo","Medio de vida","Tamaño de propiedad"]
-    qcols = [c for c in df.columns if c not in fixed]
+    
+    # 1. Identify fixed columns dynamically
+    # Country
+    country_candidates = ["País", "Pais", "admin0", "Country"]
+    country_col = next((c for c in country_candidates if c in df.columns), None)
+    
+    # Group
+    group_candidates = ["Grupo", "grupo", "Group"]
+    group_col = next((c for c in group_candidates if c in df.columns), None)
+    
+    # Livelihood
+    mdv_candidates = ["Medio de vida", "medio_de_vida", "mdv", "Livelihood"]
+    mdv_col = next((c for c in mdv_candidates if c in df.columns), None)
+    
+    # Property Size
+    size_candidates = ["Tamaño de propiedad", "Tamano de propiedad", "Size", "tamano_propiedad"]
+    size_col = next((c for c in size_candidates if c in df.columns), None)
+
+    # 2. Determine Question Columns (everything else)
+    fixed_cols_found = [c for c in [country_col, group_col, mdv_col, size_col] if c is not None]
+    qcols = [c for c in df.columns if c not in fixed_cols_found]
 
     # maps
     mdvmap = mdv_id_map(mdv_lk)
@@ -1125,6 +1482,11 @@ def tidy_7_1_ca(raw, survey_ctx_lk, mdv_lk, ca_q_lk) -> Tuple[pd.DataFrame,pd.Da
         survey_ctx_lk.apply(lambda r: canonical_text(r["admin0"])+"|"+canonical_text(r["grupo"]), axis=1),
         survey_ctx_lk["survey_context_id"]
     ))
+    # Safe get for survey context ID
+    def get_context_id(admin0, grupo):
+        k = canonical_text(admin0)+"|"+canonical_text(grupo)
+        return sc_map.get(k, np.nan)
+
     paisaje_map = dict(zip(
         survey_ctx_lk["survey_context_id"], survey_ctx_lk["paisaje_inferido"]
     ))
@@ -1132,14 +1494,35 @@ def tidy_7_1_ca(raw, survey_ctx_lk, mdv_lk, ca_q_lk) -> Tuple[pd.DataFrame,pd.Da
     qorder = dict(zip(ca_q_lk["question_id"], ca_q_lk["question_order"]))
 
     # respondents
-    df["admin0"] = df["País"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
-    df["grupo"]  = df["Grupo"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
-    df["survey_context_id"] = df.apply(lambda r: sc_map.get(canonical_text(r["admin0"])+"|"+canonical_text(r["grupo"]), np.nan), axis=1)
+    # Handle Country
+    if country_col:
+        df["admin0"] = df[country_col].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+    else:
+        df["admin0"] = ""
+
+    # Handle Group
+    if group_col:
+        df["grupo"] = df[group_col].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+    else:
+        df["grupo"] = ""
+
+    df["survey_context_id"] = df.apply(lambda r: get_context_id(r["admin0"], r["grupo"]), axis=1)
     df["paisaje_inferido"] = df["survey_context_id"].map(lambda x: paisaje_map.get(x, ""))
 
-    df["mdv_name"] = df["Medio de vida"].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+    # Handle Livelihood
+    if mdv_col:
+        df["mdv_name"] = df[mdv_col].apply(lambda x: "" if x is None or (isinstance(x,float) and np.isnan(x)) else str(x).strip())
+    else:
+        df["mdv_name"] = ""
+    
     df["mdv_id"] = df["mdv_name"].map(lambda x: mdvmap.get(canonical_text(x), np.nan))
-    df["tamano_propiedad"] = df["Tamaño de propiedad"]
+
+    # Handle Property Size
+    if size_col:
+        df["tamano_propiedad"] = df[size_col]
+    else:
+        df["tamano_propiedad"] = ""
+
     df["respondent_id"] = df.apply(lambda r: sha1_short("resp", r["survey_context_id"], r["mdv_id"], r["mdv_name"], r.get("tamano_propiedad","")), axis=1)
 
     respondents = df[["respondent_id","survey_context_id","admin0","grupo","paisaje_inferido","mdv_id","mdv_name","tamano_propiedad"]].copy()

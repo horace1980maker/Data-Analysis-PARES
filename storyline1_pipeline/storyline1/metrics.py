@@ -599,17 +599,36 @@ def action_priority_index(
     # OVERALL RANKINGS
     # -------------------------------------------------------------------------
     # Merge priority, risk, capacity on mdv_id
+    # Helper to enforce ID column types
+    def enforce_id_type(df: pd.DataFrame, id_cols: List[str]) -> pd.DataFrame:
+        out = df.copy()
+        for c in id_cols:
+            if c in out.columns:
+                # Force to string, handling NaNs as "nan" string.
+                # This ensures the column is strictly object/string type for merging.
+                out[c] = out[c].astype(str)
+        return out
+
+    # -------------------------------------------------------------------------
+    # OVERALL RANKINGS
+    # -------------------------------------------------------------------------
+    # Merge priority, risk, capacity on mdv_id
     if not priority_overall.empty:
-        overall = priority_overall[["mdv_id", "mdv_name", "priority_norm"]].copy()
+        overall = enforce_id_type(priority_overall[["mdv_id", "mdv_name", "priority_norm"]], ["mdv_id"])
         
         if not risk_overall.empty:
             # Also include mdv_name from risk table in case priority is missing it
             risk_cols = ["mdv_id", "risk_norm"]
             if "mdv_name" in risk_overall.columns:
                 risk_cols.append("mdv_name")
-            risk_merge = risk_overall[risk_cols].copy()
+            risk_merge = enforce_id_type(risk_overall[risk_cols], ["mdv_id"])
             if "mdv_name" in risk_merge.columns:
                 risk_merge = risk_merge.rename(columns={"mdv_name": "mdv_name_risk"})
+            
+            # Ensure BOTH sides are strings
+            overall["mdv_id"] = overall["mdv_id"].astype(str)
+            risk_merge["mdv_id"] = risk_merge["mdv_id"].astype(str)
+            
             overall = overall.merge(risk_merge, on="mdv_id", how="outer")
             # Fill missing mdv_name from risk
             if "mdv_name_risk" in overall.columns:
@@ -624,9 +643,14 @@ def action_priority_index(
             cap_cols = ["mdv_id", "cap_gap_norm"]
             if "mdv_name" in capacity_overall.columns:
                 cap_cols.append("mdv_name")
-            cap_merge = capacity_overall[cap_cols].copy()
+            cap_merge = enforce_id_type(capacity_overall[cap_cols], ["mdv_id"])
             if "mdv_name" in cap_merge.columns:
                 cap_merge = cap_merge.rename(columns={"mdv_name": "mdv_name_cap"})
+            
+            # Ensure BOTH sides are strings
+            overall["mdv_id"] = overall["mdv_id"].astype(str)
+            cap_merge["mdv_id"] = cap_merge["mdv_id"].astype(str)
+            
             overall = overall.merge(cap_merge, on="mdv_id", how="outer")
             # Fill missing mdv_name from capacity
             if "mdv_name_cap" in overall.columns:
@@ -670,16 +694,22 @@ def action_priority_index(
     # BY GROUP RANKINGS
     # -------------------------------------------------------------------------
     if not priority_by_group.empty and "grupo" in priority_by_group.columns:
-        by_group = priority_by_group[["grupo", "mdv_id", "mdv_name", "priority_norm"]].copy()
+        by_group = enforce_id_type(priority_by_group[["grupo", "mdv_id", "mdv_name", "priority_norm"]], ["grupo", "mdv_id"])
         
         if not risk_by_group.empty and "grupo" in risk_by_group.columns:
             # Also include mdv_name from risk table
             risk_cols = ["grupo", "mdv_id", "risk_norm"]
             if "mdv_name" in risk_by_group.columns:
                 risk_cols.append("mdv_name")
-            risk_merge = risk_by_group[risk_cols].copy()
+            risk_merge = enforce_id_type(risk_by_group[risk_cols], ["grupo", "mdv_id"])
             if "mdv_name" in risk_merge.columns:
                 risk_merge = risk_merge.rename(columns={"mdv_name": "mdv_name_risk"})
+            
+            # Ensure BOTH sides are strings
+            for col in ["grupo", "mdv_id"]:
+                by_group[col] = by_group[col].astype(str)
+                risk_merge[col] = risk_merge[col].astype(str)
+            
             by_group = by_group.merge(risk_merge, on=["grupo", "mdv_id"], how="outer")
             # Fill missing mdv_name from risk
             if "mdv_name_risk" in by_group.columns:
@@ -694,9 +724,15 @@ def action_priority_index(
             cap_cols = ["grupo", "mdv_id", "cap_gap_norm"]
             if "mdv_name" in capacity_by_group.columns:
                 cap_cols.append("mdv_name")
-            cap_merge = capacity_by_group[cap_cols].copy()
+            cap_merge = enforce_id_type(capacity_by_group[cap_cols], ["grupo", "mdv_id"])
             if "mdv_name" in cap_merge.columns:
                 cap_merge = cap_merge.rename(columns={"mdv_name": "mdv_name_cap"})
+            
+            # Ensure BOTH sides are strings
+            for col in ["grupo", "mdv_id"]:
+                by_group[col] = by_group[col].astype(str)
+                cap_merge[col] = cap_merge[col].astype(str)
+            
             by_group = by_group.merge(cap_merge, on=["grupo", "mdv_id"], how="outer")
             # Fill missing mdv_name from capacity
             if "mdv_name_cap" in by_group.columns:

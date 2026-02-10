@@ -1,0 +1,105 @@
+﻿python : Traceback (most recent call 
+last):
+At line:1 char:1
++ python compare_files.py 2>&1 | 
+Out-File -Encoding utf8 
+compare_output ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpec 
+   ified: (Traceback (most recent ca  
+  ll last)::String) [], RemoteExcep   
+ tion
+    + FullyQualifiedErrorId : NativeC 
+   ommandError
+ 
+  File "G:\My 
+Drive\000_CONSULTANCY\CATIE\SEGUNDA 
+CONSULTORIA\DATABASE ANALYSIS\CONVERSI
+ON\pares_excel_converter_app - 
+Copy\compare_files.py", line 89, in 
+compare_files
+    tables_failed = 
+compile_workbook(failed_path, 
+strict=False, copy_raw=False)
+  File "G:\My 
+Drive\000_CONSULTANCY\CATIE\SEGUNDA 
+CONSULTORIA\DATABASE ANALYSIS\CONVERSI
+ON\pares_excel_converter_app - Copy\pa
+res_converter\app\converter.py", line 
+1248, in compile_workbook
+    t51_main, t51_rel = 
+tidy_5_1_actores(raw, geo, ctx, actor)
+                        
+~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\My 
+Drive\000_CONSULTANCY\CATIE\SEGUNDA 
+CONSULTORIA\DATABASE ANALYSIS\CONVERSI
+ON\pares_excel_converter_app - Copy\pa
+res_converter\app\converter.py", line 
+1030, in tidy_5_1_actores
+    main = df[["actor_obs_id","context
+_id","actor_id","nombre_actor","tipo_a
+ctor","rol_paisaje","poder","interes"]
+].copy()
+           ~~^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^
+  File "C:\Users\narva\miniconda3\Lib\
+site-packages\pandas\core\frame.py", 
+line 4119, in __getitem__
+    indexer = 
+self.columns._get_indexer_strict(key, 
+"columns")[1]
+              ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\narva\miniconda3\Lib\
+site-packages\pandas\core\indexes\base
+.py", line 6212, in 
+_get_indexer_strict
+    self._raise_if_missing(keyarr, 
+indexer, axis_name)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
+  File "C:\Users\narva\miniconda3\Lib\
+site-packages\pandas\core\indexes\base
+.py", line 6264, in _raise_if_missing
+    raise KeyError(f"{not_found} not 
+in index")
+KeyError: "['interes'] not in index"
+================================================================================
+COMPARING OK.xlsx vs FAILED.xlsx
+================================================================================
+
+## SHEET COMPARISON ##
+OK sheets count: 18
+FAILED sheets count: 18
+
+Sheets ONLY in OK: {' 7.1 EPL  1', '7.1 EPL  2'}
+
+Sheets ONLY in FAILED: {' 7.1 SAS  1', '7.1 SAS 2'}
+
+Common sheets: 16
+
+## REQUIRED SHEETS CHECK ##
+  7.1. Encuesta CA: MISSING IN BOTH
+
+## COLUMN COMPARISON FOR REQUIRED SHEETS ##
+
+  3.3. Car_A:
+    Columns only in OK: {'observaciones'}
+
+  5.1. Actores:
+    FAILED missing required: ['interes']
+    Columns only in OK: {'interes'}
+    Columns only in FAILED: {'interÚs'}
+
+## COMPILATION TEST ##
+
+Trying to compile OK.xlsx...
+  SUCCESS! Generated 45 tables
+
+Trying to compile FAILED.xlsx...
+  FAILED: KeyError: "['interes'] not in index"
+
+  TRACEBACK:

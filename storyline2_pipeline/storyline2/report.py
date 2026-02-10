@@ -258,6 +258,7 @@ HTML_TEMPLATE = """
         <p><strong>Informe Diagnóstico - Análisis de Seguridad Basada en la Naturaleza</strong></p>
         
         <div class="metadata">
+            <strong>Organización:</strong> {org_name}<br>
             <strong>Generado:</strong> {timestamp}<br>
             <strong>Archivo de Entrada:</strong> {input_file}<br>
             <strong>Alcance del Análisis:</strong> Conectividad de Ecosistemas y Criticidad de Servicios
@@ -561,6 +562,7 @@ def generate_report(
     input_path: str,
     warnings: List[str],
     tables: Optional[Dict[str, pd.DataFrame]] = None,
+    org_name: str = "Organización",
 ) -> str:
     """
     Generate complete HTML report.
@@ -597,6 +599,7 @@ def generate_report(
     input_file = Path(input_path).name
     
     html = HTML_TEMPLATE.format(
+        org_name=org_name,
         timestamp=timestamp,
         input_file=input_file,
         content=content,

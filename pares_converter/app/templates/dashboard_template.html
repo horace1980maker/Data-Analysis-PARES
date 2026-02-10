@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interactivo PARES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #383838;
+        }
+
+        .nav-active {
+            border-bottom: 2px solid #D97706;
+            color: #D97706;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: #D97706;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+            transform: translateY(-2px);
+        }
+
+        .info-box {
+            background-color: #FFFBEB;
+            border-left: 4px solid #FBBF24;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #92400E;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: #78350F;
+        }
+
+        .cascade-item {
+            background-color: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+            width: 100%;
+        }
+
+        .cascade-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #9CA3AF;
+            margin: 0.5rem 0;
+        }
+
+        @media (min-width: 1024px) {
+            .cascade-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .cascade-item {
+                flex: 1;
+                margin: 0 0.5rem;
+            }
+
+            .cascade-arrow {
+                margin: 0;
+                transform: rotate(0deg);
+            }
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #D1D5DB;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 15px;
+            width: 12px;
+            height: 12px;
+            background: #D97706;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            width: calc(50% - 20px);
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            left: 0;
+            margin-right: calc(50% + 20px);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            left: calc(50% + 20px);
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item::before {
+                left: 20px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 60px);
+                left: 60px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+        }
+
+        .threat-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .threat-btn:hover {
+            opacity: 0.8;
+        }
+
+        .threat-btn.active {
+            background-color: #D97706 !important;
+            color: white !important;
+        }
+
+        .heatmap-cell {
+            min-width: 40px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .no-data-card {
+            background-color: #F3F4F6;
+            border: 2px dashed #D1D5DB;
+            color: #6B7280;
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    <script>
+        /* __BUNDLE_DATA__ */
+    </script>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 id="dashboard-title" class="text-3xl md:text-4xl font-bold text-gray-800"></h1>
+            <p id="dashboard-subtitle" class="mt-2 text-lg text-gray-600"></p>
+        </header>
+
+        <!-- Executive Summary -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Resumen Ejecutivo</h2>
+            <p id="executive-summary" class="text-gray-600 text-sm md:text-base"></p>
+        </div>
+
+        <!-- KPI Strip -->
+        <div class="mb-8">
+
+            <!-- KPI Strip -->
+            <div id="kpi-strip" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-services">-</div>
+                    <div class="kpi-label">Servicios Ecosistémicos</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-livelihoods">-</div>
+                    <div class="kpi-label">Medios de Vida</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-threats">-</div>
+                    <div class="kpi-label">Amenazas</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="kpi-actors">-</div>
+                    <div class="kpi-label">Actores</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex justify-center border-b border-gray-200 mb-8 flex-wrap">
+            <div class="nav-item nav-active" onclick="showSection('paisaje')">Paisaje y Ecosistemas</div>
+            <div class="nav-item" onclick="showSection('medios-vida')">Medios de Vida</div>
+            <div class="nav-item" onclick="showSection('amenazas')">Amenazas y Conflictos</div>
+            <div class="nav-item" onclick="showSection('gobernanza')">Gobernanza y Capacidad</div>
+        </nav>
+
+        <!-- Content Sections -->
+        <main>
+            <!-- Section A: Paisaje y Ecosistemas -->
+            <section id="paisaje" class="content-section active">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Vistazo General del Paisaje</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">El bienestar del paisaje depende de varios sistemas
+                        ecológicos clave. Esta sección resume su estado de salud y su papel fundamental.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card col-span-1 lg:col-span-2">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Sistemas Ecológicos</h3>
+                        <div id="ecosystems-list" class="space-y-4 text-gray-600">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Estado de Salud de Ecosistemas</h3>
+                        <div id="ecosystem-health-container" class="chart-container">
+                            <canvas id="ecosystemHealthChart"></canvas>
+                        </div>
+                        <p class="text-center mt-4 text-sm text-gray-500">Distribución de la funcionalidad de los
+                            ecosistemas evaluados.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section B: Medios de Vida -->
+            <section id="medios-vida" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Análisis de los Medios de Vida</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">Los medios de vida en este paisaje son diversos.
+                        Esta sección explora las dependencias críticas entre servicios ecosistémicos y medios de vida.
+                    </p>
+                </div>
+
+                <!-- Lifelines Heatmap -->
+                <div class="card mb-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Matriz de Dependencia: Servicios Ecosistémicos
+                        → Medios de Vida</h3>
+                    <p class="text-sm text-gray-500 mb-4">La intensidad del color indica el número de usuarios. Haga
+                        clic en una celda para ver la estacionalidad.</p>
+                    <div id="heatmap-container" class="overflow-x-auto">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Seasonality Chart -->
+                <div class="card mb-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Estacionalidad del Servicio Seleccionado</h3>
+                    <div id="seasonality-container" class="chart-container">
+                        <canvas id="seasonalityChart"></canvas>
+                    </div>
+                    <p id="seasonality-hint" class="text-center mt-4 text-sm text-gray-500">Seleccione una celda del
+                        heatmap para ver la estacionalidad.</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Medios de Vida Priorizados</h3>
+                    <p class="text-sm text-gray-500 mb-4">Mostrando los medios de vida con mayor importancia según el
+                        análisis de prioridad.</p>
+                    <div id="livelihoods-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section C: Amenazas y Conflictos -->
+            <section id="amenazas" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Amenazas, Impactos y Conflictos</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">El paisaje enfrenta amenazas climáticas y no
+                        climáticas que degradan los ecosistemas e impactan los medios de vida. Esta sección visualiza
+                        esa cascada de impactos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Threat Ranking -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Ranking de Amenazas</h3>
+                        <div class="chart-container" style="height: 280px;">
+                            <canvas id="threatRankingChart"></canvas>
+                        </div>
+                        <p class="text-center mt-4 text-sm text-gray-500">Ordenado por severidad de impacto promedio.
+                        </p>
+                    </div>
+
+                    <!-- Threat Impact Radar -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-700">Impacto Multidimensional</h3>
+                        <p class="text-sm text-gray-600 mb-4">Seleccione una amenaza para ver su impacto:</p>
+                        <div id="threat-buttons" class="flex flex-wrap gap-2 mb-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="threatRadarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conflicts Timeline -->
+                <div class="card mb-8">
+                    <h3 class="font-semibold text-lg mb-4 text-center text-gray-700">Evolución de Conflictos</h3>
+                    <div id="conflicts-timeline" class="timeline">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div id="no-conflicts" class="no-data-card" style="display: none;">
+                        <p>No hay datos de conflictos disponibles para este contexto.</p>
+                    </div>
+                </div>
+
+                <!-- Impact Cascade -->
+                <div class="card">
+                    <h3 class="font-semibold text-lg mb-4 text-center text-gray-700">La Cascada del Impacto: Del
+                        Ecosistema a la Tensión Social</h3>
+                    <p class="text-sm text-gray-600 mb-4 text-center">Las amenazas degradan los ecosistemas, impactan
+                        los servicios esenciales y generan conflictos.</p>
+                    <div class="cascade-container flex-col lg:flex-row">
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">🏔️</div>
+                            <h4 class="font-semibold">Ecosistema</h4>
+                            <p id="cascade-ecosystem" class="text-sm text-gray-600">Ecosistemas bajo estrés</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">💧</div>
+                            <h4 class="font-semibold">Servicio Afectado</h4>
+                            <p id="cascade-service" class="text-sm text-gray-600">Servicios ecosistémicos reducidos</p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">📉</div>
+                            <h4 class="font-semibold">Impacto en Medios de Vida</h4>
+                            <p id="cascade-livelihood" class="text-sm text-gray-600">Pérdidas económicas y alimentarias
+                            </p>
+                        </div>
+                        <div class="cascade-arrow transform -rotate-90 lg:rotate-0">→</div>
+                        <div class="cascade-item">
+                            <div class="text-2xl mb-2">⚠️</div>
+                            <h4 class="font-semibold">Conflicto Social</h4>
+                            <p id="cascade-conflict" class="text-sm text-gray-600">Competencia por recursos</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section D: Gobernanza y Capacidad -->
+            <section id="gobernanza" class="content-section">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Gobernanza y Capacidad Adaptativa</h2>
+                    <p class="mt-2 text-gray-600 max-w-3xl mx-auto">La capacidad de respuesta depende de la confianza,
+                        la organización y el acceso a recursos. Esta sección explora el panorama de actores y la
+                        capacidad de adaptación.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Actor Power-Interest Scatter -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Mapa de Actores (Poder/Interés)</h3>
+                        <div class="chart-container">
+                            <canvas id="actorScatterChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-600">La posición indica el poder e interés de cada actor en el
+                            paisaje.</p>
+                    </div>
+
+                    <!-- Actor List -->
+                    <div class="card">
+                        <h3 class="font-semibold text-lg mb-4 text-gray-700">Lista de Actores</h3>
+                        <div id="actor-list" class="max-h-96 overflow-y-auto space-y-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dialogue Spaces -->
+                <div class="card mb-6">
+                    <h3 class="font-semibold text-lg mb-4 text-gray-700">Espacios de Diálogo</h3>
+                    <div id="dialogue-spaces" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div id="no-dialogue" class="no-data-card" style="display: none;">
+                        <p>No hay datos de espacios de diálogo disponibles para este contexto.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>Generado por PARES Dashboard • <span id="export-date"></span></p>
+            <p class="mt-1"><span id="workbook-name"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        // ========== INITIALIZATION ==========
+        let currentContext = null;
+        let charts = {};
+
+        function init() {
+            if (typeof BUNDLE === 'undefined') {
+                console.error('Bundle data not loaded');
+                return;
+            }
+
+            // Set header
+            document.getElementById('dashboard-title').textContent = BUNDLE.meta.title;
+            document.getElementById('dashboard-subtitle').textContent = BUNDLE.meta.subtitle;
+            document.getElementById('export-date').textContent = BUNDLE.meta.export_date;
+            document.getElementById('workbook-name').textContent = BUNDLE.meta.workbook_name;
+
+            // Generate executive summary
+            generateExecutiveSummary();
+
+            // Set initial context - assuming single landscape view
+            if (BUNDLE.contexts.length > 0) {
+                currentContext = BUNDLE.contexts[0].context_id;
+            }
+
+            // Initialize charts
+            initCharts();
+
+            // Initial update
+            updateAllSections();
+        }
+
+        function generateExecutiveSummary() {
+            const totalContexts = BUNDLE.contexts.length;
+            const totalActors = BUNDLE.actors.length;
+            const totalThreats = BUNDLE.threats.threat_scores.length;
+
+            let ecosystemNote = "";
+            if (BUNDLE.ecosystems.length > 0) {
+                ecosystemNote = `Se identificaron ${BUNDLE.ecosystems.length} ecosistemas principales.`;
+            }
+
+            const summary = `Este paisaje cuenta con ${totalContexts} contexto(s) de análisis documentados, ` +
+                `involucrando ${totalActors} actores clave y ${totalThreats} amenazas principales. ` +
+                ecosystemNote + ` Este panel interactivo permite explorar las interconexiones entre el ecosistema, ` +
+                `la economía y la sociedad local, facilitando la toma de decisiones informadas para ` +
+                `intervenciones de Soluciones basadas en la Naturaleza (SbN).`;
+
+            document.getElementById('executive-summary').textContent = summary;
+        }
+
+        // ========== NAVIGATION ==========
+        function showSection(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+
+            document.getElementById(id).classList.add('active');
+            document.querySelector(`.nav-item[onclick*="${id}"]`).classList.add('nav-active');
+        }
+
+        // ========== KPI UPDATE ==========
+        function updateKPIs() {
+            // Find KPI by ID match or first one if single context
+            const ctxKey = Object.keys(BUNDLE.kpis).find(k =>
+                String(k) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!k || String(k).toLowerCase() === "nan"))
+            );
+            const kpis = BUNDLE.kpis[ctxKey || currentContext] || { n_services: 0, n_livelihoods: 0, n_threats: 0, n_actors: 0 };
+            document.getElementById('kpi-services').textContent = kpis.n_services;
+            document.getElementById('kpi-livelihoods').textContent = kpis.n_livelihoods;
+            document.getElementById('kpi-threats').textContent = kpis.n_threats;
+            document.getElementById('kpi-actors').textContent = kpis.n_actors;
+        }
+
+        // ========== ECOSYSTEMS ==========
+        function updateEcosystems() {
+            const container = document.getElementById('ecosystems-list');
+            // Modified filter: if only one context, be more inclusive of empty/missing IDs in data
+            const contextEcosystems = BUNDLE.ecosystems.filter(e =>
+                String(e.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!e.context_id || String(e.context_id).toLowerCase() === "nan"))
+            );
+
+            if (contextEcosystems.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No hay datos de ecosistemas disponibles para este contexto.</p>';
+                updateEcosystemHealthChart([]);
+                return;
+            }
+
+            // Build ecosystem cards
+            let html = '<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">';
+            contextEcosystems.forEach(eco => {
+                const healthLabel = eco.es_salud || 'No especificado';
+                html += `<div class="flex items-center space-x-2">
+                    <span class="text-xl">🌳</span>
+                    <span>${eco.ecosistema} (${healthLabel})</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            container.innerHTML = html;
+            updateEcosystemHealthChart(contextEcosystems);
+        }
+
+        function updateEcosystemHealthChart(ecosystems) {
+            const healthCounts = {};
+            ecosystems.forEach(e => {
+                const health = e.es_salud || 'No especificado';
+                healthCounts[health] = (healthCounts[health] || 0) + 1;
+            });
+
+            const labels = Object.keys(healthCounts);
+            const data = Object.values(healthCounts);
+            const colors = labels.map(l => {
+                const s = l.toLowerCase();
+                if (s.includes('buen') || s.includes('alt') || s.includes('sana') || s.includes('funcional')) return '#34D399';
+                if (s.includes('moder') || s.includes('regul') || s.includes('media')) return '#FBBF24';
+                if (s.includes('pobr') || s.includes('baj') || s.includes('degrad') || s.includes('malo') || s.includes('no funcional')) return '#F87171';
+                return '#9CA3AF';
+            });
+
+            if (charts.ecosystemHealth) {
+                charts.ecosystemHealth.data.labels = labels;
+                charts.ecosystemHealth.data.datasets[0].data = data;
+                charts.ecosystemHealth.data.datasets[0].backgroundColor = colors;
+                charts.ecosystemHealth.update();
+            }
+        }
+
+        // ========== LIFELINES HEATMAP ==========
+        function updateLifelinesHeatmap() {
+            const container = document.getElementById('heatmap-container');
+            const seMdv = BUNDLE.lifelines.se_mdv.filter(r =>
+                String(r.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!r.context_id || String(r.context_id).toLowerCase() === "nan"))
+            );
+
+            if (seMdv.length === 0) {
+                container.innerHTML = '<div class="no-data-card"><p>No hay datos de dependencias SE→MdV disponibles.</p></div>';
+                return;
+            }
+
+            // Get unique services and livelihoods
+            const services = [...new Set(seMdv.map(r => r.elemento_se).filter(Boolean))];
+            const livelihoods = [...new Set(seMdv.map(r => r.mdv_name).filter(Boolean))];
+
+            // Build matrix
+            const matrix = {};
+            const maxUsers = Math.max(...seMdv.map(r => r.nr_usuarios || 0), 1);
+            seMdv.forEach(r => {
+                const key = `${r.elemento_se}|${r.mdv_name}`;
+                matrix[key] = r;
+            });
+
+            // Build HTML table
+            let html = '<table class="min-w-full text-xs">';
+            html += '<thead><tr><th class="p-2 text-left bg-gray-100 sticky left-0">Servicio</th>';
+            livelihoods.forEach(l => {
+                html += `<th class="p-2 text-center bg-gray-100 max-w-[80px] truncate" title="${l}">${l.substring(0, 12)}${l.length > 12 ? '...' : ''}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            services.forEach(se => {
+                html += `<tr><td class="p-2 font-medium bg-gray-50 sticky left-0">${se}</td>`;
+                livelihoods.forEach(mdv => {
+                    const key = `${se}|${mdv}`;
+                    const record = matrix[key];
+                    if (record) {
+                        const users = record.nr_usuarios || 0;
+                        const intensity = Math.min(users / maxUsers, 1);
+                        const bgColor = `rgba(217, 119, 6, ${0.2 + intensity * 0.7})`;
+                        html += `<td class="p-1">
+                            <div class="heatmap-cell" style="background-color: ${bgColor};" 
+                                 data-se-mdv-id="${record.se_mdv_id}"
+                                 onclick="selectHeatmapCell('${record.se_mdv_id}', '${se}', '${mdv}')"
+                                 title="${se} → ${mdv}: ${users} usuarios">
+                                ${users}
+                            </div>
+                        </td>`;
+                    } else {
+                        html += '<td class="p-1"><div class="heatmap-cell bg-gray-100">-</div></td>';
+                    }
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+
+            container.innerHTML = html;
+        }
+
+        function selectHeatmapCell(seMdvId, service, livelihood) {
+            // Update seasonality chart
+            const monthData = BUNDLE.lifelines.se_months.filter(m => m.se_mdv_id === seMdvId);
+            updateSeasonalityChart(monthData, service, livelihood);
+            document.getElementById('seasonality-hint').textContent = `${service} → ${livelihood}`;
+        }
+
+        function updateSeasonalityChart(monthData, service, livelihood) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const contrib = new Array(12).fill(0);
+            const shortage = new Array(12).fill(0);
+
+            monthData.forEach(m => {
+                const idx = (m.month_num || 1) - 1;
+                if (m.month_type === 'contribucion' || m.month_type === 'contrib') {
+                    contrib[idx] = 1;
+                } else if (m.month_type === 'falta' || m.month_type === 'escasez') {
+                    shortage[idx] = 1;
+                }
+            });
+
+            if (charts.seasonality) {
+                charts.seasonality.data.labels = months;
+                charts.seasonality.data.datasets = [
+                    {
+                        label: 'Contribución',
+                        data: contrib,
+                        backgroundColor: '#34D399'
+                    },
+                    {
+                        label: 'Escasez',
+                        data: shortage,
+                        backgroundColor: '#F87171'
+                    }
+                ];
+                charts.seasonality.update();
+            }
+        }
+
+        // ========== LIVELIHOODS ==========
+        function updateLivelihoodsList() {
+            const container = document.getElementById('livelihoods-list');
+            // Filter prioritized livelihoods (those with a rank < 999 or i_total > 0)
+            let livelihoods = BUNDLE.livelihoods.filter(l => l.i_total > 0 || l.rank < 999);
+
+            // If none are prioritized explicitly, take the top 6
+            if (livelihoods.length === 0) {
+                livelihoods = BUNDLE.livelihoods.slice(0, 6);
+            } else {
+                // Sort by rank ascending
+                livelihoods.sort((a, b) => (a.rank || 999) - (b.rank || 999));
+            }
+
+            if (livelihoods.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-full">No hay datos de medios de vida disponibles.</p>';
+                return;
+            }
+
+            let html = '';
+            livelihoods.forEach(liv => {
+                const rankBadge = liv.rank && liv.rank < 100 ? `<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full mr-2">Top ${liv.rank}</span>` : '';
+                html += `<div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <div class="flex items-center mb-1">
+                        ${rankBadge}
+                        <h4 class="font-semibold text-gray-800">${liv.mdv_name}</h4>
+                    </div>
+                    ${liv.sistema ? `<p class="text-xs text-gray-500"><strong>Sistema:</strong> ${liv.sistema}</p>` : ''}
+                    ${liv.cv_mercado ? `<p class="text-xs text-gray-500"><strong>Mercado:</strong> ${liv.cv_mercado}</p>` : ''}
+                    ${liv.i_total ? `<p class="text-xs text-amber-700 mt-1">Importancia: ${liv.i_total.toFixed(1)}</p>` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== THREATS ==========
+        function updateThreats() {
+            const scores = BUNDLE.threats.threat_scores.filter(t =>
+                String(t.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!t.context_id || String(t.context_id).toLowerCase() === "nan"))
+            );
+            scores.sort((a, b) => b.mean_score - a.mean_score);
+            const top10 = scores.slice(0, 10);
+
+            if (charts.threatRanking) {
+                charts.threatRanking.data.labels = top10.map(t => t.amenaza);
+                charts.threatRanking.data.datasets[0].data = top10.map(t => t.mean_score.toFixed(2));
+                charts.threatRanking.update();
+            }
+        }
+
+        function updateThreatButtons() {
+            const container = document.getElementById('threat-buttons');
+            const threats = BUNDLE.threats.amenazas.filter(t =>
+                String(t.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!t.context_id || String(t.context_id).toLowerCase() === "nan"))
+            );
+            const uniqueThreats = [...new Set(threats.map(t => t.amenaza))];
+
+            let html = '';
+            const colors = ['bg-blue-100 text-blue-800', 'bg-red-100 text-red-800', 'bg-green-100 text-green-800',
+                'bg-purple-100 text-purple-800', 'bg-yellow-100 text-yellow-800'];
+
+            uniqueThreats.forEach((threat, i) => {
+                html += `<button class="threat-btn ${colors[i % colors.length]} py-1 px-3 rounded-full text-sm" 
+                         data-threat="${threat}" onclick="selectThreat('${threat}')">${threat}</button>`;
+            });
+
+            container.innerHTML = html;
+
+            // Select first threat
+            if (uniqueThreats.length > 0) {
+                selectThreat(uniqueThreats[0]);
+            }
+        }
+
+        function selectThreat(threatName) {
+            // Update button states
+            document.querySelectorAll('.threat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.threat === threatName) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Get threat impacts
+            const threat = BUNDLE.threats.amenazas.find(t =>
+                (String(t.context_id) === String(currentContext) || (BUNDLE.contexts.length === 1 && (!t.context_id || String(t.context_id).toLowerCase() === "nan"))) &&
+                t.amenaza === threatName
+            );
+
+            if (threat && charts.threatRadar) {
+                const impactLabels = ['Económico', 'Alimentario', 'Salud', 'Ambiental', 'Personal', 'Comunitario', 'Político'];
+                const impactKeys = ['i_economia', 'i_alimentaria', 'i_sanitaria', 'i_ambiental',
+                    'i_personal', 'i_comunitaria', 'i_politica'];
+                const impactData = impactKeys.map(k => threat[k] || 0);
+
+                charts.threatRadar.data.labels = impactLabels;
+                charts.threatRadar.data.datasets[0].data = impactData;
+                charts.threatRadar.data.datasets[0].label = threatName;
+                charts.threatRadar.update();
+            }
+        }
+
+        // ========== CONFLICTS ==========
+        function updateConflicts() {
+            const timeline = document.getElementById('conflicts-timeline');
+            const noData = document.getElementById('no-conflicts');
+            const events = BUNDLE.conflicts.events.filter(e =>
+                String(e.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!e.context_id || String(e.context_id).toLowerCase() === "nan"))
+            );
+
+            if (events.length === 0) {
+                timeline.style.display = 'none';
+                noData.style.display = 'block';
+                return;
+            }
+
+            timeline.style.display = 'block';
+            noData.style.display = 'none';
+
+            // Sort by year
+            events.sort((a, b) => (a.ano_evento || 0) - (b.ano_evento || 0));
+
+            let html = '';
+            events.forEach(event => {
+                const year = event.ano_evento || 'Sin fecha';
+                const title = event.evento || 'Evento';
+                const diff = event.diferencias || '';
+                const coop = event.cooperacion || '';
+
+                html += `<div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 class="font-semibold text-md text-gray-800">${year}: ${title}</h4>
+                        ${diff ? `<p class="text-sm text-gray-600">Diferencias: ${diff}</p>` : ''}
+                        ${coop ? `<p class="text-sm text-gray-600">Cooperación: ${coop}</p>` : ''}
+                    </div>
+                </div>`;
+            });
+
+            timeline.innerHTML = html;
+        }
+
+        // ========== ACTORS ==========
+        function updateActors() {
+            updateActorScatterChart();
+            updateActorList();
+        }
+
+        function updateActorScatterChart() {
+            const actors = BUNDLE.actors.filter(a =>
+                String(a.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!a.context_id || String(a.context_id).toLowerCase() === "nan"))
+            );
+
+            // Group by type for different colors
+            const byType = {};
+            actors.forEach(a => {
+                const type = a.tipo_actor || 'Otro';
+                if (!byType[type]) byType[type] = [];
+                byType[type].push({
+                    x: a.interes || 0,
+                    y: a.poder || 0,
+                    name: a.nombre_actor
+                });
+            });
+
+            const colors = ['#34D399', '#FBBF24', '#F87171', '#60A5FA', '#A78BFA', '#F472B6'];
+            const datasets = Object.entries(byType).map(([type, data], i) => ({
+                label: type,
+                data: data,
+                backgroundColor: colors[i % colors.length],
+                pointRadius: 6
+            }));
+
+            if (charts.actorScatter) {
+                charts.actorScatter.data.datasets = datasets;
+                charts.actorScatter.update();
+            }
+        }
+
+        function updateActorList() {
+            const container = document.getElementById('actor-list');
+            const actors = BUNDLE.actors.filter(a =>
+                String(a.context_id) === String(currentContext) ||
+                (BUNDLE.contexts.length === 1 && (!a.context_id || String(a.context_id).toLowerCase() === "nan"))
+            );
+
+            if (actors.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No hay actores registrados para este contexto.</p>';
+                return;
+            }
+
+            let html = '';
+            actors.forEach(actor => {
+                html += `<div class="bg-gray-50 p-2 rounded text-sm">
+                    <span class="font-medium">${actor.nombre_actor}</span>
+                    <span class="text-gray-500 text-xs ml-2">${actor.tipo_actor || ''}</span>
+                    <span class="text-xs text-amber-600 ml-2">P:${actor.poder || 0} I:${actor.interes || 0}</span>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== DIALOGUE ==========
+        function updateDialogue() {
+            const container = document.getElementById('dialogue-spaces');
+            const noData = document.getElementById('no-dialogue');
+            const spaces = BUNDLE.dialogue.spaces.filter(s => s.context_id === currentContext);
+
+            if (spaces.length === 0) {
+                container.style.display = 'none';
+                noData.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            noData.style.display = 'none';
+
+            let html = '';
+            spaces.forEach(space => {
+                html += `<div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800">${space.nombre_espacio}</h4>
+                    ${space.tipo ? `<p class="text-xs text-gray-500">Tipo: ${space.tipo}</p>` : ''}
+                    ${space.funcion ? `<p class="text-xs text-gray-600 mt-1">${space.funcion}</p>` : ''}
+                    ${space.fortalezas ? `<p class="text-xs text-green-600 mt-1">✓ ${space.fortalezas}</p>` : ''}
+                    ${space.debilidades ? `<p class="text-xs text-red-600 mt-1">✗ ${space.debilidades}</p>` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== CHART INITIALIZATION ==========
+        function initCharts() {
+            // Ecosystem Health Donut
+            const healthCtx = document.getElementById('ecosystemHealthChart').getContext('2d');
+            charts.ecosystemHealth = new Chart(healthCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: []
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Seasonality Bar
+            const seasonCtx = document.getElementById('seasonalityChart').getContext('2d');
+            charts.seasonality = new Chart(seasonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 1 } },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Threat Ranking Bar
+            const rankingCtx = document.getElementById('threatRankingChart').getContext('2d');
+            charts.threatRanking = new Chart(rankingCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Severidad',
+                        data: [],
+                        backgroundColor: '#D97706'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true, max: 3 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Threat Radar
+            const radarCtx = document.getElementById('threatRadarChart').getContext('2d');
+            charts.threatRadar = new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [],
+                        fill: true,
+                        backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                        borderColor: 'rgb(217, 119, 6)',
+                        pointBackgroundColor: 'rgb(217, 119, 6)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            suggestedMin: 0,
+                            suggestedMax: 3,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Actor Scatter
+            const scatterCtx = document.getElementById('actorScatterChart').getContext('2d');
+            charts.actorScatter = new Chart(scatterCtx, {
+                type: 'scatter',
+                data: { datasets: [] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Interés →' },
+                            min: 0, max: 10
+                        },
+                        y: {
+                            title: { display: true, text: 'Poder →' },
+                            min: 0, max: 10
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ctx.raw.name || ''
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ========== UPDATE ALL ==========
+        function updateAllSections() {
+            updateKPIs();
+            updateEcosystems();
+            updateLifelinesHeatmap();
+            updateLivelihoodsList();
+            updateThreats();
+            updateConflicts();
+            updateActors();
+            updateDialogue();
+        }
+
+        // Initialize on load
+        window.onload = init;
+    </script>
+</body>
+
+</html>

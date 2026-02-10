@@ -270,6 +270,7 @@ HTML_TEMPLATE = """
         <p><strong>Informe Diagnóstico - Viabilidad, Gobernanza y Riesgo de Conflicto</strong></p>
         
         <div class="metadata">
+            <strong>Organización:</strong> {org_name}<br>
             <strong>Generado:</strong> {timestamp}<br>
             <strong>Archivo de entrada:</strong> {input_file}<br>
             <strong>Alcance del análisis:</strong> Actores, Espacios de Diálogo, Conflictos, Viabilidad
@@ -404,16 +405,16 @@ def generate_executive_summary(
     # Feasibility by grupo
     feas_grupo = metrics.get("FEASIBILITY_BY_GRUPO", pd.DataFrame())
     if not feas_grupo.empty:
-        content += '<h3>🎯 Viabilidad por Zona</h3>'
+        content += '<h3>🎯 Viabilidad por Grupo</h3>'
         cols = [c for c in ["grupo", "feasibility_score", "actor_strength_norm", "dialogue_norm", "conflict_risk_norm"] if c in feas_grupo.columns]
         if cols:
             display = feas_grupo[cols].sort_values("feasibility_score", ascending=False).copy()
-            display.columns = ["Zona (Grupo)", "Indice Viabilidad", "Fortaleza Actores", "Diálogo", "Riesgo Conflicto"][:len(cols)]
+            display.columns = ["Grupo", "Indice Viabilidad", "Fortaleza Actores", "Diálogo", "Riesgo Conflicto"][:len(cols)]
             content += df_to_html(display)
     
     # Feasibility figure
     if "bar_feasibility_by_grupo" in figures:
-        content += embed_image(figures["bar_feasibility_by_grupo"], "Índice de Viabilidad por Zona")
+        content += embed_image(figures["bar_feasibility_by_grupo"], "Índice de Viabilidad por Grupo")
     
     content += '</section>'
     return content
@@ -813,6 +814,7 @@ def generate_report(
     input_path: str,
     warnings: List[str],
     tables: Optional[Dict[str, pd.DataFrame]] = None,
+    org_name: str = "Organización",
 ) -> str:
     """
     Generate complete HTML report.
@@ -823,6 +825,7 @@ def generate_report(
         input_path: Path to input file (for display)
         warnings: List of warning messages
         tables: Optional dict of input tables for QA section
+        org_name: Name of the organization for metadata
         
     Returns:
         Complete HTML report string
@@ -852,6 +855,7 @@ def generate_report(
     input_file = Path(input_path).name
     
     html = HTML_TEMPLATE.format(
+        org_name=org_name,
         timestamp=timestamp,
         input_file=input_file,
         content=content,

@@ -246,6 +246,7 @@ HTML_TEMPLATE = """
         <p><strong>Informe Diagnóstico - ¿Quiénes son los más afectados?</strong></p>
         
         <div class="metadata">
+            <strong>Organización:</strong> {org_name}<br>
             <strong>Generado:</strong> {timestamp}<br>
             <strong>Archivo de entrada:</strong> {input_file}<br>
             <strong>Alcance del Análisis:</strong> Impactos Diferenciados, Barreras de Acceso a Servicios, Brechas de Capacidad
@@ -380,7 +381,7 @@ def generate_executive_summary(
         cols = ["grupo", "EVI", "dif_norm", "bar_norm", "inc_norm", "cap_norm"]
         cols = [c for c in cols if c in evi_by_grupo.columns]
         display = evi_by_grupo[cols].sort_values("EVI", ascending=False).copy()
-        display.columns = ["Zona (Grupo)", "Indice EVI", "Diferenciado (Norm)", "Barreras (Norm)", "Inclusión (Norm)", "Capacidad (Norm)"][:len(cols)]
+        display.columns = ["Grupo", "Indice EVI", "Diferenciado (Norm)", "Barreras (Norm)", "Inclusión (Norm)", "Capacidad (Norm)"][:len(cols)]
         content += df_to_html(display, max_rows=10)
     
     # EVI figure
@@ -477,7 +478,7 @@ def generate_access_section(
         content += '<h3>📈 Tasas de Barreras e Inclusión por Grupo</h3>'
         cols = [c for c in ["grupo", "barriers_rate", "inclusion_rate"] if c in rates.columns]
         display = rates[cols].copy()
-        display.columns = ["Zona (Grupo)", "Tasa de Barreras", "Tasa de Inclusión"][:len(cols)]
+        display.columns = ["Grupo", "Tasa de Barreras", "Tasa de Inclusión"][:len(cols)]
         content += df_to_html(display, max_rows=10)
     
     if not has_data:
@@ -589,6 +590,7 @@ def generate_report(
     figures: Dict[str, str],
     input_path: str,
     tables: Optional[Dict[str, pd.DataFrame]] = None,
+    org_name: str = "Organización",
 ) -> str:
     """
     Generate complete HTML report.
@@ -624,6 +626,7 @@ def generate_report(
     input_file = Path(input_path).name
     
     html = HTML_TEMPLATE.format(
+        org_name=org_name,
         timestamp=timestamp,
         input_file=input_file,
         content=content,

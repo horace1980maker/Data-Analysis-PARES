@@ -187,14 +187,19 @@ def quadrant_priority_vs_risk(
     
     # Merge datasets
     data = priority_df[["mdv_id", "mdv_name", "priority_norm"]].copy()
+    data["mdv_id"] = data["mdv_id"].astype(str)
     
     if not risk_df.empty:
-        data = data.merge(risk_df[["mdv_id", "risk_norm"]], on="mdv_id", how="left")
+        risk_subset = risk_df[["mdv_id", "risk_norm"]].copy()
+        risk_subset["mdv_id"] = risk_subset["mdv_id"].astype(str)
+        data = data.merge(risk_subset, on="mdv_id", how="left")
     else:
         data["risk_norm"] = 0.5
     
     if not capacity_df.empty:
-        data = data.merge(capacity_df[["mdv_id", "cap_gap_norm"]], on="mdv_id", how="left")
+        cap_subset = capacity_df[["mdv_id", "cap_gap_norm"]].copy()
+        cap_subset["mdv_id"] = cap_subset["mdv_id"].astype(str)
+        data = data.merge(cap_subset, on="mdv_id", how="left")
     else:
         data["cap_gap_norm"] = 0.5
     

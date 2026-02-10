@@ -299,6 +299,7 @@ HTML_TEMPLATE = """
         <p><strong>Informe Diagnóstico - Análisis de Prioridad Basado en Evidencia</strong></p>
         
         <div class="metadata">
+            <strong>Organización:</strong> {org_name}<br>
             <strong>Generado:</strong> {generation_time}<br>
             <strong>Archivo de Entrada:</strong> {input_file}<br>
             <strong>Alcance del Análisis:</strong> General + Por Grupo
@@ -416,7 +417,7 @@ def generate_executive_summary(
     # Top livelihoods by grupo
     rankings_group = tables.get("rankings_by_group_balanced", pd.DataFrame())
     if not rankings_group.empty and "grupo" in rankings_group.columns:
-        sections.append('<h3>🗺️ Medios de Vida de Máxima Prioridad por Zona (Grupo)</h3>')
+        sections.append('<h3>🗺️ Medios de Vida de Máxima Prioridad por Grupo</h3>')
         for grupo in rankings_group["grupo"].dropna().unique():
             grupo_data = rankings_group[rankings_group["grupo"] == grupo].head(3)
             if not grupo_data.empty:
@@ -457,12 +458,11 @@ def generate_priority_section(tables: Dict[str, pd.DataFrame]) -> str:
     sections.append('<h2>2. Análisis de Prioridad</h2>')
     sections.append('<p>Los puntajes de prioridad se derivan de TIDY_3_2_PRIORIZACION, midiendo la importancia del medio de vida a través de múltiples dimensiones.</p>')
     
-    # Explanation of dual views
     sections.append('''
     <div class="info-box" style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #1976d2;">
-        <h4 style="margin-top: 0; color: #1565c0;">📊 Dos Vistas para Comparación</h4>
+        <h4 style="margin-top: 0; color: #1565c0;">&#128202; Dos Vistas para Comparación</h4>
         <ul style="margin-bottom: 0;">
-            <li><strong>Ranking de Campo</strong>: Utiliza los puntajes brutos de <code>i_total</code> calculados durante el taller, clasificados dentro de cada zona. Esto respeta la metodología participativa.</li>
+            <li><strong>Ranking de Campo</strong>: Utiliza los puntajes brutos de <code>i_total</code> calculados durante el taller, clasificados dentro de cada grupo. Esto respeta la metodología participativa.</li>
             <li><strong>Promedio Analítico</strong>: Agrega los puntajes a través de contextos utilizando la media, permitiendo comparaciones en todo el paisaje.</li>
         </ul>
     </div>
@@ -472,11 +472,11 @@ def generate_priority_section(tables: Dict[str, pd.DataFrame]) -> str:
     # FIELD-STYLE RANKING: How each zone ranked their livelihoods
     # -------------------------------------------------------------------------
     field_ranking = tables.get("priority_field_ranking", pd.DataFrame())
+    sections.append('<h3>🌍 Ranking de Campo por Grupo</h3>')
+    sections.append('<p><em>Muestra cómo cada grupo clasificó sus medios de vida basándose en los puntajes i_total durante el taller.</em></p>')
+    
+    # Create side-by-side tables for each grupo
     if not field_ranking.empty and "grupo" in field_ranking.columns:
-        sections.append('<h3>🌍 Ranking de Campo por Zona</h3>')
-        sections.append('<p><em>Muestra cómo cada zona clasificó sus medios de vida basándose en los puntajes i_total durante el taller.</em></p>')
-        
-        # Create side-by-side tables for each grupo
         sections.append('<div class="comparison-grid" style="display: flex; flex-wrap: wrap; gap: 20px;">')
         
         for grupo in sorted(field_ranking["grupo"].dropna().unique()):
@@ -515,7 +515,7 @@ def generate_priority_section(tables: Dict[str, pd.DataFrame]) -> str:
     # By grupo (mean view)
     priority_group = tables.get("priority_by_mdv_group", pd.DataFrame())
     if not priority_group.empty and "grupo" in priority_group.columns:
-        sections.append('<h3>Promedio por Zona (para cálculo del IPA)</h3>')
+        sections.append('<h3>Promedio por Grupo (para cálculo del IPA)</h3>')
         sections.append('<p><em>Estos valores promedio se utilizan en el cálculo del Índice de Prioridad de Acción (IPA).</em></p>')
         
         sections.append('<div style="display: flex; flex-wrap: wrap; gap: 15px;">')
@@ -565,7 +565,7 @@ def generate_threat_section(tables: Dict[str, pd.DataFrame]) -> str:
     # By grupo
     threats_group = tables.get("threats_by_group", pd.DataFrame())
     if not threats_group.empty and "grupo" in threats_group.columns:
-        sections.append('<h3>Principales Amenazas por Zona</h3>')
+        sections.append('<h3>Principales Amenazas por Grupo</h3>')
         for grupo in sorted(threats_group["grupo"].dropna().unique()):
             grupo_data = threats_group[threats_group["grupo"] == grupo].nlargest(5, "mean_suma")
             if not grupo_data.empty:
@@ -702,7 +702,7 @@ def generate_visualizations_section(figures: Dict[str, str]) -> str:
     figure_titles = {
         "quadrant_priority_risk": "Análisis de Cuadrante: Prioridad vs Riesgo",
         "bar_threats_overall": "Principales Amenazas por Severidad (General)",
-        "bar_threats_by_group": "Principales Amenazas por Zona",
+        "bar_threats_by_group": "Principales Amenazas por Grupo",
     }
     
     for fig_name, fig_path in figures.items():
@@ -725,7 +725,7 @@ def generate_visualizations_section(figures: Dict[str, str]) -> str:
                 "livelihood_first": "Escenario Medio de Vida Primero",
                 "risk_first": "Escenario Riesgo Primero"
             }
-            title = f"Principales Medios de Vida por IPA por Zona ({scenario_map.get(scenario, scenario)})"
+            title = f"Principales Medios de Vida por IPA por Grupo ({scenario_map.get(scenario, scenario)})"
         else:
             title = figure_titles.get(fig_name, fig_name.replace("_", " ").title())
         
@@ -781,6 +781,7 @@ def generate_report(
     figures: Dict[str, str],
     input_path: str,
     warnings: List[str],
+    org_name: str = "Organización",
 ) -> str:
     """
     Generate the complete HTML diagnostic report.
@@ -790,6 +791,7 @@ def generate_report(
         figures: Dict of figure name -> file path
         input_path: Path to input workbook
         warnings: List of warning messages
+        org_name: Name of the organization for metadata
         
     Returns:
         HTML string
@@ -818,6 +820,7 @@ def generate_report(
     
     # Fill template
     html = HTML_TEMPLATE.format(
+        org_name=org_name,
         generation_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         input_file=Path(input_path).name,
         abbreviations_section=generate_abbreviations_section(),

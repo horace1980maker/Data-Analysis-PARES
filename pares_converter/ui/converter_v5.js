@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("%c PARES CONVERTER v5.0 LOADED ", "background: #2ecc71; color: #fff; font-weight: bold; padding: 4px; border-radius: 4px;");
+
     // ==== CONVERTER ====
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.files.length) handleFile(e.target.files[0]);
     });
 
-    function handleFile(file) {
+    async function handleFile(file) {
         if (!file.name.endsWith('.xlsx')) {
             showToast('Please upload an Excel file (.xlsx)', 'error');
             return;
@@ -55,10 +57,89 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedFile = file;
         fileName.textContent = file.name;
         fileInfo.style.display = 'flex';
-        convertBtn.disabled = false;
         resultCard.style.display = 'none';
-        showToast(`File selected: ${file.name}`, 'success');
+
+        // Run diagnostics automatically
+        const apiUrl = document.getElementById('api-url').value.replace(/\/$/, '');
+        showToast(`Analizando archivo: ${file.name}...`, 'info');
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('lang', 'es');
+
+        try {
+            const response = await fetch(`${apiUrl}/diagnose`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.error_count > 0 || data.warning_count > 0) {
+                showDiagnosticResults(data);
+                if (data.error_count > 0) {
+                    showToast(`⚠️ Se encontraron ${data.error_count} errores que deben corregirse`, 'error');
+                    convertBtn.disabled = true;
+                } else {
+                    showToast(`✓ Archivo listo con ${data.warning_count} advertencias`, 'warning');
+                    convertBtn.disabled = false;
+                }
+            } else {
+                clearDiagnosticResults();
+                showToast(`✓ Archivo válido: ${file.name}`, 'success');
+                convertBtn.disabled = false;
+            }
+        } catch (e) {
+            console.error('Diagnostic error:', e);
+            // If diagnostics fail, still allow conversion attempt
+            convertBtn.disabled = false;
+            showToast(`Archivo seleccionado: ${file.name}`, 'success');
+        }
     }
+
+    function showDiagnosticResults(data) {
+        let container = document.getElementById('diagnostic-results');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'diagnostic-results';
+            container.style.cssText = 'margin-top:20px;padding:15px;background:#fff;border-radius:8px;border:1px solid #ddd;color:#333;';
+            // Insert after convert button
+            if (resultCard && resultCard.parentNode) {
+                resultCard.parentNode.insertBefore(container, resultCard);
+            }
+        }
+
+        let html = `<h3 style="margin:0 0 15px 0;color:#333;">📋 Diagnóstico del Archivo</h3>`;
+
+        if (data.errors && data.errors.length > 0) {
+            html += `<div style="margin-bottom:15px;"><strong style="color:#d32f2f;">❌ Errores (${data.errors.length})</strong>`;
+            html += `<table style="width:100%;margin-top:10px;border-collapse:collapse;font-size:0.9em;color:#333;">`;
+            html += `<tr style="background:#ffebee;"><th style="padding:8px;text-align:left;border:1px solid #ffcdd2;color:#b71c1c;">Hoja</th><th style="padding:8px;text-align:left;border:1px solid #ffcdd2;color:#b71c1c;">Problema</th><th style="padding:8px;text-align:left;border:1px solid #ffcdd2;color:#b71c1c;">Solución</th></tr>`;
+            for (const e of data.errors) {
+                html += `<tr><td style="padding:8px;border:1px solid #ffcdd2;color:#333;">${e.sheet || '-'}</td><td style="padding:8px;border:1px solid #ffcdd2;color:#333;">${e.description}</td><td style="padding:8px;border:1px solid #ffcdd2;color:#333;">${e.suggested_fix}</td></tr>`;
+            }
+            html += `</table></div>`;
+        }
+
+        if (data.warnings && data.warnings.length > 0) {
+            html += `<div><strong style="color:#f57c00;">⚠️ Advertencias (${data.warnings.length})</strong>`;
+            html += `<table style="width:100%;margin-top:10px;border-collapse:collapse;font-size:0.9em;color:#333;">`;
+            html += `<tr style="background:#fff8e1;"><th style="padding:8px;text-align:left;border:1px solid #ffecb3;color:#e65100;">Hoja</th><th style="padding:8px;text-align:left;border:1px solid #ffecb3;color:#e65100;">Problema</th><th style="padding:8px;text-align:left;border:1px solid #ffecb3;color:#e65100;">Solución</th></tr>`;
+            for (const w of data.warnings) {
+                html += `<tr><td style="padding:8px;border:1px solid #ffecb3;color:#333;">${w.sheet || '-'}</td><td style="padding:8px;border:1px solid #ffecb3;color:#333;">${w.description}</td><td style="padding:8px;border:1px solid #ffecb3;color:#333;">${w.suggested_fix}</td></tr>`;
+            }
+            html += `</table></div>`;
+        }
+
+        container.innerHTML = html;
+        container.style.display = 'block';
+    }
+
+    function clearDiagnosticResults() {
+        const container = document.getElementById('diagnostic-results');
+        if (container) container.style.display = 'none';
+    }
+
 
     removeFile.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -167,8 +248,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) {
             container = document.createElement('div');
             container.id = 'validation-errors';
-            // Insert after convert button container
-            convertBtn.parentNode.parentNode.insertBefore(container, resultCard);
+            // Insert before resultCard using its parent
+            if (resultCard && resultCard.parentNode) {
+                resultCard.parentNode.insertBefore(container, resultCard);
+            } else {
+                console.warn("resultCard or parent not found, appending to main");
+                const main = document.querySelector('main');
+                if (main) main.appendChild(container);
+                else document.body.appendChild(container);
+            }
             // Apply base styles
             container.style.marginTop = '20px';
             container.style.padding = '15px';
@@ -211,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         table.appendChild(tbody);
 
+        table.style.color = '#333';
         container.appendChild(table);
         container.style.display = 'block';
     }
@@ -220,7 +309,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) {
             container = document.createElement('div');
             container.id = 'validation-errors';
-            convertBtn.parentNode.parentNode.insertBefore(container, resultCard);
+            // Insert before resultCard using its parent
+            if (resultCard && resultCard.parentNode) {
+                resultCard.parentNode.insertBefore(container, resultCard);
+            } else {
+                document.querySelector('main').appendChild(container);
+            }
             container.style.marginTop = '20px';
             container.style.padding = '15px';
             container.style.background = '#fff0f0';

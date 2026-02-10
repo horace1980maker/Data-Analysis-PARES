@@ -380,6 +380,7 @@ HTML_TEMPLATE = """
         <p><strong>Portafolio de Acciones SbN + Plan de Monitoreo</strong></p>
         
         <div class="metadata">
+            <strong>Organización:</strong> {org_name}<br>
             <strong>Generado:</strong> {timestamp}<br>
             <strong>Archivo de entrada:</strong> {input_path}<br>
             <strong>Alcance del Análisis:</strong> Portafolio SbN, Priorización (Do Now/Next/Later), Plan de Monitoreo, Cobertura de Datos
@@ -636,7 +637,7 @@ def generate_bundle_details(
         
         # Grupo
         html += '<div class="detail-item">'
-        html += '<div class="detail-label">Zona (Grupo)</div>'
+        html += '<div class="detail-label">Grupo</div>'
         html += f'<div>{row.get("grupo", "TODOS")}</div>'
         html += '</div>'
         
@@ -685,8 +686,10 @@ def generate_monitoring_plan_section(
     if not indicators.empty:
         for _, row in indicators.iterrows():
             ind_type = row.get("indicator_type", "OUTPUT")
+            if pd.isna(ind_type):
+                ind_type = "OUTPUT"
             type_display = INDICATOR_TYPE_NAMES.get(ind_type, ind_type)
-            type_class = f"type-{ind_type.lower()}"
+            type_class = f"type-{str(ind_type).lower()}"
             
             html += '<div class="indicator-card">'
             html += f'<span class="indicator-type {type_class}">{type_display}</span>'
@@ -799,6 +802,7 @@ def generate_report(
     input_path: str,
     warnings: List[str],
     tables: Dict[str, pd.DataFrame],
+    org_name: str = "Organización",
 ) -> str:
     """
     Generate the complete HTML report.
@@ -810,6 +814,7 @@ def generate_report(
         input_path: Path to input file
         warnings: List of warning messages
         tables: Raw input tables (for QA)
+        org_name: Name of the organization for metadata
         
     Returns:
         Complete HTML report string
@@ -825,6 +830,7 @@ def generate_report(
     
     # Fill template
     html = HTML_TEMPLATE.format(
+        org_name=org_name,
         timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         input_path=input_path,
         content=content,

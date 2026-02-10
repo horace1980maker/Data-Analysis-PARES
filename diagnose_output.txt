@@ -1,0 +1,14 @@
+=== ECO_SM vs OK FILE DIAGNOSIS ===
+
+
+=== 3.1. Lluvia MdV&SE ===
+ECO_SM columns: [datetime.datetime(2025, 6, 5, 0, 0), 'admin0', 'paisaje', 'grupo', 'elemento_SES', 'nombre', 'uso_fin_mdv']
+OK columns: ['fecha', 'admin0', 'paisaje', 'grupo', 'elemento_SES', 'nombre', 'uso_fin_mdv']
+
+=== 3.2. Priorización ===
+ECO_SM columns: ['fecha', 'admin0', 'paisaje', 'grupo', 'mdv ', 'producto_principal', 'i_seg_alim', 'i_area']
+OK columns: ['fecha', 'admin0', 'paisaje', 'grupo', 'mdv ', 'producto_principal', 'i_seg_alim', 'i_area']
+
+=== 4.1. Amenazas ===
+ECO_SM (as '4.1. Amenazas '): ['fecha', 'admin0', 'paisaje', 'grupo', 'tipo_amenaza', 'amenaza', 'magnitud', 'frequencia']
+OK columns: ['fecha', 'admin0', 'paisaje', 'grupo', 'tipo_amenaza', 'amenaza', 'magnitud', 'frequencia']
