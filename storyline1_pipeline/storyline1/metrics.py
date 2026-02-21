@@ -417,6 +417,7 @@ def capacity_metrics(
     tidy_respondents: pd.DataFrame,
     tidy_responses: pd.DataFrame,
     lookup_questions: pd.DataFrame,
+    tidy_capacity: pd.DataFrame = None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Compute adaptive capacity metrics from survey responses.
@@ -425,6 +426,7 @@ def capacity_metrics(
         tidy_respondents: TIDY_7_1_RESPONDENTS with respondent_id, mdv_id, grupo, etc.
         tidy_responses: TIDY_7_1_RESPONSES with response_id, respondent_id, question_id, response_raw
         lookup_questions: LOOKUP_CA_QUESTIONS with question_id, question_text
+        tidy_capacity: Optional TIDY_7_1_CAPACITY (aggregated format) with mdv_id, mdv_name, indicator, score
         
     Returns:
         Tuple of:
@@ -440,6 +442,41 @@ def capacity_metrics(
         "question_id", "question_text", "mean_response_0_1", "n_responses"
     ])
     
+    # =========================================================================
+    # PATH A: AGGREGATED DATA (TIDY_7_1_CAPACITY)
+    # =========================================================================
+    if tidy_capacity is not None and not tidy_capacity.empty:
+        logger.info("Using aggregated capacity data (TIDY_7_1_CAPACITY)")
+        df = tidy_capacity.copy()
+        
+        # Normalize score: input 1-5 -> output 0-1
+        vals = pd.to_numeric(df["score"], errors="coerce")
+        df["response_0_1"] = ((vals - 1) / 4).clip(0, 1)
+        
+        # MdV Overall
+        cap_by_mdv = df.groupby(["mdv_id", "mdv_name"], dropna=False).agg({
+            "response_0_1": ["mean", "count"]
+        }).reset_index()
+        cap_by_mdv.columns = ["mdv_id", "mdv_name", "mean_response_0_1", "n_responses"]
+        if not cap_by_mdv.empty:
+            cap_by_mdv["capacity_gap"] = 1 - cap_by_mdv["mean_response_0_1"]
+            cap_by_mdv["cap_gap_norm"] = minmax(cap_by_mdv["capacity_gap"])
+        
+        # Questions Overall - use indicator as question_id
+        cap_questions = df.groupby(["indicator"], dropna=False).agg({
+            "response_0_1": ["mean", "count"]
+        }).reset_index()
+        cap_questions.columns = ["question_id", "mean_response_0_1", "n_responses"]
+        cap_questions["question_text"] = cap_questions["question_id"]
+        cap_questions = cap_questions.sort_values("mean_response_0_1", ascending=True)
+        
+        # By Group tables - not available in aggregated format
+        logger.info(f"Aggregated capacity: {len(cap_by_mdv)} MdV, {len(cap_questions)} indicators")
+        return cap_by_mdv, empty_mdv.copy(), cap_questions, empty_questions.copy()
+    
+    # =========================================================================
+    # PATH B: INDIVIDUAL RESPONSES (Legacy)
+    # =========================================================================
     if tidy_responses.empty or tidy_respondents.empty:
         logger.warning("Empty survey data, returning empty capacity metrics")
         return empty_mdv, empty_mdv.copy(), empty_questions, empty_questions.copy()
@@ -846,6 +883,7 @@ def compute_all_metrics(
         tables.get("TIDY_7_1_RESPONDENTS", pd.DataFrame()),
         tables.get("TIDY_7_1_RESPONSES", pd.DataFrame()),
         tables.get("LOOKUP_CA_QUESTIONS", pd.DataFrame()),
+        tables.get("TIDY_7_1_CAPACITY"),
     )
     results["capacity_overall_by_mdv"] = cap_overall
     results["capacity_by_group_by_mdv"] = cap_by_group

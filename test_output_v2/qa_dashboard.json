@@ -1,0 +1,18 @@
+{
+  "missing_optional": [],
+  "available_sheets": [
+    "LOOKUP_CONTEXT",
+    "LOOKUP_GEO",
+    "TIDY_3_5_SE_MDV",
+    "TIDY_3_5_SE_MONTHS",
+    "TIDY_4_1_AMENAZAS",
+    "TIDY_4_2_1_AMENAZA_MDV",
+    "TIDY_5_1_ACTORES",
+    "TIDY_3_4_ECOSISTEMAS",
+    "TIDY_6_1_CONFLICT_EVENTS",
+    "TIDY_5_2_DIALOGO",
+    "TIDY_7_1_RESPONDENTS",
+    "TIDY_7_1_RESPONSES"
+  ],
+  "data_quality_notes": []
+}

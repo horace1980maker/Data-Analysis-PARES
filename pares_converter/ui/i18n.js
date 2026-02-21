@@ -146,41 +146,73 @@ const translations = {
         en: 'Where to Act First?',
         es: '¿Dónde Actuar Primero?'
     },
-    'storyline.1.desc': {
-        en: 'Priority analysis for SbN/adaptation actions',
-        es: 'Análisis de priorización para acciones SbN/adaptación'
+    'storyline.1.desc.analyzer': {
+        en: 'Priority analysis and metrics for SbN/adaptation actions',
+        es: 'Análisis técnico de priorización y métricas para acciones SbN'
+    },
+    'storyline.1.desc.narrative': {
+        en: 'Narrative interpreted report with actionable insights',
+        es: 'Informe narrativo interpretado con recomendaciones de acción'
     },
     'storyline.2.title': {
         en: 'Ecosystem-Service Lifelines',
-        es: 'Líneas críticas de servicios ecosistémicos para los medios de vida'
+        es: 'Líneas Críticas de Servicios Ecosistémicos'
     },
-    'storyline.2.desc': {
-        en: 'Critical services and ecosystem leverage points',
-        es: 'Servicios críticos y puntos de apalancamiento ecosistémico'
+    'storyline.2.desc.analyzer': {
+        en: 'Connectivity, leverage (ELI) and criticality metrics',
+        es: 'Análisis técnico de conectividad, apalancamiento (ELI) y criticidad'
+    },
+    'storyline.2.desc.narrative': {
+        en: 'Narrative analysis of ecosystem leverage and criticality',
+        es: 'Análisis narrativo de apalancamiento ecosistémico y criticidad'
     },
     'storyline.3.title': {
         en: 'Equity & Vulnerability',
         es: 'Equidad y Vulnerabilidad'
     },
-    'storyline.3.desc': {
-        en: 'Differentiated impacts and inclusion analysis',
-        es: 'Impactos diferenciados y análisis de inclusión'
+    'storyline.3.desc.analyzer': {
+        en: 'Differentiated impacts and quantitative inclusion metrics',
+        es: 'Análisis técnico de impactos diferenciados y métricas de inclusión'
+    },
+    'storyline.3.desc.narrative': {
+        en: 'Narrative report on differentiated impacts and barriers',
+        es: 'Informe narrativo sobre impactos diferenciados y barreras'
     },
     'storyline.4.title': {
         en: 'Feasibility & Governance',
         es: 'Factibilidad y Gobernanza'
     },
-    'storyline.4.desc': {
-        en: 'Actor networks and conflict dynamics',
-        es: 'Redes de actores y dinámicas de conflicto'
+    'storyline.4.desc.analyzer': {
+        en: 'Actor networks and conflict dynamics analysis',
+        es: 'Análisis técnico de redes de actores y dinámicas de conflicto'
+    },
+    'storyline.4.desc.narrative': {
+        en: 'Narrative report on governance and conflict risks',
+        es: 'Informe narrativo sobre gobernanza y riesgos de conflicto'
     },
     'storyline.5.title': {
         en: 'SbN Portfolio Design',
         es: 'Diseño de Portafolio SbN'
     },
-    'storyline.5.desc': {
-        en: 'Synthesize findings into recommendations',
-        es: 'Sintetizar hallazgos en recomendaciones'
+    'storyline.5.desc.analyzer': {
+        en: 'Synthesis of findings and technical recommendations',
+        es: 'Síntesis técnica de hallazgos y recomendaciones'
+    },
+    'storyline.5.desc.narrative': {
+        en: 'Roadmap and narrative strategy for SbN implementation',
+        es: 'Hoja de ruta y estrategia narrativa para implementación SbN'
+    },
+    'storyline.6.title': {
+        en: 'Adaptive Capacity',
+        es: 'Capacidad Adaptativa'
+    },
+    'storyline.6.desc.analyzer': {
+        en: 'Resilience, equity and barriers metrics in livelihoods',
+        es: 'Métricas de resiliencia, equidad y barreras en medios de vida'
+    },
+    'storyline.6.desc.narrative': {
+        en: 'Involvement report on adaptive capacity and empowerment',
+        es: 'Informe narrativo sobre capacidad adaptativa y empoderamiento'
     },
     'storyline.status.available': {
         en: 'Available',
@@ -249,6 +281,10 @@ const translations = {
     'results.download.report': {
         en: '📄 Download Report',
         es: '📄 Descargar Reporte'
+    },
+    'results.download.html': {
+        en: '💾 Download HTML',
+        es: '💾 Descargar HTML'
     },
     'results.download.all': {
         en: '📦 Download All',

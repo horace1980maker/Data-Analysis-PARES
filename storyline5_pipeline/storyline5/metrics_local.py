@@ -211,24 +211,43 @@ def compute_API_mdv(
         logger.warning("Could not compute risk (missing TIDY_4_2_1_AMENAZA_MDV)")
     
     # --- CAPACITY GAP from surveys ---
-    responses_df = tables.get("TIDY_7_1_RESPONSES", pd.DataFrame())
     capacity_by_mdv = pd.DataFrame()
+    mdv_id_col_cap = None
     
-    if not responses_df.empty:
-        responses_df = responses_df.copy()
-        mdv_id_col_cap = pick_first_existing_col(responses_df, MDV_ID_CANDIDATES)
+    # PATH A: aggregated capacity data
+    cap_agg_df = tables.get("TIDY_7_1_CAPACITY", pd.DataFrame())
+    if not cap_agg_df.empty and "score" in cap_agg_df.columns:
+        logger.info("Using aggregated capacity data (TIDY_7_1_CAPACITY) for API")
+        df_cap = cap_agg_df.copy()
+        vals = pd.to_numeric(df_cap["score"], errors="coerce")
+        df_cap["response_0_1"] = ((vals - 1) / 4).clip(0, 1)
         
-        if mdv_id_col_cap and "response" in responses_df.columns:
-            responses_df["response_numeric"] = pd.to_numeric(responses_df["response"], errors="coerce")
-            responses_df["response_0_1"] = minmax(responses_df["response_numeric"])
-            
-            capacity_by_mdv = responses_df.groupby(mdv_id_col_cap, as_index=False).agg(
+        mdv_id_col_cap = pick_first_existing_col(df_cap, MDV_ID_CANDIDATES)
+        if mdv_id_col_cap:
+            capacity_by_mdv = df_cap.groupby(mdv_id_col_cap, as_index=False).agg(
                 mean_response=("response_0_1", "mean")
             )
             capacity_by_mdv["capacity_gap"] = 1 - capacity_by_mdv["mean_response"].fillna(0.5)
-            logger.info(f"Computed capacity gap for {len(capacity_by_mdv)} MdV")
-    else:
-        logger.debug("Survey responses not available, using default capacity gap")
+            logger.info(f"Computed capacity gap for {len(capacity_by_mdv)} MdV (aggregated)")
+    
+    # PATH B: individual responses (legacy)
+    if capacity_by_mdv.empty:
+        responses_df = tables.get("TIDY_7_1_RESPONSES", pd.DataFrame())
+        if not responses_df.empty:
+            responses_df = responses_df.copy()
+            mdv_id_col_cap = pick_first_existing_col(responses_df, MDV_ID_CANDIDATES)
+            
+            if mdv_id_col_cap and "response" in responses_df.columns:
+                responses_df["response_numeric"] = pd.to_numeric(responses_df["response"], errors="coerce")
+                responses_df["response_0_1"] = minmax(responses_df["response_numeric"])
+                
+                capacity_by_mdv = responses_df.groupby(mdv_id_col_cap, as_index=False).agg(
+                    mean_response=("response_0_1", "mean")
+                )
+                capacity_by_mdv["capacity_gap"] = 1 - capacity_by_mdv["mean_response"].fillna(0.5)
+                logger.info(f"Computed capacity gap for {len(capacity_by_mdv)} MdV")
+        else:
+            logger.debug("Survey responses not available, using default capacity gap")
     
     # --- Combine into impact potential ---
     # Start with priority or risk as base (preference: priority)
@@ -613,23 +632,35 @@ def compute_EVI(
                 }])
     
     # --- Capacity gap from surveys ---
-    responses_df = tables.get("TIDY_7_1_RESPONSES", pd.DataFrame())
     capacity_stats = pd.DataFrame()
     
-    if not responses_df.empty and "response" in responses_df.columns:
-        responses_df = attach_geo(responses_df, dim_context_geo)
-        responses_df["response_numeric"] = pd.to_numeric(responses_df["response"], errors="coerce")
-        responses_df["response_0_1"] = minmax(responses_df["response_numeric"])
-        
-        if GRUPO_COL in responses_df.columns:
-            capacity_stats = responses_df.groupby(GRUPO_COL, as_index=False).agg(
-                capacity_mean=("response_0_1", "mean")
-            )
-            capacity_stats["capacity_gap"] = 1 - capacity_stats["capacity_mean"].fillna(0.5)
-        else:
-            capacity_stats = pd.DataFrame([{
-                "capacity_gap": 1 - responses_df["response_0_1"].mean() if not responses_df["response_0_1"].isna().all() else 0.5
-            }])
+    # PATH A: aggregated capacity data
+    cap_agg_df = tables.get("TIDY_7_1_CAPACITY", pd.DataFrame())
+    if not cap_agg_df.empty and "score" in cap_agg_df.columns:
+        logger.info("Using aggregated capacity data (TIDY_7_1_CAPACITY) for EVI")
+        df_cap = cap_agg_df.copy()
+        vals = pd.to_numeric(df_cap["score"], errors="coerce")
+        df_cap["response_0_1"] = ((vals - 1) / 4).clip(0, 1)
+        overall_gap = 1.0 - df_cap["response_0_1"].mean()
+        capacity_stats = pd.DataFrame([{"capacity_gap": overall_gap}])
+    
+    # PATH B: individual responses (legacy)
+    if capacity_stats.empty:
+        responses_df = tables.get("TIDY_7_1_RESPONSES", pd.DataFrame())
+        if not responses_df.empty and "response" in responses_df.columns:
+            responses_df = attach_geo(responses_df, dim_context_geo)
+            responses_df["response_numeric"] = pd.to_numeric(responses_df["response"], errors="coerce")
+            responses_df["response_0_1"] = minmax(responses_df["response_numeric"])
+            
+            if GRUPO_COL in responses_df.columns:
+                capacity_stats = responses_df.groupby(GRUPO_COL, as_index=False).agg(
+                    capacity_mean=("response_0_1", "mean")
+                )
+                capacity_stats["capacity_gap"] = 1 - capacity_stats["capacity_mean"].fillna(0.5)
+            else:
+                capacity_stats = pd.DataFrame([{
+                    "capacity_gap": 1 - responses_df["response_0_1"].mean() if not responses_df["response_0_1"].isna().all() else 0.5
+                }])
     
     # --- Combine into EVI ---
     # Use diff_stats as base if available, otherwise barriers_stats

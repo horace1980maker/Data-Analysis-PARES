@@ -149,31 +149,42 @@ document.addEventListener('DOMContentLoaded', () => {
     analyzeBtn.addEventListener('click', async () => {
         if (!analyzerSelectedFile) return;
 
-        const storylineEndpoints = {
-            1: '/analyze/storyline1',
-            2: '/analyze/storyline2',
-            3: '/analyze/storyline3',
-            4: '/analyze/storyline4',
-            5: '/analyze/storyline5'
-        };
-        const storylineNames = {
-            1: 'Storyline 1',
-            2: 'Storyline 2',
-            3: 'Storyline 3',
-            4: 'Storyline 4',
-            5: 'Storyline 5'
-        };
-        const endpoint = storylineEndpoints[selectedStoryline] || '/analyze/storyline1';
-        const storylineName = storylineNames[selectedStoryline] || 'Storyline 1';
+        showToast('Running Analysis V3...', 'info');
 
-        // DEBUG: Log which storyline is being called
-        console.log('Selected Storyline:', selectedStoryline);
-        console.log('Endpoint:', endpoint);
-        console.log('Storyline Name:', storylineName);
+        // FORCE CAST TO NUMBER TO BE ABSOLUTELY SURE
+        const currentStoryline = parseInt(selectedStoryline);
+
+        if (currentStoryline === 1) {
+            endpoint = '/analyze/storyline1';
+            storylineName = 'Storyline 1';
+        } else if (currentStoryline === 2) {
+            endpoint = '/analyze/storyline2';
+            storylineName = 'Storyline 2';
+        } else if (currentStoryline === 3) {
+            endpoint = '/analyze/storyline3';
+            storylineName = 'Storyline 3';
+        } else if (currentStoryline === 4) {
+            endpoint = '/analyze/storyline4';
+            storylineName = 'Storyline 4';
+        } else if (currentStoryline === 5) {
+            endpoint = '/analyze/storyline5';
+            storylineName = 'Storyline 5';
+        } else if (currentStoryline === 6) {
+            endpoint = '/analyze/capacity';
+            storylineName = 'Capacidad Adaptativa';
+        }
+
+        console.log('!!! ANALYZER V3 RUNNING !!!');
+        console.log('!!! RAW selectedStoryline:', selectedStoryline);
+        console.log('!!! PARSED currentStoryline:', currentStoryline);
+        console.log('!!! FINAL ENDPOINT:', endpoint);
 
         const topN = document.getElementById('top-n').value;
         const includeFigures = document.getElementById('include-figures').checked;
         const includeReport = document.getElementById('include-report').checked;
+
+        // Clear previous results
+        analysisResults = { xlsx: null, report: null, zip: null };
 
         setLoading(analyzeBtn, true);
         analysisProgress.style.display = 'block';
@@ -262,11 +273,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('download-report-btn').addEventListener('click', () => {
         if (analysisResults.report) {
-            const prefix = `storyline${selectedStoryline}`;
-            downloadBlob(analysisResults.report, `${prefix}_report.html`);
-            showToast('Downloading HTML report...', 'success');
+            const url = window.URL.createObjectURL(analysisResults.report);
+            window.open(url, '_blank');
         } else {
             showToast('Report not available', 'error');
+        }
+    });
+
+    document.getElementById('download-html-btn').addEventListener('click', () => {
+        console.log('[ANALYZER] Download HTML clicked, report blob:', analysisResults.report);
+        if (analysisResults.report) {
+            const prefix = `storyline${selectedStoryline}`;
+            const timestamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15);
+            downloadBlob(analysisResults.report, `${prefix}_report_${timestamp}.html`);
+            showToast('Descargando informe HTML...', 'success');
+        } else {
+            console.warn('[ANALYZER] Report blob is null/undefined');
+            showToast('Informe no disponible', 'error');
         }
     });
 
@@ -313,14 +336,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function downloadBlob(blob, filename) {
+        console.log('[ANALYZER] downloadBlob called:', filename, 'size:', blob?.size);
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
+        a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+        // Delay cleanup to ensure download starts
+        setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }, 1000);
     }
 
     function base64ToBlob(base64, mimeType) {

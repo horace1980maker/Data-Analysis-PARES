@@ -1,0 +1,21 @@
+grupo,amenaza_id,tipo_amenaza,amenaza,se_key,sum_pressure,mean_pressure,n_rows,pressure_norm
+Amarillo,045e2f706ad83acd,no-climática,Deforestacion ,P1,15.0,15.0,1,1.0
+Amarillo,045e2f706ad83acd,no-climática,Deforestacion ,P3,15.0,15.0,1,1.0
+Amarillo,385b4e71c08c156a,climática,Tormenta,P1,14.0,14.0,1,0.5
+Amarillo,385b4e71c08c156a,climática,Tormenta,P3,14.0,14.0,1,0.5
+Amarillo,39d789daa476857a,climática,Sequia ,P1,13.0,13.0,1,0.0
+Amarillo,39d789daa476857a,climática,Sequia ,P3,13.0,13.0,1,0.0
+Amarillo,5ca74b4bf572ee0f,no-climática,Contaminacion por agroquimicos ,P1,15.0,15.0,1,1.0
+Amarillo,5ca74b4bf572ee0f,no-climática,Contaminacion por agroquimicos ,P3,15.0,15.0,1,1.0
+Azul,10cd3b13a71c7982,no-climática,Deforestación,P3,30.857142857142854,15.428571428571427,2,0.0
+Azul,385b4e71c08c156a,climática,Tormenta,P3,32.0,16.0,2,0.04371584699453563
+Azul,877a642c7a52bd47,no-climática,Contaminación,P3,36.0,18.0,2,0.19672131147540994
+Azul,9e6ffa759c6ee67d,climática,Sequía,P3,57.0,19.0,3,1.0
+Rojo,10cd3b13a71c7982,no-climática,Deforestación,P1,9.428571428571429,9.428571428571429,1,0.0
+Rojo,385b4e71c08c156a,climática,Tormenta,P1,28.0,14.0,2,0.9027777777777778
+Rojo,877a642c7a52bd47,no-climática,Contaminación,P1,30.0,15.0,2,1.0
+Rojo,9e6ffa759c6ee67d,climática,Sequía,P1,11.0,11.0,1,0.07638888888888888
+Verde,10cd3b13a71c7982,no-climática,Deforestación,P1,12.0,12.0,1,0.0
+Verde,385b4e71c08c156a,climática,Tormenta,P1,14.0,14.0,1,0.4
+Verde,877a642c7a52bd47,no-climática,Contaminación,P1,17.0,17.0,1,1.0
+Verde,9e6ffa759c6ee67d,climática,Sequía,P1,15.0,15.0,1,0.6

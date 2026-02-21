@@ -1,0 +1,15 @@
+amenaza_id,tipo_amenaza,amenaza,se_key,sum_pressure,mean_pressure,n_rows,pressure_norm
+045e2f706ad83acd,no-climática,Deforestacion ,P1,15.0,15.0,1,0.045454545454545456
+045e2f706ad83acd,no-climática,Deforestacion ,P3,15.0,15.0,1,0.045454545454545456
+10cd3b13a71c7982,no-climática,Deforestación,P1,21.42857142857143,10.714285714285715,2,0.1915584415584416
+10cd3b13a71c7982,no-climática,Deforestación,P3,30.857142857142854,15.428571428571427,2,0.4058441558441558
+385b4e71c08c156a,climática,Tormenta,P1,56.0,14.0,4,0.9772727272727273
+385b4e71c08c156a,climática,Tormenta,P3,46.0,15.333333333333334,3,0.75
+39d789daa476857a,climática,Sequia ,P1,13.0,13.0,1,0.0
+39d789daa476857a,climática,Sequia ,P3,13.0,13.0,1,0.0
+5ca74b4bf572ee0f,no-climática,Contaminacion por agroquimicos ,P1,15.0,15.0,1,0.045454545454545456
+5ca74b4bf572ee0f,no-climática,Contaminacion por agroquimicos ,P3,15.0,15.0,1,0.045454545454545456
+877a642c7a52bd47,no-climática,Contaminación,P1,47.0,15.666666666666666,3,0.7727272727272727
+877a642c7a52bd47,no-climática,Contaminación,P3,36.0,18.0,2,0.5227272727272727
+9e6ffa759c6ee67d,climática,Sequía,P1,26.0,13.0,2,0.29545454545454547
+9e6ffa759c6ee67d,climática,Sequía,P3,57.0,19.0,3,1.0

@@ -17,6 +17,7 @@ from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from .converter import compile_workbook, write_workbook, ValidationError, diagnose_file, format_diagnostic_report
+from .dashboard_generator import generate_dashboard
 
 # Add storylines to path
 storyline1_path = os.path.join(os.path.dirname(__file__), "..", "..", "storyline1_pipeline")
@@ -54,6 +55,16 @@ def read_converter():
 @app.get("/analyzer")
 def read_analyzer():
     ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "analyzer.html")
+    return FileResponse(ui_path)
+
+@app.get("/dashboard")
+def read_dashboard():
+    ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "dashboard.html")
+    return FileResponse(ui_path)
+
+@app.get("/interpreter")
+def read_interpreter():
+    ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "interpreter.html")
     return FileResponse(ui_path)
 
 # Mount the ui directory to serve CSS/JS as /ui/style.css etc
@@ -124,6 +135,16 @@ STORYLINE_REQUIREMENTS = {
             "TIDY_6_1_CONFLICT_EVENTS",  # Conflicts
         ],
         "description": "SbN Portfolio Design + Monitoring Plan"
+    },
+    6: {
+        "required": ["LOOKUP_CONTEXT", "LOOKUP_GEO", "TIDY_7_1_CAPACITY"],
+        "recommended": [
+            "LOOKUP_MDV",
+            "TIDY_3_2_PRIORIZACION",
+            "TIDY_4_1_AMENAZAS",
+            "TIDY_5_1_ACTORES",
+        ],
+        "description": "Capacidad Adaptativa"
     }
 }
 
@@ -337,6 +358,71 @@ async def convert(
             "X-Converter-TotalTables": str(total_tables),
         },
     )
+
+@app.post("/api/dashboard")
+async def api_generate_dashboard(
+    file: UploadFile = File(...),
+    org_name: str = Form("Organización"),
+):
+    """
+    Generate interactive dashboard from uploaded Excel workbook.
+    """
+    try:
+        content = await file.read()
+        tmpdir = tempfile.mkdtemp()
+        
+        start_time = datetime.now()
+        
+        # Save temp input
+        input_path = Path(tmpdir) / file.filename
+        input_path.write_bytes(content)
+        
+        # Output dir
+        outdir = Path(tmpdir) / "output"
+        outdir.mkdir()
+        
+        # Generate
+        html_path, bundle_path, qa_path = generate_dashboard(
+            str(input_path),
+            str(outdir),
+            org_name=org_name
+        )
+        
+        # Read HTML content
+        with open(html_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+            
+        # Create ZIP
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for root, dirs, files in os.walk(outdir):
+                for file_name in files:
+                    file_path = Path(root) / file_name
+                    arcname = file_path.relative_to(outdir)
+                    zf.write(file_path, arcname)
+        zip_base64 = base64.b64encode(zip_buffer.getvalue()).decode("utf-8")
+        
+        end_time = datetime.now()
+        duration = f"{(end_time - start_time).total_seconds():.1f}s"
+        
+        return JSONResponse(content={
+            "success": True,
+            "duration": duration,
+            "html_content": html_content,
+            "zip_base64": zip_base64
+        })
+
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "traceback": traceback.format_exc()},
+        )
+    finally:
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
 
 
 @app.post("/analyze/storyline1")
@@ -619,6 +705,135 @@ async def analyze_storyline4(
             shutil.rmtree(tmpdir, ignore_errors=True)
         except Exception:
             pass
+
+
+@app.post("/interpret/storyline4")
+async def interpret_storyline4(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Run Storyline 4 interpreted (narrative) report.
+    """
+    try:
+        from storyline4.io import create_runlog, load_tables, write_outputs, get_sheet_availability, get_row_counts
+        from storyline4.metrics import process_metrics
+        from storyline4.plots import generate_plots
+        from storyline4.interpreted_report import generate_interpreted_report
+    except ImportError as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to import storyline4 module: {e}"},
+        )
+
+    content = await file.read()
+    tmpdir = tempfile.mkdtemp()
+
+    try:
+        input_path = Path(tmpdir) / file.filename
+        input_path.write_bytes(content)
+
+        outdir = Path(tmpdir) / "output"
+        outdir.mkdir()
+
+        start_time = datetime.now()
+
+        # Step 1: Load tables
+        tables, warnings = load_tables(str(input_path))
+
+        # Step 2: Compute metrics
+        params = {"top_n": top_n}
+        metrics_tables = process_metrics(tables, params)
+
+        # Step 3: Generate figures
+        figures = {}
+        if include_figures:
+            figures = generate_plots(metrics_tables, str(outdir), params)
+
+        # Step 4: Generate INTERPRETED report
+        report_html = generate_interpreted_report(
+            metrics_tables, figures, str(input_path), warnings, tables,
+            org_name=org_name
+        )
+
+        # Step 5: Write outputs
+        end_time = datetime.now()
+
+        qa_summary = {}
+        for qa_name in ["QA_INPUT_SCHEMA", "QA_PK_DUPLICATES", "QA_MISSING_IDS", "QA_FOREIGN_KEYS"]:
+            qa_df = tables.get(qa_name)
+            qa_summary[qa_name] = len(qa_df) if qa_df is not None and not qa_df.empty else 0
+
+        runlog = create_runlog(
+            input_path=str(input_path),
+            output_dir=str(outdir),
+            warnings=warnings,
+            qa_summary=qa_summary,
+            tables_generated=list(metrics_tables.keys()),
+            figures_generated=list(figures.keys()),
+            params=params,
+            sheet_availability=get_sheet_availability(tables),
+            row_counts=get_row_counts(tables),
+            start_time=start_time,
+            end_time=end_time,
+        )
+
+        output_paths = write_outputs(
+            str(outdir), metrics_tables, figures, report_html, runlog
+        )
+
+        # Read outputs into memory
+        xlsx_base64 = None
+        xlsx_path = output_paths.get("xlsx")
+        if xlsx_path and Path(xlsx_path).exists():
+            with open(xlsx_path, "rb") as f:
+                xlsx_base64 = base64.b64encode(f.read()).decode("utf-8")
+
+        # Create ZIP
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for root, dirs, files in os.walk(outdir):
+                for file_name in files:
+                    file_path = Path(root) / file_name
+                    arcname = file_path.relative_to(outdir)
+                    zf.write(file_path, arcname)
+        zip_base64 = base64.b64encode(zip_buffer.getvalue()).decode("utf-8")
+
+        duration = f"{(end_time - start_time).total_seconds():.1f}s"
+
+        return JSONResponse(content={
+            "success": True,
+            "tables_count": len(metrics_tables),
+            "figures_count": len(figures),
+            "duration": duration,
+            "warnings": warnings,
+            "xlsx_base64": xlsx_base64,
+            "report_html": report_html,
+            "zip_base64": zip_base64,
+        })
+
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "traceback": traceback.format_exc()},
+        )
+    finally:
+        tables = None
+        metrics_tables = None
+        figures = None
+        gc.collect()
+
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
+
+
 @app.post("/analyze/storyline2")
 async def analyze_storyline2(
     file: UploadFile = File(...),
@@ -752,6 +967,72 @@ async def analyze_storyline2(
             pass
 
 
+@app.post("/analyze/capacity")
+async def analyze_capacity_endpoint(
+    file: UploadFile = File(...),
+    org_name: str = Form("Organización"),
+):
+    """
+    Run Capacity Analysis (Storyline 6) and return HTML report.
+    Reuses the Dashboard Generator logic.
+    """
+    try:
+        from .dashboard_generator import build_bundle, generate_capacity_html
+    except ImportError as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to import dashboard_generator: {e}"},
+        )
+    
+    content = await file.read()
+    tmpdir = tempfile.mkdtemp()
+    
+    try:
+        input_path = Path(tmpdir) / file.filename
+        input_path.write_bytes(content)
+        
+        start_time = datetime.now()
+        
+        # Load workbook and build bundle
+        try:
+            xl = pd.ExcelFile(input_path)
+            bundle = build_bundle(xl, file.filename, org_name)
+        except Exception as e:
+             return JSONResponse(
+                status_code=400,
+                content={"error": f"Error processing Excel file: {str(e)}"},
+            )
+            
+        # Generate HTML
+        report_html = generate_capacity_html(bundle)
+        
+        end_time = datetime.now()
+        duration = f"{(end_time - start_time).total_seconds():.1f}s"
+        
+        # Calculate stats for the response
+        # Capacity profile count
+        profiles_count = len(bundle.get("capacity", {}).get("profiles", []))
+        
+        return JSONResponse(content={
+            "success": True,
+            "tables_count": profiles_count, # Using profile count as a proxy for tables
+            "figures_count": 1, # At least 1 radar chart per profile usually
+            "duration": duration,
+            "report_html": report_html,
+        })
+        
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "traceback": traceback.format_exc()},
+        )
+    finally:
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
+
 @app.post("/analyze/storyline3")
 async def analyze_storyline3(
     file: UploadFile = File(...),
@@ -762,7 +1043,29 @@ async def analyze_storyline3(
     org_name: str = Form("Organización"),
 ):
     """
-    Run Storyline 3 analysis: "Equity & Differentiated Vulnerability"
+    Generate Storyline 3 Technical Analysis Report.
+    """
+    # For now, Storyline 3 uses the same report but we can add a flag later
+    return await _run_storyline3(file, top_n, include_figures, include_report, lang, org_name, technical=True)
+
+@app.post("/interpret/storyline3")
+async def interpret_storyline3(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Generate Storyline 3 Interpreted (Narrative) Report.
+    """
+    return await _run_storyline3(file, top_n, include_figures, include_report, lang, org_name, technical=False)
+
+async def _run_storyline3(file, top_n, include_figures, include_report, lang, org_name, technical=False):
+    """
+    Generate Storyline 3 Interpreted (Narrative) Report.
+    Analysis of Equity, Differentiated Vulnerability, and Access Barriers.
     """
     try:
         from storyline3.io import create_runlog, load_tables, write_outputs
@@ -880,6 +1183,157 @@ async def analyze_storyline3(
             pass
 
 
+@app.post("/analyze/storyline2")
+async def analyze_storyline2(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Generate Storyline 2 Technical Analysis Report.
+    """
+    return await _run_storyline2_logic(file, top_n, include_figures, include_report, lang, org_name, technical=True)
+
+@app.post("/interpret/storyline2")
+async def interpret_storyline2(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Generate Storyline 2 Interpreted (Narrative) Report.
+    """
+    return await _run_storyline2_logic(file, top_n, include_figures, include_report, lang, org_name, technical=False)
+
+async def _run_storyline2_logic(file: UploadFile, top_n: int, include_figures: bool, include_report: bool, lang: str, org_name: str, technical: bool = False):
+    """
+    Unified logic for Storyline 2 Technical and Narrative reports.
+    """
+    try:
+        from storyline2.io import load_tables, create_runlog, write_outputs
+        from storyline2.metrics import compute_all_metrics, load_params
+        from storyline2.report import generate_report
+        from storyline2.plots import generate_all_plots
+    except ImportError as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to import storyline2 modules: {e}"},
+        )
+    
+    content = await file.read()
+    tmpdir = tempfile.mkdtemp()
+    
+    try:
+        input_path = Path(tmpdir) / file.filename
+        input_path.write_bytes(content)
+        
+        outdir = Path(tmpdir) / "output"
+        outdir.mkdir()
+        
+        start_time = datetime.now()
+        
+        # Step 1: Load tables
+        tables, warnings = load_tables(str(input_path))
+        
+        # Step 2: Compute metrics
+        metrics_tables = compute_all_metrics(tables, top_n=top_n)
+        
+        # Step 3: Generate figures
+        figures = generate_all_plots(metrics_tables, str(outdir), tables=tables) 
+        
+        # Step 4: Generate report
+        report_html = generate_report(
+            metrics_tables, figures,
+            input_path=str(input_path),
+            warnings=warnings,
+            tables=tables,
+            org_name=org_name
+        )
+        
+        # Step 5: Write outputs
+        end_time = datetime.now()
+
+        qa_summary = {}
+        for qa_name in ["QA_INPUT_SCHEMA", "QA_PK_DUPLICATES", "QA_MISSING_IDS", "QA_FOREIGN_KEYS"]:
+            qa_df = tables.get(qa_name)
+            qa_summary[qa_name] = len(qa_df) if qa_df is not None and not qa_df.empty else 0
+
+        params = load_params()
+        params["top_n"] = top_n
+
+        runlog = create_runlog(
+            input_path=str(input_path),
+            output_dir=str(outdir),
+            warnings=warnings,
+            qa_summary=qa_summary,
+            tables_generated=list(metrics_tables.keys()),
+            figures_generated=list(figures.keys()),
+            params=params,
+            scenarios=["balanced", "livelihood_priority", "fragility_first"],
+            sheet_availability={name: not tables.get(name, pd.DataFrame()).empty for name in tables},
+            row_counts={name: len(df) for name, df in tables.items() if not df.empty},
+            start_time=start_time,
+            end_time=end_time,
+        )
+
+        output_paths = write_outputs(
+            str(outdir), metrics_tables, figures, report_html, runlog
+        )
+
+        # Read outputs into memory
+        xlsx_base64 = None
+        xlsx_path = output_paths.get("xlsx")
+        if xlsx_path and Path(xlsx_path).exists():
+            with open(xlsx_path, "rb") as f:
+                xlsx_base64 = base64.b64encode(f.read()).decode("utf-8")
+
+        # Create ZIP
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for root, dirs, files in os.walk(outdir):
+                for file_name in files:
+                    file_path = Path(root) / file_name
+                    arcname = file_path.relative_to(outdir)
+                    zf.write(file_path, arcname)
+        zip_base64 = base64.b64encode(zip_buffer.getvalue()).decode("utf-8")
+
+        duration = f"{(end_time - start_time).total_seconds():.1f}s"
+        
+        return JSONResponse(content={
+            "success": True,
+            "tables_count": len(metrics_tables),
+            "figures_count": len(figures),
+            "duration": duration,
+            "warnings": warnings,
+            "xlsx_base64": xlsx_base64,
+            "report_html": report_html,
+            "zip_base64": zip_base64,
+        })
+        
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "traceback": traceback.format_exc()},
+        )
+    finally:
+        tables = None
+        metrics_tables = None
+        figures = None
+        gc.collect()
+        
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
+
+
 @app.post("/analyze/storyline5")
 async def analyze_storyline5(
     file: UploadFile = File(...),
@@ -890,14 +1344,29 @@ async def analyze_storyline5(
     org_name: str = Form("Organización"),
 ):
     """
-    Run Storyline 5 analysis: "SbN Portfolio Design + Monitoring Plan"
-    
-    - **file**: Analysis-ready Excel workbook (with LOOKUP_* and TIDY_* sheets)
-    - **top_n**: Number of top bundles in rankings (default: 10)
-    - **include_figures**: Generate visualization figures (default: True)
-    - **include_report**: Generate HTML report (default: True)
-    
-    Returns JSON with base64-encoded outputs.
+    Run Storyline 5 Technical Analysis Report.
+    """
+    from storyline5.report import generate_report
+    return await _run_storyline5_logic(file, top_n, include_figures, include_report, lang, org_name, generate_report)
+
+@app.post("/interpret/storyline5")
+async def interpret_storyline5(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Run Storyline 5 Interpreted (Narrative) Report.
+    """
+    from storyline5.interpreted_report import generate_interpreted_report as generate_report
+    return await _run_storyline5_logic(file, top_n, include_figures, include_report, lang, org_name, generate_report)
+
+async def _run_storyline5_logic(file: UploadFile, top_n: int, include_figures: bool, include_report: bool, lang: str, org_name: str, report_func):
+    """
+    Unified logic for Storyline 5 Technical and Narrative reports.
     """
     try:
         from storyline5.io import create_runlog, load_tables, write_outputs, get_sheet_availability, get_row_counts
@@ -905,7 +1374,6 @@ async def analyze_storyline5(
         from storyline5.portfolio import build_portfolio
         from storyline5.monitoring import build_monitoring_tables
         from storyline5.plots import generate_plots
-        from storyline5.report import generate_report
     except ImportError as e:
         return JSONResponse(
             status_code=500,
@@ -950,10 +1418,10 @@ async def analyze_storyline5(
         if include_figures:
             figures = generate_plots(portfolio_tables, str(outdir), params)
         
-        # Step 6: Generate report
+        # Step 6: Generate report (using the passed function)
         report_html = None
         if include_report:
-            report_html = generate_report(
+            report_html = report_func(
                 portfolio_tables, monitoring_tables, figures, str(input_path), warnings, tables,
                 org_name=org_name
             )
@@ -1044,9 +1512,149 @@ async def analyze_storyline5(
             pass
 
 
-# ============================================================
-# DASHBOARD ENDPOINT
-# ============================================================
+@app.post("/analyze/storyline1")
+async def analyze_storyline1(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Run Storyline 1 Technical Analysis.
+    """
+    from storyline1.report import generate_report # Technical report
+    return await _run_storyline1_logic(file, top_n, include_figures, include_report, lang, org_name, generate_report)
+
+@app.post("/interpret/storyline1")
+async def interpret_storyline1(
+    file: UploadFile = File(...),
+    top_n: int = Form(10),
+    include_figures: bool = Form(True),
+    include_report: bool = Form(True),
+    lang: str = Form("es"),
+    org_name: str = Form("Organización"),
+):
+    """
+    Run Storyline 1 Interpreted (Narrative) Analysis.
+    """
+    from storyline1.interpreted_report import generate_interpreted_report as generate_report # Narrative report
+    return await _run_storyline1_logic(file, top_n, include_figures, include_report, lang, org_name, generate_report)
+
+async def _run_storyline1_logic(file: UploadFile, top_n: int, include_figures: bool, include_report: bool, lang: str, org_name: str, report_func):
+    """
+    Unified logic for Storyline 1 Technical and Narrative reports.
+    """
+    try:
+        from storyline1.io import load_tables, create_runlog, write_outputs
+        from storyline1.metrics import compute_all_metrics
+        from storyline1.plots import generate_all_plots
+    except ImportError as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Failed to import storyline1 modules: {e}"},
+        )
+    
+    content = await file.read()
+    tmpdir = tempfile.mkdtemp()
+    
+    try:
+        input_path = Path(tmpdir) / file.filename
+        input_path.write_bytes(content)
+        
+        outdir = Path(tmpdir) / "output"
+        outdir.mkdir()
+        
+        start_time = datetime.now()
+        
+        # Step 1: Load tables
+        tables, warnings = load_tables(str(input_path))
+        
+        # Step 2: Compute metrics
+        metrics_tables = compute_all_metrics(tables, top_n=top_n, top_n_drivers=5)
+        
+        # Step 3: Generate figures
+        figures = generate_all_plots(metrics_tables, str(outdir))
+        
+        # Step 4: Generate report (using the passed function)
+        report_html = report_func(
+            metrics_tables, figures,
+            input_path=str(input_path),
+            warnings=warnings,
+            org_name=org_name,
+        )
+        
+        # Step 5: Write outputs
+        end_time = datetime.now()
+
+        qa_summary = {}
+        for qa_name in ["QA_INPUT_SCHEMA", "QA_PK_DUPLICATES", "QA_MISSING_IDS", "QA_FOREIGN_KEYS"]:
+            qa_df = tables.get(qa_name)
+            qa_summary[qa_name] = len(qa_df) if qa_df is not None and not qa_df.empty else 0
+
+        runlog = create_runlog(
+            input_path=str(input_path),
+            output_dir=str(outdir),
+            warnings=warnings,
+            qa_summary=qa_summary,
+            tables_generated=list(metrics_tables.keys()),
+            figures_generated=list(figures.keys()),
+            start_time=start_time,
+            end_time=end_time,
+        )
+
+        output_paths = write_outputs(
+            str(outdir), metrics_tables, figures, report_html, runlog
+        )
+
+        # Read outputs into memory
+        xlsx_base64 = None
+        xlsx_path = output_paths.get("xlsx")
+        if xlsx_path and Path(xlsx_path).exists():
+            with open(xlsx_path, "rb") as f:
+                xlsx_base64 = base64.b64encode(f.read()).decode("utf-8")
+
+        # Create ZIP
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for root, dirs, files in os.walk(outdir):
+                for file_name in files:
+                    file_path = Path(root) / file_name
+                    arcname = file_path.relative_to(outdir)
+                    zf.write(file_path, arcname)
+        zip_base64 = base64.b64encode(zip_buffer.getvalue()).decode("utf-8")
+
+        duration = f"{(end_time - start_time).total_seconds():.1f}s"
+        
+        return JSONResponse(content={
+            "success": True,
+            "tables_count": len(metrics_tables),
+            "figures_count": len(figures),
+            "duration": duration,
+            "warnings": warnings,
+            "xlsx_base64": xlsx_base64,
+            "report_html": report_html,
+            "zip_base64": zip_base64,
+        })
+        
+    except Exception as e:
+        import traceback
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "traceback": traceback.format_exc()},
+        )
+    finally:
+        tables = None
+        metrics_tables = None
+        figures = None
+        gc.collect()
+        
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
+
 
 @app.get("/dashboard")
 def read_dashboard():

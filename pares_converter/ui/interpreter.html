@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARES Informe Narrativo | Reportes Interpretativos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/style.css">
+    <link rel="stylesheet" href="/ui/analyzer.css">
+</head>
+
+<body>
+    <div class="glass-bg"></div>
+
+    <div class="container">
+        <header>
+            <div class="header-nav">
+                <a href="/" class="back-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Volver al Inicio</span>
+                </a>
+            </div>
+            <div class="logo-area">
+                <div class="icon-pulse"></div>
+                <h1>PARES <span>Informe Narrativo</span> <small style="font-size: 10px; opacity: 0.5;">V3</small></h1>
+            </div>
+            <p class="subtitle">Genera informes interpretativos con narrativas basadas en datos</p>
+        </header>
+
+        <main>
+            <!-- Step 1: Select Storyline -->
+            <section class="card glass">
+                <div class="card-content">
+                    <div class="step-header">
+                        <span class="step-number">1</span>
+                        <h2>Seleccionar Storyline</h2>
+                    </div>
+
+                    <div class="storyline-grid">
+                        <!-- Storyline 1 -->
+                        <div class="storyline-card selected" data-storyline="1">
+                            <div class="storyline-status available">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                                <span data-i18n="storyline.status.available">Disponible</span>
+                            </div>
+                            <div class="storyline-number">01</div>
+                            <h3 data-i18n="storyline.1.title">¿Dónde Actuar Primero?</h3>
+                            <p data-i18n="storyline.1.desc.narrative">Informe narrativo interpretado con recomendaciones de acción</p>
+                        </div>
+
+                        <!-- Storyline 2 -->
+                        <div class="storyline-card" data-storyline="2">
+                            <div class="storyline-status available">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                                <span data-i18n="storyline.status.available">Disponible</span>
+                            </div>
+                            <div class="storyline-number">02</div>
+                            <h3 data-i18n="storyline.2.title">Servicios Ecosistémicos</h3>
+                            <p data-i18n="storyline.2.desc.narrative">Análisis narrativo de apalancamiento ecosistémico y criticidad</p>
+                        </div>
+
+                        <!-- Storyline 3 -->
+                        <div class="storyline-card" data-storyline="3">
+                            <div class="storyline-status available">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                                <span data-i18n="storyline.status.available">Disponible</span>
+                            </div>
+                            <div class="storyline-number">03</div>
+                            <h3 data-i18n="storyline.3.title">Equidad y Vulnerabilidad</h3>
+                            <p data-i18n="storyline.3.desc.narrative">Informe narrativo sobre impactos diferenciados y barreras</p>
+                        </div>
+
+                        <!-- Storyline 4 -->
+                        <div class="storyline-card" data-storyline="4">
+                            <div class="storyline-status available">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                                <span data-i18n="storyline.status.available">Disponible</span>
+                            </div>
+                            <div class="storyline-number">04</div>
+                            <h3 data-i18n="storyline.4.title">Factibilidad y Gobernanza</h3>
+                            <p data-i18n="storyline.4.desc.narrative">Informe narrativo sobre gobernanza y riesgos de conflicto</p>
+                        </div>
+
+                        <!-- Storyline 5 -->
+                        <div class="storyline-card" data-storyline="5">
+                            <div class="storyline-status available">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                                <span data-i18n="storyline.status.available">Disponible</span>
+                            </div>
+                            <div class="storyline-number">05</div>
+                            <h3 data-i18n="storyline.5.title">Diseño de Portafolio SbN</h3>
+                            <p data-i18n="storyline.5.desc.narrative">Hoja de ruta y estrategia narrativa para implementación SbN</p>
+                        </div>
+
+                        <!-- Storyline 6: Capacidad -->
+                        <div class="storyline-card" data-storyline="6">
+                            <div class="storyline-status available">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                                <span data-i18n="storyline.status.available">Disponible</span>
+                            </div>
+                            <div class="storyline-number">06</div>
+                            <h3 data-i18n="storyline.6.title">Capacidad Adaptativa</h3>
+                            <p data-i18n="storyline.6.desc.narrative">Análisis de resiliencia, equidad y barreras en medios de vida.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Upload -->
+            <section class="card glass">
+                <div class="card-content">
+                    <div class="step-header">
+                        <span class="step-number">2</span>
+                        <h2>Cargar Archivo y Generar</h2>
+                    </div>
+
+                    <div class="upload-area" id="interp-drop-zone">
+                        <input type="file" id="interp-file-input" hidden accept=".xlsx">
+                        <div class="upload-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                        </div>
+                        <h3>Cargar Libro de Trabajo Listo para An&aacute;lisis</h3>
+                        <p>Debe contener hojas LOOKUP_* y TIDY_*</p>
+                        <div class="file-info" id="interp-file-info" style="display: none;">
+                            <span class="file-name" id="interp-file-display-name"></span>
+                            <button class="remove-file" id="interp-remove-file">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- Validation Status -->
+                    <div id="interp-validation-status" class="validation-status" style="display: none;">
+                        <div id="interp-validation-icon" class="validation-icon"></div>
+                        <div id="interp-validation-message" class="validation-message"></div>
+                        <div id="interp-validation-details" class="validation-details"></div>
+                    </div>
+
+                    <button id="interp-btn" class="primary-btn" disabled>
+                        <span>Generar Informe Narrativo</span>
+                        <div class="loader" style="display: none;"></div>
+                    </button>
+
+                    <!-- Progress -->
+                    <div id="interp-progress" class="progress-container" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="interp-progress-fill"></div>
+                        </div>
+                        <p class="progress-text" id="interp-progress-text">Iniciando...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results -->
+            <section id="interp-result-card" class="card glass result-card" style="display: none;">
+                <div class="result-header">
+                    <div class="success-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Informe Narrativo Generado</h3>
+                        <p class="result-subtitle" id="interp-result-subtitle">Tu informe interpretativo est&aacute; listo</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid three-col">
+                    <div class="stat-item">
+                        <span class="stat-value" id="interp-res-tables">-</span>
+                        <span class="stat-label">Tablas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="interp-res-figures">-</span>
+                        <span class="stat-label">Figuras</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="interp-res-duration">-</span>
+                        <span class="stat-label">Duraci&oacute;n</span>
+                    </div>
+                </div>
+
+                <div class="download-grid">
+                    <button id="interp-download-xlsx-btn" class="download-btn">
+                        <div class="download-icon">📊</div>
+                        <div class="download-info">
+                            <span class="download-title">Descargar Excel</span>
+                            <span class="download-desc">Todas las tablas en un archivo</span>
+                        </div>
+                    </button>
+                    <button id="interp-download-report-btn" class="download-btn">
+                        <div class="download-icon">🌐</div>
+                        <div class="download-info">
+                            <span class="download-title">Abrir Informe Narrativo</span>
+                            <span class="download-desc">Ver reporte en una nueva pestaña</span>
+                        </div>
+                    </button>
+                    <button id="interp-download-html-btn" class="download-btn">
+                        <div class="download-icon">💾</div>
+                        <div class="download-info">
+                            <span class="download-title">Descargar HTML</span>
+                            <span class="download-desc">Guardar informe como archivo</span>
+                        </div>
+                    </button>
+                    <button id="interp-download-zip-btn" class="download-btn primary">
+                        <div class="download-icon">📦</div>
+                        <div class="download-info">
+                            <span class="download-title">Descargar Todo (ZIP)</span>
+                            <span class="download-desc">Tablas, figuras, reporte, logs</span>
+                        </div>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Metodolog&iacute;a PARES | Soluciones Basadas en la Naturaleza</p>
+        </footer>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="/ui/i18n.js?v=3"></script>
+    <script src="/ui/interpreter.js?v=3"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.i18n) window.i18n.initLangToggle();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+{
+  "pipeline": "storyline2",
+  "version": "1.0.0",
+  "input_path": "FINAL_ADEL_analysis_ready.xlsx",
+  "output_dir": "test_sl2_narrative",
+  "params": {
+    "top_n": 10,
+    "min_records_for_rank": 1,
+    "use_threat_severity_weight": true,
+    "threat_weight_fallback": 1.0,
+    "max_heatmap_items": 15,
+    "fill_missing_numeric": 0.0,
+    "fill_missing_norm": 0.5
+  },
+  "scenarios": [
+    "balanced",
+    "livelihood_priority",
+    "fragility_first"
+  ],
+  "sheet_availability": {
+    "LOOKUP_GEO": true,
+    "LOOKUP_CONTEXT": true,
+    "LOOKUP_MDV": true,
+    "LOOKUP_SE": true,
+    "LOOKUP_ECOSISTEMA": true,
+    "TIDY_3_4_ECOSISTEMAS": true,
+    "TIDY_3_4_ECO_SE": true,
+    "TIDY_3_4_ECO_MDV": true,
+    "TIDY_3_5_SE_MDV": true,
+    "TIDY_3_5_SE_MONTHS": true,
+    "TIDY_4_2_2_AMENAZA_SE": true,
+    "TIDY_4_1_AMENAZAS": true,
+    "TIDY_3_2_PRIORIZACION": true,
+    "QA_INPUT_SCHEMA": true,
+    "QA_PK_DUPLICATES": true,
+    "QA_MISSING_IDS": true,
+    "QA_FOREIGN_KEYS": true
+  },
+  "row_counts": {
+    "LOOKUP_GEO": 5,
+    "LOOKUP_CONTEXT": 10,
+    "LOOKUP_MDV": 18,
+    "LOOKUP_SE": 13,
+    "LOOKUP_ECOSISTEMA": 13,
+    "TIDY_3_4_ECOSISTEMAS": 5,
+    "TIDY_3_4_ECO_SE": 31,
+    "TIDY_3_4_ECO_MDV": 5,
+    "TIDY_3_5_SE_MDV": 24,
+    "TIDY_3_5_SE_MONTHS": 360,
+    "TIDY_4_2_2_AMENAZA_SE": 27,
+    "TIDY_4_1_AMENAZAS": 14,
+    "TIDY_3_2_PRIORIZACION": 6,
+    "QA_INPUT_SCHEMA": 17,
+    "QA_PK_DUPLICATES": 40,
+    "QA_MISSING_IDS": 45,
+    "QA_FOREIGN_KEYS": 46
+  },
+  "start_time": "2026-02-13T11:37:15.814335",
+  "end_time": "2026-02-13T11:37:25.482648",
+  "duration_seconds": 9.668313,
+  "warnings": [],
+  "qa_summary": {
+    "QA_INPUT_SCHEMA": 17,
+    "QA_PK_DUPLICATES": 40,
+    "QA_MISSING_IDS": 45,
+    "QA_FOREIGN_KEYS": 46
+  },
+  "outputs": {
+    "tables": [
+      "dim_context_geo",
+      "dim_mdv",
+      "dim_se",
+      "dim_ecosistema",
+      "ecosystem_summary_overall",
+      "ecosystem_summary_by_grupo",
+      "service_sci_components_overall",
+      "service_sci_components_by_grupo",
+      "service_ranking_overall_balanced",
+      "service_ranking_overall_livelihood_priority",
+      "service_ranking_overall_fragility_first",
+      "service_ranking_by_grupo_balanced",
+      "service_ranking_by_grupo_livelihood_priority",
+      "service_ranking_by_grupo_fragility_first",
+      "ecosystem_eli_overall",
+      "ecosystem_eli_by_grupo",
+      "tps_overall",
+      "tps_by_grupo",
+      "ivl_overall",
+      "ivl_by_grupo"
+    ],
+    "figures": []
+  }
+}

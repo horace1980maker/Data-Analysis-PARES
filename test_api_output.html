@@ -1,0 +1,887 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia 2: Líneas de Vida de Servicios Ecosistémicos - Informe Diagnóstico</title>
+    <style>
+        :root {
+            --primary-color: #2c5530;
+            --secondary-color: #4a7c59;
+            --accent-color: #7cb342;
+            --warning-color: #ff9800;
+            --danger-color: #e53935;
+            --light-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 40px;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+        }
+        
+        .metadata {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+        
+        .metadata strong {
+            color: var(--primary-color);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .subsection {
+            margin-left: 20px;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        
+        table th {
+            background: var(--secondary-color);
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        table tr:hover {
+            background-color: #e8f5e9;
+        }
+        
+        .figure-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .figure-caption {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .error {
+            background: #ffebee;
+            border-left: 4px solid var(--danger-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .toc {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            padding: 5px 0;
+        }
+        
+        .toc a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .toc {
+                page-break-after: always;
+            }
+            h2 {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Historia 2: Líneas de Vida de Servicios Ecosistémicos</h1>
+        <p><strong>Informe Diagnóstico - Análisis de Seguridad Basada en la Naturaleza</strong></p>
+        
+        <div class="metadata">
+            <strong>Organización:</strong> Organización<br>
+            <strong>Generado:</strong> 2026-02-13 11:46:00<br>
+            <strong>Archivo de Entrada:</strong> FINAL_ADEL_analysis_ready.xlsx<br>
+            <strong>Alcance del Análisis:</strong> Conectividad de Ecosistemas y Criticidad de Servicios
+        </div>
+        
+        <div class="toc">
+            <h3>📋 Tabla de Contenidos</h3>
+            <ul>
+                <li><a href="#executive-summary">1. Resumen Ejecutivo</a></li>
+                <li><a href="#ecosystem-analysis">2. Análisis de Ecosistemas</a></li>
+                <li><a href="#service-criticality">3. Análisis de Criticidad de Servicios</a></li>
+                <li><a href="#threats-vulnerability">4. Amenazas y Vulnerabilidad</a></li>
+                <li><a href="#data-quality">5. Resumen de Calidad de Datos</a></li>
+            </ul>
+        </div>
+        
+        <section id="executive-summary" class="section"><h2>1. Resumen Ejecutivo</h2><div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Servicios Ecosistémicos Analizados</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Ecosistemas Mapeados</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Amenazas Identificadas</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Medios de Vida Expuestos</div>
+    </div>
+    </div><h3>🎯 Principales Servicios Críticos (SCI - Equilibrado)</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Rango</th>
+      <th>Servicio Ecosistémico</th>
+      <th>Puntaje SCI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>P1 - Alimentos</td>
+      <td>0.66</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>P3 - Agua dulce</td>
+      <td>0.53</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>R1 - Regulación de la calidad del aire y el clima locales</td>
+      <td>0.28</td>
+    </tr>
+  </tbody>
+</table></section><section id="ecosystem-analysis" class="section"><h2>2. Análisis de Ecosistemas</h2><p>El ecosistema con mayor conectividad es <strong>Bosque seco</strong>, el cual provee 8 servicios distintos y beneficia directamente a 2 medios de vida.</p>
+<p>Además, <strong>Bosque seco</strong> también lidera el Índice de Apalancamiento (ELI=1.00), confirmando su rol central como pilar de la resiliencia local tanto por volumen de conexiones como por importancia estratégica.</p><h3>🌳 Resumen de Conectividad de Ecosistemas</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Ecosistema</th>
+      <th>Observaciones</th>
+      <th>Servicios</th>
+      <th>Medios de Vida</th>
+      <th>Conectividad Norm.</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bosque seco</td>
+      <td>2</td>
+      <td>8</td>
+      <td>2</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>Costero Marino</td>
+      <td>1</td>
+      <td>9</td>
+      <td>1</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>Manglar</td>
+      <td>1</td>
+      <td>7</td>
+      <td>1</td>
+      <td>0.50</td>
+    </tr>
+    <tr>
+      <td>Bosque Montano</td>
+      <td>1</td>
+      <td>5</td>
+      <td>1</td>
+      <td>0.00</td>
+    </tr>
+  </tbody>
+</table><h3>📈 Índice de Apalancamiento del Ecosistema (ELI)</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Ecosistema</th>
+      <th>Conectividad</th>
+      <th>Criticidad Prom.</th>
+      <th>ELI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bosque seco</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <td>Costero Marino</td>
+      <td>1.00</td>
+      <td>0.67</td>
+      <td>0.87</td>
+    </tr>
+    <tr>
+      <td>Manglar</td>
+      <td>0.50</td>
+      <td>0.67</td>
+      <td>0.57</td>
+    </tr>
+    <tr>
+      <td>Bosque Montano</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+    </tr>
+  </tbody>
+</table></section><section id="service-criticality" class="section"><h2>3. Análisis de Criticidad de Servicios</h2><p>El servicio más crítico identificado es <strong>P1</strong> (SCI=0.66). Su alta importancia está impulsada principalmente por <strong>Vínculos con MdV</strong>, lo que indica que su pérdida tendría un impacto desproporcionado en la comunidad.</p>
+<p>Le siguen en importancia <strong>P3</strong>, <strong>R1</strong>, formando el grupo de servicios esenciales que requieren monitoreo prioritario.</p><h3>📊 Componentes de Criticidad del Servicio</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Servicio Ecosistémico</th>
+      <th>Vínculos MdV</th>
+      <th>Usuarios</th>
+      <th>Fragilidad Estacional</th>
+      <th>Peso de Prioridad</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>P1 - Alimentos</td>
+      <td>3</td>
+      <td>45390.00</td>
+      <td>0.00</td>
+      <td>0.67</td>
+    </tr>
+    <tr>
+      <td>P3 - Agua dulce</td>
+      <td>2</td>
+      <td>57891.00</td>
+      <td>0.00</td>
+      <td>0.56</td>
+    </tr>
+    <tr>
+      <td>R1 - Regulación de la calidad del aire y el clima locales</td>
+      <td>1</td>
+      <td>30000.00</td>
+      <td>0.00</td>
+      <td>1.00</td>
+    </tr>
+  </tbody>
+</table></section><section id="threats-vulnerability" class="section"><h2>4. Amenazas y Vulnerabilidad</h2><p>La amenaza predominante es <strong>Tormenta</strong>, la cual ejerce presión sobre <strong>2</strong> servicios ecosistémicos distintos. Esto sugiere una vulnerabilidad sistémica donde un solo evento de tormenta podría comprometer múltiples funciones ecológicas simultáneamente.</p><p>Los medios de vida más expuestos indirectamente (a través de la degradación de servicios) están encabezados por <strong>Granos Basicos</strong>. Este medio de vida depende fuertemente de servicios que están actualmente bajo alta presión de amenazas, lo que representa un riesgo oculto no siempre visible en el análisis directo de impactos.</p><h3>⚠️ Presión de Amenazas sobre los Servicios (TPS)</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Amenaza</th>
+      <th>Servicio Ecosistémico</th>
+      <th>Presión Total</th>
+      <th>Presión Promedio</th>
+      <th>Filas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Sequía</td>
+      <td>P3 - Agua dulce</td>
+      <td>57.00</td>
+      <td>19.00</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Tormenta</td>
+      <td>P1 - Alimentos</td>
+      <td>56.00</td>
+      <td>14.00</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>Contaminación</td>
+      <td>P1 - Alimentos</td>
+      <td>47.00</td>
+      <td>15.67</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Tormenta</td>
+      <td>P3 - Agua dulce</td>
+      <td>46.00</td>
+      <td>15.33</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Contaminación</td>
+      <td>P3 - Agua dulce</td>
+      <td>36.00</td>
+      <td>18.00</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Deforestación</td>
+      <td>P3 - Agua dulce</td>
+      <td>30.86</td>
+      <td>15.43</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Sequía</td>
+      <td>P1 - Alimentos</td>
+      <td>26.00</td>
+      <td>13.00</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Deforestación</td>
+      <td>P1 - Alimentos</td>
+      <td>21.43</td>
+      <td>10.71</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Deforestacion</td>
+      <td>P1 - Alimentos</td>
+      <td>15.00</td>
+      <td>15.00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Deforestacion</td>
+      <td>P3 - Agua dulce</td>
+      <td>15.00</td>
+      <td>15.00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Contaminacion por agroquimicos</td>
+      <td>P1 - Alimentos</td>
+      <td>15.00</td>
+      <td>15.00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Contaminacion por agroquimicos</td>
+      <td>P3 - Agua dulce</td>
+      <td>15.00</td>
+      <td>15.00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Sequia</td>
+      <td>P1 - Alimentos</td>
+      <td>13.00</td>
+      <td>13.00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Sequia</td>
+      <td>P3 - Agua dulce</td>
+      <td>13.00</td>
+      <td>13.00</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table><h3>🔗 Vulnerabilidad Indirecta de los Medios de Vida (IVL)</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Medio de Vida</th>
+      <th>Amenaza</th>
+      <th>Presión Total vía Servicios</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Granos Basicos</td>
+      <td>Sequía</td>
+      <td>342.00</td>
+    </tr>
+    <tr>
+      <td>Pesca</td>
+      <td>Tormenta</td>
+      <td>336.00</td>
+    </tr>
+    <tr>
+      <td>Ganadería</td>
+      <td>Tormenta</td>
+      <td>306.00</td>
+    </tr>
+    <tr>
+      <td>Pesca</td>
+      <td>Contaminación</td>
+      <td>282.00</td>
+    </tr>
+    <tr>
+      <td>Granos Basicos</td>
+      <td>Tormenta</td>
+      <td>276.00</td>
+    </tr>
+    <tr>
+      <td>Ganadería</td>
+      <td>Contaminación</td>
+      <td>249.00</td>
+    </tr>
+    <tr>
+      <td>Ganadería</td>
+      <td>Sequía</td>
+      <td>249.00</td>
+    </tr>
+    <tr>
+      <td>Granos Basicos</td>
+      <td>Contaminación</td>
+      <td>216.00</td>
+    </tr>
+    <tr>
+      <td>Granos Basicos</td>
+      <td>Deforestación</td>
+      <td>185.14</td>
+    </tr>
+    <tr>
+      <td>Hortalizas</td>
+      <td>Tormenta</td>
+      <td>168.00</td>
+    </tr>
+    <tr>
+      <td>Ganadería</td>
+      <td>Deforestación</td>
+      <td>156.86</td>
+    </tr>
+    <tr>
+      <td>Pesca</td>
+      <td>Sequía</td>
+      <td>156.00</td>
+    </tr>
+    <tr>
+      <td>Hortalizas</td>
+      <td>Contaminación</td>
+      <td>141.00</td>
+    </tr>
+    <tr>
+      <td>Pesca</td>
+      <td>Deforestación</td>
+      <td>128.57</td>
+    </tr>
+    <tr>
+      <td>Granos Basicos</td>
+      <td>Contaminacion por agroquimicos</td>
+      <td>90.00</td>
+    </tr>
+  </tbody>
+</table><p><em>Mostrando las primeras 15 de 28 filas</em></p></section><section id="data-quality" class="section"><h2>5. Resumen de Calidad de Datos</h2><h3>QA_INPUT_SCHEMA</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>sheet</th>
+      <th>status</th>
+      <th>missing_cols</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>variables</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.1. Lluvia MdV&SE</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.2. Priorización</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.3. Car_A</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.3. Car_B</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.3. Car_C</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.3. Car_D</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.4. Ecosistemas</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>3.5. SE y MdV</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>4.1. Amenazas</td>
+      <td>ok</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table><p><em>Mostrando las primeras 10 de 17 filas</em></p><h3>QA_PK_DUPLICATES</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>table</th>
+      <th>pk</th>
+      <th>duplicate_rows</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>LOOKUP_ACTOR</td>
+      <td>actor_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_AMENAZA</td>
+      <td>amenaza_id</td>
+      <td>4</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_CA_QUESTIONS</td>
+      <td>question_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_CONFLICTO</td>
+      <td>conflicto_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_CONTEXT</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_ECOSISTEMA</td>
+      <td>ecosistema_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_ELEMENTO_SE</td>
+      <td>elemento_se_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_ESPACIO</td>
+      <td>espacio_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_GEO</td>
+      <td>geo_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>LOOKUP_MDV</td>
+      <td>mdv_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table><p><em>Mostrando las primeras 10 de 40 filas</em></p><h3>QA_MISSING_IDS</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>table</th>
+      <th>col</th>
+      <th>missing</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TIDY_3_1_BRAINSTORM</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_2_PRIORIZACION</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_2_PRIORIZACION</td>
+      <td>mdv_id</td>
+      <td>2</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_A</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_A</td>
+      <td>mdv_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_B</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_B</td>
+      <td>mdv_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_C</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_C</td>
+      <td>mdv_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_D</td>
+      <td>context_id</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table><p><em>Mostrando las primeras 10 de 45 filas</em></p><h3>QA_FOREIGN_KEYS</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>table</th>
+      <th>fk</th>
+      <th>lookup</th>
+      <th>missing_fk</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>LOOKUP_CONTEXT</td>
+      <td>geo_id</td>
+      <td>LOOKUP_GEO</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_1_BRAINSTORM</td>
+      <td>context_id</td>
+      <td>LOOKUP_CONTEXT</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_1_BRAINSTORM</td>
+      <td>ecosistema_id</td>
+      <td>LOOKUP_ECOSISTEMA</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_1_BRAINSTORM</td>
+      <td>mdv_id</td>
+      <td>LOOKUP_MDV</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_2_PRIORIZACION</td>
+      <td>context_id</td>
+      <td>LOOKUP_CONTEXT</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_2_PRIORIZACION</td>
+      <td>mdv_id</td>
+      <td>LOOKUP_MDV</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_A</td>
+      <td>context_id</td>
+      <td>LOOKUP_CONTEXT</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_A</td>
+      <td>mdv_id</td>
+      <td>LOOKUP_MDV</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_B</td>
+      <td>context_id</td>
+      <td>LOOKUP_CONTEXT</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>TIDY_3_3_CAR_B</td>
+      <td>mdv_id</td>
+      <td>LOOKUP_MDV</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table><p><em>Mostrando las primeras 10 de 46 filas</em></p></section>
+        
+        <hr>
+        <p style="text-align: center; color: #666; font-size: 0.85em;">
+            Generado por Storyline 2 Pipeline v1.0.0 | Metodología PARES<br>
+            © 2026 - Para uso analítico interno
+        </p>
+    </div>
+</body>
+</html>

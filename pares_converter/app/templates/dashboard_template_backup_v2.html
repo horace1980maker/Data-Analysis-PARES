@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARES Dashboard 2.0</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981', // Emerald 500
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        slate: {
+                            850: '#1e293b', // Custom dark for sidebar
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Bento Grid Utilities */
+        .bento-card {
+            @apply bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col transition-all duration-200 hover:shadow-md;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased flex h-screen overflow-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- DATA PLACEHOLDER -->
+    <script>
+        /* __BUNDLE_DATA__ */
+    </script>
+
+    <!-- SIDEBAR -->
+    <aside class="w-20 lg:w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 transition-all duration-300 z-50">
+        <!-- Logo Area -->
+        <div class="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
+            <div class="h-8 w-8 bg-brand-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i data-lucide="leaf" class="text-white h-5 w-5"></i>
+            </div>
+            <span class="ml-3 font-bold text-lg hidden lg:block tracking-tight">PARES <span class="text-brand-500">2.0</span></span>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3">
+            <button onclick="router.navigate('home')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group active-nav">
+                <i data-lucide="layout-grid" class="h-5 w-5 group-hover:text-brand-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Resumen</span>
+            </button> <!-- Added Dashboard as Home -->
+
+            <div class="pt-4 pb-2">
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:block">Análisis</p>
+                <div class="h-px bg-slate-800 my-2 lg:hidden"></div>
+            </div>
+
+            <button onclick="router.navigate('landscape')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="mountain" class="h-5 w-5 group-hover:text-cyan-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Paisaje</span>
+            </button>
+
+            <button onclick="router.navigate('livelihoods')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="sprout" class="h-5 w-5 group-hover:text-emerald-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Medios de Vida</span>
+            </button>
+
+            <button onclick="router.navigate('threats')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="alert-triangle" class="h-5 w-5 group-hover:text-amber-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Amenazas</span>
+            </button>
+
+            <button onclick="router.navigate('governance')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="users" class="h-5 w-5 group-hover:text-purple-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Gobernanza</span>
+            </button>
+        </nav>
+
+        <!-- User/Footer -->
+        <div class="p-4 border-t border-slate-800">
+            <div class="flex items-center">
+                <div class="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-300">
+                    <i data-lucide="user" class="h-4 w-4"></i>
+                </div>
+                <div class="ml-3 hidden lg:block">
+                    <p class="text-sm font-medium text-white" id="org-name">TierraViva</p>
+                    <p class="text-xs text-slate-500">Ver. 2.0</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-full bg-slate-50 relative overflow-hidden">
+        
+        <!-- Top Bar -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 md:px-8 z-10 flex-shrink-0">
+            <h1 id="page-title" class="text-xl font-bold text-slate-800">Resumen Ejecutivo</h1>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Context Selector -->
+                <div class="relative">
+                    <select id="context-selector" class="appearance-none bg-slate-50 border border-slate-300 text-slate-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-medium transition-shadow cursor-pointer">
+                        <!-- Options injected -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                        <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                    </div>
+                </div>
+                <button class="p-2 text-slate-400 hover:text-slate-600 transition-colors" title="Exportar Informe">
+                    <i data-lucide="download" class="h-5 w-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Area -->
+        <div id="content-area" class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
+            
+            <!-- VIEW: HOME (Bento Grid) -->
+            <div id="view-home" class="view-section space-y-6 fade-in">
+                <!-- KPI Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-cyan-50 text-cyan-600 rounded-lg"><i data-lucide="droplets" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Servicios Eco.</p><p class="text-2xl font-bold text-slate-800" id="kpi-services">-</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="wheat" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Medios de Vida</p><p class="text-2xl font-bold text-slate-800" id="kpi-livelihoods">-</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="flame" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Amenazas</p><p class="text-2xl font-bold text-slate-800" id="kpi-threats">-</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="users-2" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Actores</p><p class="text-2xl font-bold text-slate-800" id="kpi-actors">-</p></div>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Ecosystem Health (Large) -->
+                    <div class="bento-card lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-800">Salud de los Ecosistemas</h3>
+                            <button onclick="router.navigate('landscape')" class="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center">Ver detalles <i data-lucide="arrow-right" class="h-4 w-4 ml-1"></i></button>
+                        </div>
+                        <div class="relative h-64 w-full">
+                            <canvas id="ecosystemHealthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Threats (Tall) -->
+                    <div class="bento-card lg:row-span-2">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Ranking de Amenazas</h3>
+                        <div class="relative h-full min-h-[300px]">
+                            <canvas id="threatRankingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Executive Summary (Wide text) -->
+                    <div class="bento-card lg:col-span-2">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">Visión General del Territorio</h3>
+                        <p id="executive-summary" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: LANDSCAPE -->
+            <div id="view-landscape" class="view-section hidden fade-in space-y-6">
+                <!-- Ecosystem List Cards -->
+                <div id="ecosystems-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Injected -->
+                </div>
+            </div>
+
+            <!-- VIEW: LIVELIHOODS -->
+            <div id="view-livelihoods" class="view-section hidden fade-in space-y-6">
+                 <!-- Network Graph -->
+                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Red de Dependencias (Ecosistema → Medios de Vida)</h3>
+                    <div id="d3-network-container" class="w-full h-[500px] border border-slate-100 rounded-lg bg-slate-50 relative overflow-hidden"></div>
+                    <p class="text-sm text-slate-500 mt-2 text-center">Nodos: Verde (Servicios), Azul (Medios de Vida). Enlaces: Grosor = Nr. Usuarios.</p>
+                </div>
+
+                <!-- Heatmap -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-hidden">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Matriz Detallada</h3>
+                    <div id="heatmap-container" class="overflow-x-auto custom-scrollbar"></div>
+                </div>
+                
+                <!-- Seasonality Detail -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2">Estacionalidad</h3>
+                    <p id="seasonality-hint" class="text-sm text-slate-500 mb-4">Seleccione una celda en la matriz para ver detalles.</p>
+                    <div class="h-64"><canvas id="seasonalityChart"></canvas></div>
+                </div>
+            </div>
+
+             <!-- VIEW: THREATS -->
+             <div id="view-threats" class="view-section hidden fade-in space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Radar de Impactos</h3>
+                        <div id="threat-buttons" class="flex flex-wrap gap-2 mb-4"></div>
+                        <div class="h-80 flex items-center justify-center">
+                            <canvas id="threatRadarChart"></canvas>
+                        </div>
+                    </div>
+                     <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Línea de Tiempo de Conflictos</h3>
+                        <div id="conflicts-timeline" class="space-y-4 max-h-[400px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: GOVERNANCE -->
+            <div id="view-governance" class="view-section hidden fade-in space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Mapa de Actores (Poder vs. Interés)</h3>
+                        <div class="h-80"><canvas id="actorScatterChart"></canvas></div>
+                    </div>
+                    <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Actor List</h3>
+                        <div id="actor-list" class="space-y-2 max-h-80 overflow-y-auto"></div>
+                    </div>
+                </div>
+                <div class="bento-card">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Espacios de Diálogo</h3>
+                    <div id="dialogue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- LOGIC -->
+    <script>
+        // --- ROUTER ---
+        const router = {
+            current: 'home',
+            navigate: (viewId) => {
+                // Hide all views
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                // Show target view
+                const target = document.getElementById(`view-${viewId}`);
+                if (target) target.classList.remove('hidden');
+                
+                // Update Sidebar State
+                document.querySelectorAll('.nav-item').forEach(el => {
+                    el.classList.remove('bg-slate-800', 'text-white');
+                    el.classList.add('text-slate-400');
+                });
+                // Find active link (simple matching)
+                const activeBtn = Array.from(document.querySelectorAll('.nav-item')).find(btn => btn.onclick.toString().includes(viewId));
+                if (activeBtn) {
+                    activeBtn.classList.add('bg-slate-800', 'text-white');
+                    activeBtn.classList.remove('text-slate-400');
+                }
+
+                // Update Title
+                const titles = {
+                    'home': 'Resumen Ejecutivo',
+                    'landscape': 'Paisaje y Ecosistemas',
+                    'livelihoods': 'Medios de Vida y Servicios',
+                    'threats': 'Amenazas y Conflictos',
+                    'governance': 'Gobernanza'
+                };
+                document.getElementById('page-title').textContent = titles[viewId] || 'Dashboard';
+                
+                router.current = viewId;
+
+                // Trigger resize for charts that might be hidden
+                if (viewId === 'livelihoods') initD3Graph(); 
+                window.dispatchEvent(new Event('resize'));
+            }
+        };
+
+        // --- STATE ---
+        let state = {
+            contextId: null,
+            charts: {}
+        };
+
+        // --- INIT ---
+        window.onload = () => {
+            if (typeof BUNDLE === 'undefined') return alert('Error: No data loaded');
+            
+            lucide.createIcons();
+            initContextSelector();
+            
+            // Set first context
+            if (BUNDLE.contexts.length > 0) {
+                setContext(BUNDLE.contexts[0].context_id);
+            }
+
+            // Init Charts
+            initCharts();
+            
+            // Nav to home
+            router.navigate('home');
+        };
+
+        function initContextSelector() {
+            const sel = document.getElementById('context-selector');
+            BUNDLE.contexts.forEach(ctx => {
+                const opt = document.createElement('option');
+                opt.value = ctx.context_id;
+                opt.innerText = ctx.label;
+                sel.appendChild(opt);
+            });
+            sel.addEventListener('change', (e) => setContext(e.target.value));
+        }
+
+        function setContext(id) {
+            state.contextId = id;
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            updateKPIs();
+            updateCharts();
+            updateLists();
+            initD3Graph(); // Re-run D3 with new data
+        }
+
+        // --- UPDATERS ---
+        function updateKPIs() {
+            const kpi = BUNDLE.kpis[state.contextId] || { n_services:0, n_livelihoods:0, n_threats:0, n_actors:0 };
+            document.getElementById('kpi-services').textContent = kpi.n_services;
+            document.getElementById('kpi-livelihoods').textContent = kpi.n_livelihoods;
+            document.getElementById('kpi-threats').textContent = kpi.n_threats;
+            document.getElementById('kpi-actors').textContent = kpi.n_actors;
+
+            // Summary Text
+            const ctxLabel = BUNDLE.contexts.find(c => c.context_id === state.contextId)?.label || 'Contexto';
+            document.getElementById('executive-summary').textContent = `En el contexto de ${ctxLabel}, se han identificado ${kpi.n_services} servicios ecosistémicos clave que sustentan ${kpi.n_livelihoods} medios de vida. El análisis de vulnerabilidad destaca ${kpi.n_threats} amenazas principales, siendo gestionadas por una red de ${kpi.n_actors} actores locales e institucionales.`;
+        }
+
+        function updateLists() {
+            // Ecosystems
+            const ecoContainer = document.getElementById('ecosystems-grid');
+            const ecosystems = BUNDLE.ecosystems.filter(e => e.context_id === state.contextId);
+            ecoContainer.innerHTML = ecosystems.map(e => `
+                <div class="bg-white rounded-lg p-5 border border-slate-200 shadow-sm hover:border-brand-300 transition-colors">
+                    <div class="flex iems-start justify-between">
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded mb-3 inline-block">
+                             <i data-lucide="tree-pine" class="h-6 w-6"></i>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${getHealthColor(e.es_salud)}">${e.es_salud}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-1">${e.ecosistema}</h4>
+                    <p class="text-sm text-slate-500 mb-3">${e.tipo || 'Tipo no especificado'}</p>
+                    <p class="text-xs text-slate-400">Degradación: ${e.causas_deg || 'No reportada'}</p>
+                </div>
+            `).join('');
+            lucide.createIcons();
+
+            // Threat Buttons
+            const threatBtnsObj = document.getElementById('threat-buttons');
+            const threats = [...new Set(BUNDLE.threats.amenazas.filter(t => t.context_id === state.contextId).map(t => t.amenaza))];
+            threatBtnsObj.innerHTML = threats.map(t => 
+                `<button onclick="selectThreat('${t}')" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors focus:bg-amber-100 focus:text-amber-800 focus:ring-2 ring-amber-500 ring-offset-1">${t}</button>`
+            ).join('');
+            if(threats.length) selectThreat(threats[0]);
+
+            // Conflict Timeline
+            const conflictCont = document.getElementById('conflicts-timeline');
+            const conflicts = BUNDLE.conflicts.events.filter(c => c.context_id === state.contextId).sort((a,b) => (a.ano_evento||0) - (b.ano_evento||0));
+            conflictCont.innerHTML = conflicts.map(c => `
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-3 h-3 bg-slate-300 rounded-full"></div>
+                        <div class="w-0.5 bg-slate-200 flex-1 h-full min-h-[20px]"></div>
+                    </div>
+                    <div class="pb-6">
+                        <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">${c.ano_evento || '?'}</span>
+                        <h4 class="font-semibold text-slate-800 text-sm mt-1">${c.evento}</h4>
+                        <p class="text-xs text-slate-500 mt-1">Coop: ${c.coop_factor || '-'}</p>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-sm text-slate-400 italic">No hay conflictos registrados.</p>';
+
+            // Actors List
+            const actorList = document.getElementById('actor-list');
+            const actors = BUNDLE.actors.filter(a => a.context_id === state.contextId).sort((a,b) => b.poder - a.poder);
+            actorList.innerHTML = actors.map(a => `
+                <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded border-b border-slate-100 last:border-0">
+                    <div>
+                        <p class="font-medium text-sm text-slate-800">${a.nombre_actor}</p>
+                        <p class="text-[10px] text-slate-500 uppercase">${a.tipo_actor}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="text-xs px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded" title="Poder">P:${a.poder}</div>
+                        <div class="text-xs px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded" title="Interés">I:${a.interes}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Heatmap
+            renderHeatmap();
+        }
+
+        function getHealthColor(status) {
+            const s = (status || '').toLowerCase();
+            if(s.includes('buen') || s.includes('alta')) return 'bg-emerald-100 text-emerald-800';
+            if(s.includes('reg') || s.includes('media')) return 'bg-amber-100 text-amber-800';
+            if(s.includes('mal') || s.includes('baja')) return 'bg-rose-100 text-rose-800';
+            return 'bg-slate-100 text-slate-600';
+        }
+
+        // --- CHARTS ---
+        function initCharts() {
+            // Ecosystems
+            state.charts.eco = new Chart(document.getElementById('ecosystemHealthChart'), {
+                type: 'doughnut',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#cbd5e1'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } }, cutout: '70%' }
+            });
+
+            // Threats Ranking
+            state.charts.threatRank = new Chart(document.getElementById('threatRankingChart'), {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Score', data: [], backgroundColor: '#f59e0b', borderRadius: 4 }] },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+            });
+
+            // Threat Radar
+            state.charts.threatRadar = new Chart(document.getElementById('threatRadarChart'), {
+                type: 'radar',
+                data: { labels: ['Econ', 'Alim', 'Sanit', 'Amb', 'Pers', 'Com', 'Pol'], datasets: [{ data: [], fill: true, backgroundColor: 'rgba(245, 158, 11, 0.2)', borderColor: '#f59e0b' }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 3 } }, plugins: { legend: { display: false } } }
+            });
+
+            // Seasonality
+            state.charts.season = new Chart(document.getElementById('seasonalityChart'), {
+                type: 'bar',
+                data: { labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'], datasets: [
+                    { label: 'Contribución', data: [], backgroundColor: '#10b981' },
+                    { label: 'Escasez', data: [], backgroundColor: '#ef4444' }
+                ]},
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 1 } } }
+            });
+
+            // Actors Scatter
+            state.charts.actor = new Chart(document.getElementById('actorScatterChart'), {
+                type: 'scatter',
+                data: { datasets: [] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    scales: { x: { min: 0, max: 10, title: { display:true, text:'Interés'} }, y: { min: 0, max: 10, title: {display:true, text:'Poder'} } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.raw.label } } }
+                }
+            });
+        }
+
+        function updateCharts() {
+            // Eco Health
+            const ecosystems = BUNDLE.ecosystems.filter(e => e.context_id === state.contextId);
+            const healthCounts = { Bueno: 0, Regular: 0, Malo: 0, Otro: 0 };
+            ecosystems.forEach(e => {
+                const s = (e.es_salud||'').toLowerCase();
+                if(s.includes('buen')||s.includes('3')) healthCounts.Bueno++;
+                else if(s.includes('reg')||s.includes('2')) healthCounts.Regular++;
+                else if(s.includes('mal')||s.includes('1')) healthCounts.Malo++;
+                else healthCounts.Otro++;
+            });
+            state.charts.eco.data.datasets[0].data = [healthCounts.Bueno, healthCounts.Regular, healthCounts.Malo, healthCounts.Otro];
+            state.charts.eco.update();
+
+            // Threat Rank
+            const tScores = BUNDLE.threats.threat_scores.filter(t => t.context_id === state.contextId).sort((a,b) => b.mean_score - a.mean_score).slice(0, 10);
+            state.charts.threatRank.data.labels = tScores.map(t => t.amenaza);
+            state.charts.threatRank.data.datasets[0].data = tScores.map(t => t.mean_score);
+            state.charts.threatRank.update();
+
+            // Actor Scatter
+            const actors = BUNDLE.actors.filter(a => a.context_id === state.contextId);
+            state.charts.actor.data.datasets = [{
+                label: 'Actores',
+                data: actors.map(a => ({ x: a.interes, y: a.poder, label: a.nombre_actor })),
+                backgroundColor: actors.map(a => a.tipo_actor === 'Comunitario' ? '#10b981' : a.tipo_actor === 'Gubernamental' ? '#3b82f6' : '#64748b')
+            }];
+            state.charts.actor.update();
+        }
+
+        function selectThreat(name) {
+            const t = BUNDLE.threats.amenazas.find(x => x.context_id === state.contextId && x.amenaza === name);
+            if (!t) return;
+            state.charts.threatRadar.data.datasets[0].data = [t.i_economia, t.i_alimentaria, t.i_sanitaria, t.i_ambiental, t.i_personal, t.i_comunitaria, t.i_politica];
+            state.charts.threatRadar.data.datasets[0].label = name;
+            state.charts.threatRadar.update();
+        }
+
+        function renderHeatmap() {
+            const data = BUNDLE.lifelines.se_mdv.filter(x => x.context_id === state.contextId);
+            const container = document.getElementById('heatmap-container');
+            if(!data.length) return container.innerHTML = '<p class="text-sm text-slate-400 p-4">Sin datos de matriz.</p>';
+
+            const services = [...new Set(data.map(d => d.elemento_se))];
+            const mdvs = [...new Set(data.map(d => d.mdv_name))];
+
+            let html = '<table class="w-full text-xs border-collapse">';
+            html += '<thead><tr><th class="p-2 border-b border-slate-200 text-left bg-slate-50 min-w-[120px]">Servicio \\ MdV</th>';
+            mdvs.forEach(m => html += `<th class="p-2 border-b border-slate-200 bg-slate-50 font-medium text-slate-600 rotate-45 h-24 whitespace-nowrap align-bottom"><div class="w-6">${m}</div></th>`);
+            html += '</tr></thead><tbody>';
+
+            services.forEach(s => {
+                html += `<tr><td class="p-2 border-b border-slate-100 font-medium text-slate-700 bg-slate-50 sticky left-0 shadow-sm">${s}</td>`;
+                mdvs.forEach(m => {
+                    const item = data.find(x => x.elemento_se === s && x.mdv_name === m);
+                    if(item) {
+                        const alpha = Math.min((item.nr_usuarios || 0) / 100, 1) * 0.8 + 0.2; // Mock normalization
+                        html += `<td class="p-1 border-b border-slate-100 text-center cursor-pointer hover:bg-slate-100" onclick="showSeasonality('${item.se_mdv_id}')">
+                            <div class="w-full h-8 rounded flex items-center justify-center text-[10px] font-bold text-emerald-900" style="background-color: rgba(16, 185, 129, ${alpha})">
+                                ${item.nr_usuarios || ''}
+                            </div>
+                        </td>`;
+                    } else {
+                        html += '<td class="border-b border-slate-100"></td>';
+                    }
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function showSeasonality(id) {
+            const months = BUNDLE.lifelines.se_months.filter(x => x.se_mdv_id === id);
+            const contrib = new Array(12).fill(0);
+            const fal = new Array(12).fill(0);
+            months.forEach(m => {
+                if((m.month_type||'').includes('contrib')) contrib[m.month_num - 1] = 1;
+                else fal[m.month_num - 1] = 1;
+            });
+            state.charts.season.data.datasets[0].data = contrib;
+            state.charts.season.data.datasets[1].data = fal;
+            state.charts.season.update();
+            document.getElementById('seasonality-hint').textContent = 'ID: ' + id;
+        }
+
+        // --- D3 FORCE GRAPH ---
+        function initD3Graph() {
+            const container = document.getElementById('d3-network-container');
+            container.innerHTML = ''; // Clear
+            if (router.current !== 'livelihoods') return; // Only render when visible
+
+            const width = container.clientWidth;
+            const height = 500;
+            const data = BUNDLE.lifelines.se_mdv.filter(x => x.context_id === state.contextId);
+            
+            if(!data.length) return;
+
+            const nodes = [];
+            const links = [];
+            const addedNodes = new Set();
+
+            data.forEach(d => {
+                // Service Node
+                if (!addedNodes.has('S:' + d.elemento_se)) {
+                    nodes.push({ id: 'S:' + d.elemento_se, label: d.elemento_se, type: 'service' });
+                    addedNodes.add('S:' + d.elemento_se);
+                }
+                // MDV Node
+                if (!addedNodes.has('M:' + d.mdv_name)) {
+                    nodes.push({ id: 'M:' + d.mdv_name, label: d.mdv_name, type: 'mdv' });
+                    addedNodes.add('M:' + d.mdv_name);
+                }
+                // Link
+                links.push({ source: 'S:' + d.elemento_se, target: 'M:' + d.mdv_name, value: d.nr_usuarios });
+            });
+
+            const svg = d3.select(container).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", [0, 0, width, height]);
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-200))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collide", d3.forceCollide().radius(30));
+
+            const link = svg.append("g")
+                .attr("stroke", "#94a3b8")
+                .attr("stroke-opacity", 0.6)
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("stroke-width", d => Math.sqrt(d.value || 1));
+
+            const node = svg.append("g")
+                .selectAll("circle")
+                .data(nodes)
+                .join("circle")
+                .attr("r", d => d.type === 'service' ? 8 : 12)
+                .attr("fill", d => d.type === 'service' ? '#10b981' : '#3b82f6')
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2)
+                .call(drag(simulation));
+
+            // Tooltips
+            node.append("title").text(d => d.label);
+
+            // Labels
+            const label = svg.append("g")
+                .selectAll("text")
+                .data(nodes)
+                .join("text")
+                .attr("dx", 15)
+                .attr("dy", 4)
+                .text(d => d.label)
+                .attr("font-size", "10px")
+                .attr("fill", "#475569")
+                .style("pointer-events", "none");
+
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+                
+                label
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+
+            function drag(simulation) {
+                function dragstarted(event) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    event.subject.fx = event.subject.x;
+                    event.subject.fy = event.subject.y;
+                }
+                function dragged(event) {
+                    event.subject.fx = event.x;
+                    event.subject.fy = event.y;
+                }
+                function dragended(event) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    event.subject.fx = null;
+                    event.subject.fy = null;
+                }
+                return d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+            }
+        }
+    </script>
+</body>
+</html>

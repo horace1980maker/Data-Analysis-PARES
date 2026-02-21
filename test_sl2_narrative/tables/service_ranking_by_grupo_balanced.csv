@@ -1,0 +1,7 @@
+grupo,se_key,links_mdv,users,seasonality_fragility,priority_weight,links_mdv_norm,users_norm,seasonality_norm,priority_norm,sci,rank,scenario
+Amarillo,P3,1,57711.0,0.0,0.5,0.5,0.5,0.5,0.5,0.5,1.0,balanced
+Azul,P3,1,180.0,0.0,0.6666666666666666,0.5,1.0,0.5,0.5,0.625,1.0,balanced
+Azul,P1,1,90.0,0.0,0.6666666666666666,0.5,0.0,0.5,0.5,0.37500000000000006,2.0,balanced
+Rojo,P1,1,300.0,0.0,0.0,0.5,0.5,0.5,0.5,0.5,1.0,balanced
+Verde,P1,1,45000.0,0.0,1.0,0.5,1.0,0.5,0.5,0.625,1.0,balanced
+Verde,R1,1,30000.0,0.0,1.0,0.5,0.0,0.5,0.5,0.37500000000000006,2.0,balanced

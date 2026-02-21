@@ -1,0 +1,5 @@
+ecosistema_id,n_obs,n_causes_deg,n_services,n_livelihoods,connectivity_raw,connectivity_norm,ecosistema,mean_sci,mean_sci_norm,eli,eli_norm
+0b9889c245c97f64,1,1,7,1,8,0.5,Manglar,0.5,0.6666666666666664,0.5666666666666665,0.5666666666666665
+5bcb7c58676c1273,2,2,8,2,10,1.0,Bosque seco,0.55,1.0,1.0,1.0
+8102384e15c30837,1,1,9,1,10,1.0,Costero Marino,0.5,0.6666666666666664,0.8666666666666665,0.8666666666666665
+d2f5a3719a00236a,1,1,5,1,6,0.0,Bosque Montano,0.4,0.0,0.0,0.0

@@ -1,0 +1,29 @@
+grupo,mdv_id,mdv_name,amenaza_id,amenaza,sum_pressure_via_services,ivl_norm
+Amarillo,b2cead53d40c0274,Granos Basicos,045e2f706ad83acd,Deforestacion ,90.0,0.045454545454545456
+Amarillo,b2cead53d40c0274,Granos Basicos,10cd3b13a71c7982,Deforestación,185.1428571428571,0.40584415584415573
+Amarillo,b2cead53d40c0274,Granos Basicos,385b4e71c08c156a,Tormenta,276.0,0.75
+Amarillo,b2cead53d40c0274,Granos Basicos,39d789daa476857a,Sequia ,78.0,0.0
+Amarillo,b2cead53d40c0274,Granos Basicos,5ca74b4bf572ee0f,Contaminacion por agroquimicos ,90.0,0.045454545454545456
+Amarillo,b2cead53d40c0274,Granos Basicos,877a642c7a52bd47,Contaminación,216.0,0.5227272727272727
+Amarillo,b2cead53d40c0274,Granos Basicos,9e6ffa759c6ee67d,Sequía,342.0,1.0
+Azul,2643f02ff8a352d7,Ganadería,045e2f706ad83acd,Deforestacion ,90.0,0.05263157894736842
+Azul,2643f02ff8a352d7,Ganadería,10cd3b13a71c7982,Deforestación,156.85714285714286,0.3458646616541354
+Azul,2643f02ff8a352d7,Ganadería,385b4e71c08c156a,Tormenta,306.0,1.0
+Azul,2643f02ff8a352d7,Ganadería,39d789daa476857a,Sequia ,78.0,0.0
+Azul,2643f02ff8a352d7,Ganadería,5ca74b4bf572ee0f,Contaminacion por agroquimicos ,90.0,0.05263157894736842
+Azul,2643f02ff8a352d7,Ganadería,877a642c7a52bd47,Contaminación,249.0,0.75
+Azul,2643f02ff8a352d7,Ganadería,9e6ffa759c6ee67d,Sequía,249.0,0.75
+Rojo,5238f6f40047d1a6,Hortalizas,045e2f706ad83acd,Deforestacion ,45.0,0.046511627906976744
+Rojo,5238f6f40047d1a6,Hortalizas,10cd3b13a71c7982,Deforestación,64.28571428571429,0.19601328903654489
+Rojo,5238f6f40047d1a6,Hortalizas,385b4e71c08c156a,Tormenta,168.0,1.0
+Rojo,5238f6f40047d1a6,Hortalizas,39d789daa476857a,Sequia ,39.0,0.0
+Rojo,5238f6f40047d1a6,Hortalizas,5ca74b4bf572ee0f,Contaminacion por agroquimicos ,45.0,0.046511627906976744
+Rojo,5238f6f40047d1a6,Hortalizas,877a642c7a52bd47,Contaminación,141.0,0.7906976744186046
+Rojo,5238f6f40047d1a6,Hortalizas,9e6ffa759c6ee67d,Sequía,78.0,0.3023255813953488
+Verde,484bec16d502a00b,Pesca,045e2f706ad83acd,Deforestacion ,90.0,0.046511627906976744
+Verde,484bec16d502a00b,Pesca,10cd3b13a71c7982,Deforestación,128.57142857142858,0.19601328903654489
+Verde,484bec16d502a00b,Pesca,385b4e71c08c156a,Tormenta,336.0,1.0
+Verde,484bec16d502a00b,Pesca,39d789daa476857a,Sequia ,78.0,0.0
+Verde,484bec16d502a00b,Pesca,5ca74b4bf572ee0f,Contaminacion por agroquimicos ,90.0,0.046511627906976744
+Verde,484bec16d502a00b,Pesca,877a642c7a52bd47,Contaminación,282.0,0.7906976744186046
+Verde,484bec16d502a00b,Pesca,9e6ffa759c6ee67d,Sequía,156.0,0.3023255813953488

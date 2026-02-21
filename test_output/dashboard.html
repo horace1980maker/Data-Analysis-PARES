@@ -1,0 +1,4567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARES Dashboard 2.0</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981', // Emerald 500
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        slate: {
+                            850: '#1e293b', // Custom dark for sidebar
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Bento Grid Utilities */
+        .bento-card {
+            @apply bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col transition-all duration-200 hover:shadow-md;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased flex h-screen overflow-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- DATA PLACEHOLDER -->
+    <script>
+        const BUNDLE = {
+  "meta": {
+    "title": "Análisis Interactivo del Paisaje de La Unión",
+    "subtitle": "Una exploración visual de las dinámicas socioecológicas y la capacidad adaptativa.",
+    "org": "TEST_ORG",
+    "landscape": "La Unión",
+    "admin0": "El Salvador",
+    "export_date": "2026-02-12",
+    "workbook_name": "FINAL_ADEL_analysis_ready.xlsx"
+  },
+  "contexts": [
+    {
+      "context_id": "d883f0d73b9b1ed5",
+      "geo_id": "9235c9109fe66ca6",
+      "fecha_iso": "2025-06-18",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "ADEL La Unión",
+      "grupo_normalized": "ADEL La Unión",
+      "label": "La Unión — ADEL La Unión — 2025-06"
+    },
+    {
+      "context_id": "91a74eda6a8e5959",
+      "geo_id": "918215e91f5e005f",
+      "fecha_iso": "2025-06-18",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Azul",
+      "grupo_normalized": "Azul",
+      "label": "La Unión — Azul — 2025-06"
+    },
+    {
+      "context_id": "0c3b9211deb6a4fe",
+      "geo_id": "d5e6ce52eb1c07fa",
+      "fecha_iso": "2025-06-18",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Rojo",
+      "grupo_normalized": "Rojo",
+      "label": "La Unión — Rojo — 2025-06"
+    },
+    {
+      "context_id": "902746947da24012",
+      "geo_id": "4f78ce0576d09ef4",
+      "fecha_iso": "2025-06-18",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Verde",
+      "grupo_normalized": "Verde",
+      "label": "La Unión — Verde — 2025-06"
+    },
+    {
+      "context_id": "ded36a8cdec02160",
+      "geo_id": "ab0a19348ba454e0",
+      "fecha_iso": "2025-06-18",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Amarillo",
+      "grupo_normalized": "Amarillo",
+      "label": "La Unión — Amarillo — 2025-06"
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "geo_id": "9235c9109fe66ca6",
+      "fecha_iso": "2025-06-19",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "ADEL La Unión",
+      "grupo_normalized": "ADEL La Unión",
+      "label": "La Unión — ADEL La Unión — 2025-06"
+    },
+    {
+      "context_id": "44616e973aa9e727",
+      "geo_id": "918215e91f5e005f",
+      "fecha_iso": "2025-06-19",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Azul",
+      "grupo_normalized": "Azul",
+      "label": "La Unión — Azul — 2025-06"
+    },
+    {
+      "context_id": "df41c0ebafba051d",
+      "geo_id": "d5e6ce52eb1c07fa",
+      "fecha_iso": "2025-06-19",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Rojo",
+      "grupo_normalized": "Rojo",
+      "label": "La Unión — Rojo — 2025-06"
+    },
+    {
+      "context_id": "c831582d0f53b9d7",
+      "geo_id": "4f78ce0576d09ef4",
+      "fecha_iso": "2025-06-19",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Verde",
+      "grupo_normalized": "Verde",
+      "label": "La Unión — Verde — 2025-06"
+    },
+    {
+      "context_id": "de4815042051e88e",
+      "geo_id": "ab0a19348ba454e0",
+      "fecha_iso": "2025-06-19",
+      "admin0": "El Salvador",
+      "paisaje": "La Unión",
+      "grupo": "Amarillo",
+      "grupo_normalized": "Amarillo",
+      "label": "La Unión — Amarillo — 2025-06"
+    }
+  ],
+  "kpis": {
+    "d883f0d73b9b1ed5": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "91a74eda6a8e5959": {
+      "n_services": 3,
+      "n_livelihoods": 1,
+      "n_threats": 14,
+      "n_actors": 0
+    },
+    "0c3b9211deb6a4fe": {
+      "n_services": 3,
+      "n_livelihoods": 1,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "902746947da24012": {
+      "n_services": 3,
+      "n_livelihoods": 1,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "ded36a8cdec02160": {
+      "n_services": 3,
+      "n_livelihoods": 1,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "a5f0c949385f9601": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 9
+    },
+    "44616e973aa9e727": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "df41c0ebafba051d": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "c831582d0f53b9d7": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    },
+    "de4815042051e88e": {
+      "n_services": 0,
+      "n_livelihoods": 0,
+      "n_threats": 0,
+      "n_actors": 0
+    }
+  },
+  "lifelines": {
+    "se_mdv": [
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "context_id": "91a74eda6a8e5959",
+        "elemento_se": "provisión",
+        "mdv_name": "Ganadería",
+        "nr_usuarios": 60,
+        "accesso": "",
+        "barreras": "Falta de concientización en prácticas agrícolas"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "context_id": "91a74eda6a8e5959",
+        "elemento_se": "flujo",
+        "mdv_name": "Ganadería",
+        "nr_usuarios": 60,
+        "accesso": "",
+        "barreras": "Falta de mano de obra"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "context_id": "91a74eda6a8e5959",
+        "elemento_se": "demanda",
+        "mdv_name": "Ganadería",
+        "nr_usuarios": 60,
+        "accesso": "",
+        "barreras": "Crecimiento demográfico"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "context_id": "91a74eda6a8e5959",
+        "elemento_se": "provisión",
+        "mdv_name": "Ganadería",
+        "nr_usuarios": 30,
+        "accesso": "",
+        "barreras": "Alto costo de la canasta básica"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "context_id": "91a74eda6a8e5959",
+        "elemento_se": "flujo",
+        "mdv_name": "Ganadería",
+        "nr_usuarios": 30,
+        "accesso": "",
+        "barreras": "Alto costo de la canasta básica"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "context_id": "91a74eda6a8e5959",
+        "elemento_se": "demanda",
+        "mdv_name": "Ganadería",
+        "nr_usuarios": 30,
+        "accesso": "",
+        "barreras": "Las personas con menor poder adquisitivo no acceden a estos alimentos"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "context_id": "0c3b9211deb6a4fe",
+        "elemento_se": "provisión",
+        "mdv_name": "Hortalizas",
+        "nr_usuarios": 100,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "context_id": "0c3b9211deb6a4fe",
+        "elemento_se": "flujo",
+        "mdv_name": "Hortalizas",
+        "nr_usuarios": 100,
+        "accesso": "",
+        "barreras": "Químicos, Quemas, degradación de suelo"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "context_id": "0c3b9211deb6a4fe",
+        "elemento_se": "demanda",
+        "mdv_name": "Hortalizas",
+        "nr_usuarios": 100,
+        "accesso": "",
+        "barreras": "Incremento de la población"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "context_id": "902746947da24012",
+        "elemento_se": "provisión",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 7000,
+        "accesso": "",
+        "barreras": "Mal manejo, clima, aumento pescadores"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "context_id": "902746947da24012",
+        "elemento_se": "flujo",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 7000,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "context_id": "902746947da24012",
+        "elemento_se": "demanda",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 7000,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "b8794a533198d481",
+        "context_id": "902746947da24012",
+        "elemento_se": "provisión",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 10000,
+        "accesso": "",
+        "barreras": "Tala de bosque salado"
+      },
+      {
+        "se_mdv_id": "b6a2f2da4c285e56",
+        "context_id": "902746947da24012",
+        "elemento_se": "flujo",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 10000,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "057bc752ed1dbac7",
+        "context_id": "902746947da24012",
+        "elemento_se": "demanda",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 10000,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "context_id": "902746947da24012",
+        "elemento_se": "provisión",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 8000,
+        "accesso": "",
+        "barreras": "Tala de manglar por salinera"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "context_id": "902746947da24012",
+        "elemento_se": "flujo",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 8000,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "context_id": "902746947da24012",
+        "elemento_se": "demanda",
+        "mdv_name": "Pesca",
+        "nr_usuarios": 8000,
+        "accesso": "",
+        "barreras": "Sobrepoblación, disminución de manglar"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "context_id": "ded36a8cdec02160",
+        "elemento_se": "provisión",
+        "mdv_name": "Granos Basicos",
+        "nr_usuarios": 19000,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "context_id": "ded36a8cdec02160",
+        "elemento_se": "flujo",
+        "mdv_name": "Granos Basicos",
+        "nr_usuarios": 19000,
+        "accesso": "",
+        "barreras": "Racionalizacion del agua"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "context_id": "ded36a8cdec02160",
+        "elemento_se": "demanda",
+        "mdv_name": "Granos Basicos",
+        "nr_usuarios": 19000,
+        "accesso": "",
+        "barreras": "Aumento de la poblacion"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "context_id": "ded36a8cdec02160",
+        "elemento_se": "provisión",
+        "mdv_name": "Granos Basicos",
+        "nr_usuarios": 237,
+        "accesso": "",
+        "barreras": ""
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "context_id": "ded36a8cdec02160",
+        "elemento_se": "flujo",
+        "mdv_name": "Granos Basicos",
+        "nr_usuarios": 237,
+        "accesso": "",
+        "barreras": "Costo de mantenimiento"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "context_id": "ded36a8cdec02160",
+        "elemento_se": "demanda",
+        "mdv_name": "Granos Basicos",
+        "nr_usuarios": 237,
+        "accesso": "",
+        "barreras": "Mas demanda "
+      }
+    ],
+    "se_months": [
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "1a80195dc15cc48d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a985c6d4b3000fd7",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "8a25350f93ccabc9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "27ec29832871960b",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a280c6a3e387df9d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "91526d0906be665f",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "abb85cf0ffe616b9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "44c410926530e246",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 5.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 8.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 11.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 1.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 7.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 10.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": 4.0,
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "de3a4bf86ff2aa94",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "a17bae1cdf66dcfb",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "2fc161c3eac411e9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 1.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 2.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": 3.0,
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c061fcbab898c091",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "e7408d1aaa224965",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "adb9a1da9c310e23",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "c5344d022476e0d9",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "f67c5fa8ac69f105",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "ef6bad8128e7278d",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "contrib"
+      },
+      {
+        "se_mdv_id": "62e6b76c86cf770e",
+        "month_num": "",
+        "month_type": "falta"
+      }
+    ]
+  },
+  "threats": {
+    "amenazas": [
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 15,
+        "i_economia": 1,
+        "i_alimentaria": 1,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 15,
+        "i_economia": 1,
+        "i_alimentaria": 1,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 15,
+        "i_economia": 1,
+        "i_alimentaria": 1,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 60,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 60,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 60,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Contaminación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 60,
+        "i_economia": 1,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 60,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 60,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 60,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 2,
+        "threat_score": 1.4285714285714286
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 2,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 1.5714285714285714
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 2,
+        "i_politica": 2,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 2,
+        "i_politica": 2,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 2,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 2,
+        "i_politica": 2,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Contaminación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Contaminación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 100,
+        "i_economia": 3,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 100,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 2,
+        "threat_score": 1.7142857142857142
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 100,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 2,
+        "threat_score": 1.7142857142857142
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 100,
+        "i_economia": 2,
+        "i_alimentaria": 1,
+        "i_sanitaria": 1,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 2,
+        "threat_score": 1.7142857142857142
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 8000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 2,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Sequía",
+        "tipo_amenaza": "climática",
+        "nr_familias": 8000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 2,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 8000,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 1,
+        "i_personal": 3,
+        "i_comunitaria": 3,
+        "i_politica": 2,
+        "threat_score": 2.0
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 8000,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 1,
+        "i_ambiental": 1,
+        "i_personal": 3,
+        "i_comunitaria": 3,
+        "i_politica": 2,
+        "threat_score": 2.0
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Contaminación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 10000,
+        "i_economia": 2,
+        "i_alimentaria": 2,
+        "i_sanitaria": 3,
+        "i_ambiental": 3,
+        "i_personal": 3,
+        "i_comunitaria": 3,
+        "i_politica": 1,
+        "threat_score": 2.4285714285714284
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 10000,
+        "i_economia": 1,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.0
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 10000,
+        "i_economia": 1,
+        "i_alimentaria": 3,
+        "i_sanitaria": 3,
+        "i_ambiental": 2,
+        "i_personal": 2,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.0
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Sequia",
+        "tipo_amenaza": "climática",
+        "nr_familias": 19000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 2,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.0
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Tormenta",
+        "tipo_amenaza": "climática",
+        "nr_familias": 19000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 2,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.0
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Contaminacion por agroquimicos ",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 19000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 2,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 2,
+        "i_politica": 1,
+        "threat_score": 2.142857142857143
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Deforestación ",
+        "tipo_amenaza": "no-climática",
+        "nr_familias": 19000,
+        "i_economia": 3,
+        "i_alimentaria": 3,
+        "i_sanitaria": 2,
+        "i_ambiental": 3,
+        "i_personal": 1,
+        "i_comunitaria": 1,
+        "i_politica": 1,
+        "threat_score": 2.0
+      }
+    ],
+    "threat_scores": [
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Tormenta",
+        "mean_score": 1.4285714285714286,
+        "total_familias": 45
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Sequía",
+        "mean_score": 1.5714285714285714,
+        "total_familias": 180
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Contaminación",
+        "mean_score": 1.5714285714285714,
+        "total_familias": 60
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Deforestación",
+        "mean_score": 1.4285714285714286,
+        "total_familias": 180
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Sequía",
+        "mean_score": 1.5714285714285714,
+        "total_familias": 300
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Tormenta",
+        "mean_score": 2.142857142857143,
+        "total_familias": 300
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Contaminación",
+        "mean_score": 2.142857142857143,
+        "total_familias": 200
+      },
+      {
+        "context_id": "0c3b9211deb6a4fe",
+        "amenaza": "Deforestación",
+        "mean_score": 1.7142857142857142,
+        "total_familias": 300
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Sequía",
+        "mean_score": 2.142857142857143,
+        "total_familias": 16000
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Tormenta",
+        "mean_score": 2.0,
+        "total_familias": 16000
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Contaminación",
+        "mean_score": 2.4285714285714284,
+        "total_familias": 10000
+      },
+      {
+        "context_id": "902746947da24012",
+        "amenaza": "Deforestación",
+        "mean_score": 2.0,
+        "total_familias": 20000
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Sequia",
+        "mean_score": 2.0,
+        "total_familias": 19000
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Tormenta",
+        "mean_score": 2.0,
+        "total_familias": 19000
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Contaminacion por agroquimicos ",
+        "mean_score": 2.142857142857143,
+        "total_familias": 19000
+      },
+      {
+        "context_id": "ded36a8cdec02160",
+        "amenaza": "Deforestación ",
+        "mean_score": 2.0,
+        "total_familias": 19000
+      }
+    ],
+    "amenazas_meta": [
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Tormentas",
+        "tipo_amenaza": "climática",
+        "magnitud": 4,
+        "frequencia": 2,
+        "tendencia": 2
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Sequías",
+        "tipo_amenaza": "climática",
+        "magnitud": 5,
+        "frequencia": 2,
+        "tendencia": 1
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Inundaciones",
+        "tipo_amenaza": "climática",
+        "magnitud": 1,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Vientos fuertes (huracanes)",
+        "tipo_amenaza": "climática",
+        "magnitud": 1,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Marejadas",
+        "tipo_amenaza": "climática",
+        "magnitud": 2,
+        "frequencia": 3,
+        "tendencia": 1
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Olas de calor",
+        "tipo_amenaza": "climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 3
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Contaminación por agroquímicos",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Incendios",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 1,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Deforestación",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 2
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Tala indiscriminada",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 4,
+        "frequencia": 3,
+        "tendencia": 3
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Sobre explotación pesquera",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 1,
+        "frequencia": 2,
+        "tendencia": 2
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Extracción de leña",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 2,
+        "frequencia": 2,
+        "tendencia": 2
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Extracción de flora y fauna no regulada",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 1,
+        "frequencia": 1,
+        "tendencia": 1
+      },
+      {
+        "context_id": "91a74eda6a8e5959",
+        "amenaza": "Procesos de urbanización",
+        "tipo_amenaza": "no-climática",
+        "magnitud": 3,
+        "frequencia": 2,
+        "tendencia": 1
+      }
+    ]
+  },
+  "actors": [
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "08661674dc3a369e",
+      "nombre_actor": "ADEL La Unión",
+      "tipo_actor": "ONG",
+      "rol_paisaje": "Regional ",
+      "poder": 9,
+      "interes": 10
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "91cb8ffb1087280d",
+      "nombre_actor": "CENTA",
+      "tipo_actor": "Gobierno",
+      "rol_paisaje": "Nacional",
+      "poder": 8,
+      "interes": 5
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "62365516a02e8d68",
+      "nombre_actor": "ADESCOS",
+      "tipo_actor": "Comunitario",
+      "rol_paisaje": "Local",
+      "poder": 9,
+      "interes": 6
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "b5f94c0b0e40bc87",
+      "nombre_actor": "Ministerio de Agricultura y Ganadería (MAG)",
+      "tipo_actor": "Gobierno",
+      "rol_paisaje": "Nacional",
+      "poder": 9,
+      "interes": 6
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "4d969c9a67739b52",
+      "nombre_actor": "Juntas de agua",
+      "tipo_actor": "Comunitario",
+      "rol_paisaje": "Local",
+      "poder": 6,
+      "interes": 8
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "ed90231691491eaf",
+      "nombre_actor": "PMA",
+      "tipo_actor": "Organismo internacional",
+      "rol_paisaje": "Internacional",
+      "poder": 5,
+      "interes": 5
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "eab3a5cabfb651e2",
+      "nombre_actor": "ACUGOLFO",
+      "tipo_actor": "ONG",
+      "rol_paisaje": "Regional ",
+      "poder": 6,
+      "interes": 8
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "451fc766b55e5cde",
+      "nombre_actor": "FundaTamarindo",
+      "tipo_actor": "ONG",
+      "rol_paisaje": "Local",
+      "poder": 9,
+      "interes": 10
+    },
+    {
+      "context_id": "a5f0c949385f9601",
+      "actor_id": "37bd166d23dc9de8",
+      "nombre_actor": "Marina Nacional",
+      "tipo_actor": "Gobierno",
+      "rol_paisaje": "Internacional",
+      "poder": 9,
+      "interes": 6
+    }
+  ],
+  "ecosystems": [
+    {
+      "context_id": "91a74eda6a8e5959",
+      "ecosistema": "Bosque seco",
+      "tipo": "",
+      "es_salud": "2",
+      "causas_deg": "Sobrepastoreo, intoxicación de los suelos por químicos, atrae plagas, gas metano, falta de conocimiento, falta de Asistencia ténica y mala práctica"
+    },
+    {
+      "context_id": "0c3b9211deb6a4fe",
+      "ecosistema": "Bosque seco",
+      "tipo": "",
+      "es_salud": "2",
+      "causas_deg": "Pesticidas, tala, quemas"
+    },
+    {
+      "context_id": "902746947da24012",
+      "ecosistema": "Costero Marino",
+      "tipo": "",
+      "es_salud": "2",
+      "causas_deg": "Contaminación, aguas negras, basura, sobre explotación pesquera, derrames de combustibles, incumplimiento de normas"
+    },
+    {
+      "context_id": "902746947da24012",
+      "ecosistema": "Manglar",
+      "tipo": "Agua salobres",
+      "es_salud": "2",
+      "causas_deg": "Tala de manglar, degradación salineras, escorrentías, contaminación química"
+    },
+    {
+      "context_id": "ded36a8cdec02160",
+      "ecosistema": "Bosque Montano",
+      "tipo": "",
+      "es_salud": "2",
+      "causas_deg": "Quema, Tala, Agroquimicos, Contaminación"
+    }
+  ],
+  "livelihoods": [
+    {
+      "mdv_id": "04c6a063b1996757",
+      "mdv_name": "Frutas",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "dda58c56888e3aa6",
+      "mdv_name": "Miel",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "5bc3f18c75371c2a",
+      "mdv_name": "Aves",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "bd6ef2c34bb13527",
+      "mdv_name": "Granos básicos",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "484bec16d502a00b",
+      "mdv_name": "Pesca",
+      "context_id": "902746947da24012",
+      "i_total": 0,
+      "rank": 999,
+      "sistema": "Pesca de mar",
+      "uso_final": "autoconsumo",
+      "cv_importancia": NaN,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "afb7b78e0468e730",
+      "mdv_name": "Servicios turístitcos",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "5238f6f40047d1a6",
+      "mdv_name": "Hortalizas",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "771611832e2867f8",
+      "mdv_name": "Preparación de alimentos",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "ef0f0248c61a1f82",
+      "mdv_name": "Salinera",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "b3b6b7966f041d90",
+      "mdv_name": "Moluscos",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "c17c9f0e2ed1442c",
+      "mdv_name": "Crustáceos",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "ec295591e60f2ecf",
+      "mdv_name": "Artesanías",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "2643f02ff8a352d7",
+      "mdv_name": "Ganadería",
+      "context_id": "91a74eda6a8e5959",
+      "i_total": 0,
+      "rank": 999,
+      "sistema": "Leche",
+      "uso_final": "comercial",
+      "cv_importancia": 1.0,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "2347a50f0fc4df75",
+      "mdv_name": "Hortaliza",
+      "context_id": "0c3b9211deb6a4fe",
+      "i_total": 0,
+      "rank": 999,
+      "sistema": "Chile",
+      "uso_final": "comercial",
+      "cv_importancia": 2.0,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "b2cead53d40c0274",
+      "mdv_name": "Granos basicos",
+      "context_id": "ded36a8cdec02160",
+      "i_total": 0,
+      "rank": 999,
+      "sistema": "Maiz",
+      "uso_final": "autoconsumo",
+      "cv_importancia": 1.0,
+      "cv_producto": "nan",
+      "cv_mercado": "nan"
+    },
+    {
+      "mdv_id": "837d2639d848eff1",
+      "mdv_name": "Pesca marina",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "2562500cd6a97af3",
+      "mdv_name": "Pesca Bahía",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    },
+    {
+      "mdv_id": "4c97e0f7747b33d0",
+      "mdv_name": "Moluscos y Crustáceos",
+      "context_id": "",
+      "i_total": 0,
+      "rank": 999
+    }
+  ],
+  "conflicts": {
+    "events": [
+      {
+        "event_id": "894bd7e2499392c2",
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "evento": "Tormenta Tropical Sara",
+        "ano_evento": 2024,
+        "diferencias": "0",
+        "dif_factor": "Hay información pero no se le da la solución al problema",
+        "cooperacion": "-1",
+        "coop_factor": "Las acciones fueron reactivas no preventivas",
+        "suma": -1
+      },
+      {
+        "event_id": "b93ed3711c9e5b6b",
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "evento": "Tormenta Tropical Rafael, escasez de granos básicos, otro temporal que afecto, perdida de rastrojo, escasez de pasto, no hubo presencia de las instituciones, sólo se toman la foto",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Sólo había presencia para hacer publicidad",
+        "cooperacion": "-1",
+        "coop_factor": "La comunidad solicitaba ayuda pero la respuesta fue mínima",
+        "suma": -2
+      },
+      {
+        "event_id": "ef060146dabe52b3",
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "evento": "Lluvias atípicas o fuera de temporada, alto costo de los granos básicos, subio el precio de la leche y la harina para el ganado, enjambre sísmico, no hubo presencia de institucions solo tomaron datos pero no hubo respuesta.",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Sólo había presencia para hacer publicidad",
+        "cooperacion": "-1",
+        "coop_factor": "La comunidad solicitaba ayuda pero la respuesta fue mínima",
+        "suma": -2
+      },
+      {
+        "event_id": "a2b10833e7c6d04c",
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "evento": "Lluvias inesperadas ",
+        "ano_evento": 2025,
+        "diferencias": "0",
+        "dif_factor": "Todas las acciones son reactivas",
+        "cooperacion": "-1",
+        "coop_factor": "La mayoría de las acciones las hacía la comunidad",
+        "suma": -1
+      },
+      {
+        "event_id": "57a704584f6404e7",
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "evento": "Establecimiento de agromercados municipales subsidiados por el Gobierno Central (MAG)",
+        "ano_evento": 2025,
+        "diferencias": "1",
+        "dif_factor": "Hubo del cambio del Gobierno Central para bajar los precios de la canasta básica",
+        "cooperacion": "0",
+        "coop_factor": "Hubo beneficio en la comunidad y se redujeron las tensiones",
+        "suma": 1
+      },
+      {
+        "event_id": "7345d4a4e49a2131",
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "evento": "Consolidación de la estrategia de los agromercados ampliando de municipal a distrital",
+        "ano_evento": 2025,
+        "diferencias": "0",
+        "dif_factor": "Se resolvió lo de los precios pero afecto a  los agricultores locales",
+        "cooperacion": "1",
+        "coop_factor": "Generó buena reacción en la población.",
+        "suma": 1
+      },
+      {
+        "event_id": "965bb5b98c4d308d",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1",
+        "evento": "Comunidad Río Negro vivía de los recursos del río Negro",
+        "ano_evento": 2010,
+        "diferencias": "0",
+        "dif_factor": "La agricultura la hacían gente de afuera, costos de producción y mano de obra",
+        "cooperacion": "-1",
+        "coop_factor": "Los productores no pertenecen a la comunidad y no les interesa cuidar los recursos",
+        "suma": -1
+      },
+      {
+        "event_id": "21cdd44153fa58f3",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C4",
+        "evento": "Comunidad Río Negro vivía de los recursos del río Negro",
+        "ano_evento": 2010,
+        "diferencias": "0",
+        "dif_factor": "La agricultura la hacían gente de afuera, costos de producción y mano de obra",
+        "cooperacion": "-1",
+        "coop_factor": "Los productores no pertenecen a la comunidad y no les interesa cuidar los recursos",
+        "suma": -1
+      },
+      {
+        "event_id": "2e124f6964aef146",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C5",
+        "evento": "Comunidad Río Negro vivía de los recursos del río Negro",
+        "ano_evento": 2010,
+        "diferencias": "0",
+        "dif_factor": "La agricultura la hacían gente de afuera, costos de producción y mano de obra",
+        "cooperacion": "-1",
+        "coop_factor": "Los productores no pertenecen a la comunidad y no les interesa cuidar los recursos",
+        "suma": -1
+      },
+      {
+        "event_id": "f19e4b71a5d5740f",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1",
+        "evento": "Se intoxicó un agricultor, el promotor vino a dar charlas, se hicieron análisis del agua",
+        "ano_evento": 2017,
+        "diferencias": "-1",
+        "dif_factor": "Mal manejo de los productos químicos",
+        "cooperacion": "-1",
+        "coop_factor": "Fue referido al hospital por la intoxicación",
+        "suma": -2
+      },
+      {
+        "event_id": "eec87f35c21fd5ea",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C4",
+        "evento": "Se intoxicó un agricultor, el promotor vino a dar charlas, se hicieron análisis del agua",
+        "ano_evento": 2017,
+        "diferencias": "-1",
+        "dif_factor": "Mal manejo de los productos químicos",
+        "cooperacion": "-1",
+        "coop_factor": "Fue referido al hospital por la intoxicación",
+        "suma": -2
+      },
+      {
+        "event_id": "6d43f448d61c3c96",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C5",
+        "evento": "Se intoxicó un agricultor, el promotor vino a dar charlas, se hicieron análisis del agua",
+        "ano_evento": 2017,
+        "diferencias": "-1",
+        "dif_factor": "Mal manejo de los productos químicos",
+        "cooperacion": "-1",
+        "coop_factor": "Fue referido al hospital por la intoxicación",
+        "suma": -2
+      },
+      {
+        "event_id": "fc1457a8f63c4ef4",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1",
+        "evento": "La comunidad comenzó abrir pozos",
+        "ano_evento": 2018,
+        "diferencias": "0",
+        "dif_factor": "Cooperación comunitaria",
+        "cooperacion": "1",
+        "coop_factor": "Cooperación entre familias",
+        "suma": 1
+      },
+      {
+        "event_id": "5d654f7b372c2814",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C4",
+        "evento": "La comunidad comenzó abrir pozos",
+        "ano_evento": 2018,
+        "diferencias": "0",
+        "dif_factor": "Cooperación comunitaria",
+        "cooperacion": "1",
+        "coop_factor": "Cooperación entre familias",
+        "suma": 1
+      },
+      {
+        "event_id": "379361442ace4068",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C5",
+        "evento": "La comunidad comenzó abrir pozos",
+        "ano_evento": 2018,
+        "diferencias": "0",
+        "dif_factor": "Cooperación comunitaria",
+        "cooperacion": "1",
+        "coop_factor": "Cooperación entre familias",
+        "suma": 1
+      },
+      {
+        "event_id": "f721db580e1afb84",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1",
+        "evento": "Limpieza del río Programa Mundial de Alimentos (PMA) y la comunidad",
+        "ano_evento": 2021,
+        "diferencias": "0",
+        "dif_factor": "Interés por solucionar o reducir el problema",
+        "cooperacion": "1",
+        "coop_factor": "Cooperación PMA y comunidad",
+        "suma": 1
+      },
+      {
+        "event_id": "407a4eb925ec8cd0",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C4",
+        "evento": "Limpieza del río Programa Mundial de Alimentos (PMA) y la comunidad",
+        "ano_evento": 2021,
+        "diferencias": "0",
+        "dif_factor": "Interés por solucionar o reducir el problema",
+        "cooperacion": "1",
+        "coop_factor": "Cooperación PMA y comunidad",
+        "suma": 1
+      },
+      {
+        "event_id": "5204d48bab3f4945",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C5",
+        "evento": "Limpieza del río Programa Mundial de Alimentos (PMA) y la comunidad",
+        "ano_evento": 2021,
+        "diferencias": "0",
+        "dif_factor": "Interés por solucionar o reducir el problema",
+        "cooperacion": "1",
+        "coop_factor": "Cooperación PMA y comunidad",
+        "suma": 1
+      },
+      {
+        "event_id": "7935d1804c533a8b",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1",
+        "evento": "Una familia monitorea que se mantenga limpio, a los productores no les gusta que se haga este monitoreo",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "A la población no le gusta que se metan a los terrenos",
+        "cooperacion": "-1",
+        "coop_factor": "No hay interés del resto de la gente",
+        "suma": -2
+      },
+      {
+        "event_id": "7e3ff95a94395e9d",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C4",
+        "evento": "Una familia monitorea que se mantenga limpio, a los productores no les gusta que se haga este monitoreo",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "A la población no le gusta que se metan a los terrenos",
+        "cooperacion": "-1",
+        "coop_factor": "No hay interés del resto de la gente",
+        "suma": -2
+      },
+      {
+        "event_id": "86e858d7b850d7f7",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C5",
+        "evento": "Una familia monitorea que se mantenga limpio, a los productores no les gusta que se haga este monitoreo",
+        "ano_evento": 2023,
+        "diferencias": "-1",
+        "dif_factor": "A la población no le gusta que se metan a los terrenos",
+        "cooperacion": "-1",
+        "coop_factor": "No hay interés del resto de la gente",
+        "suma": -2
+      },
+      {
+        "event_id": "db64ba6f426854f8",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1",
+        "evento": "Se mantiene el uso de los agroquímicos",
+        "ano_evento": 2025,
+        "diferencias": "0",
+        "dif_factor": "Se ha visto menos desechos ADESCO esta más pendiente",
+        "cooperacion": "0",
+        "coop_factor": "Conciencia de protección",
+        "suma": 0
+      },
+      {
+        "event_id": "7c9381150cc67732",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C4",
+        "evento": "Se mantiene el uso de los agroquímicos",
+        "ano_evento": 2025,
+        "diferencias": "0",
+        "dif_factor": "Se ha visto menos desechos ADESCO esta más pendiente",
+        "cooperacion": "0",
+        "coop_factor": "Conciencia de protección",
+        "suma": 0
+      },
+      {
+        "event_id": "68902ab563377ea6",
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C5",
+        "evento": "Se mantiene el uso de los agroquímicos",
+        "ano_evento": 2025,
+        "diferencias": "0",
+        "dif_factor": "Se ha visto menos desechos ADESCO esta más pendiente",
+        "cooperacion": "0",
+        "coop_factor": "Conciencia de protección",
+        "suma": 0
+      },
+      {
+        "event_id": "c52f87c8d258c36a",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Veda de camarón",
+        "ano_evento": 2006,
+        "diferencias": "-1",
+        "dif_factor": "Económico y políticos",
+        "cooperacion": "-1",
+        "coop_factor": "No hay solución, no se hace ninguna accón",
+        "suma": -2
+      },
+      {
+        "event_id": "ff0d6e075b97c115",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Ley de CENDEPESCA no regula a los pescadores",
+        "ano_evento": 2011,
+        "diferencias": "-1",
+        "dif_factor": "CENDEPESCA no da soluciones",
+        "cooperacion": "-1",
+        "coop_factor": "CENDEPESCA no coopera",
+        "suma": -2
+      },
+      {
+        "event_id": "b65ed6ec527aada7",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Redes endiablada",
+        "ano_evento": 2015,
+        "diferencias": "-1",
+        "dif_factor": "Diferencias intolerables",
+        "cooperacion": "-1",
+        "coop_factor": "No hay cooperación de instituciones",
+        "suma": -2
+      },
+      {
+        "event_id": "52bafef6adad7944",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Pesca de tubo",
+        "ano_evento": 2017,
+        "diferencias": "-1",
+        "dif_factor": "Sobre explotación de recursos",
+        "cooperacion": "-1",
+        "coop_factor": "Instituciones gubernamentales no intervienen ",
+        "suma": -2
+      },
+      {
+        "event_id": "52b4cb13a9828348",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Entro ley de cambio y regulación de maya",
+        "ano_evento": 2018,
+        "diferencias": "-1",
+        "dif_factor": "Diferencias intolerables, relación con pescadores muy malas",
+        "cooperacion": "-1",
+        "coop_factor": "No hay cooperación , falta de aplicación de ley igual para todos los pescadores",
+        "suma": -2
+      },
+      {
+        "event_id": "db5dd3105bfe99ed",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Se prohibió el uso de redes endiabladas",
+        "ano_evento": 2021,
+        "diferencias": "1",
+        "dif_factor": "Aplicación de acciones para mejorar pesca",
+        "cooperacion": "1",
+        "coop_factor": "Reactivación de FECOPAO",
+        "suma": 2
+      },
+      {
+        "event_id": "d5f2e29585bea472",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Ley de Marina",
+        "ano_evento": 2024,
+        "diferencias": "-1",
+        "dif_factor": "Emite matricula de embarcaciones",
+        "cooperacion": "-1",
+        "coop_factor": "Procesos burocráticos",
+        "suma": -2
+      },
+      {
+        "event_id": "0023781c8fd9e0fa",
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "evento": "Persiste la burocracia",
+        "ano_evento": 2025,
+        "diferencias": "-1",
+        "dif_factor": "Emite matricula de embarcaciones",
+        "cooperacion": "-1",
+        "coop_factor": "Persisten los procesos burocráticos",
+        "suma": -2
+      },
+      {
+        "event_id": "aabbf46293ff0d9a",
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1",
+        "evento": "Desacuerdo en la abministracionn del proyecto de agua, redistribucion del agua del sector alcaldia",
+        "ano_evento": 2006,
+        "diferencias": "0",
+        "dif_factor": "",
+        "cooperacion": "0",
+        "coop_factor": "",
+        "suma": 0
+      },
+      {
+        "event_id": "7d499c125452533d",
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C4",
+        "evento": "Desacuerdo en la abministracionn del proyecto de agua, redistribucion del agua del sector alcaldia",
+        "ano_evento": 2006,
+        "diferencias": "0",
+        "dif_factor": "",
+        "cooperacion": "0",
+        "coop_factor": "",
+        "suma": 0
+      },
+      {
+        "event_id": "2c65c8247207d7d4",
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1",
+        "evento": "Existio una division en la comunidad por la abastecimiento del agua, alcaldia soluciona momentaneamente, pero se reactiva el problema por la racionalizacion del agua ",
+        "ano_evento": 2007,
+        "diferencias": "-1",
+        "dif_factor": "Una comunidad se quedo con todos los fondos de operatividad del proyecto ",
+        "cooperacion": "-1",
+        "coop_factor": "No existió mediacion ",
+        "suma": -2
+      },
+      {
+        "event_id": "db82a0e624442d59",
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C4",
+        "evento": "Existio una division en la comunidad por la abastecimiento del agua, alcaldia soluciona momentaneamente, pero se reactiva el problema por la racionalizacion del agua ",
+        "ano_evento": 2007,
+        "diferencias": "-1",
+        "dif_factor": "Una comunidad se quedo con todos los fondos de operatividad del proyecto ",
+        "cooperacion": "-1",
+        "coop_factor": "No existió mediacion ",
+        "suma": -2
+      },
+      {
+        "event_id": "b58293162f415a81",
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1",
+        "evento": "Solo una comunidad queda beneficiada con el proyecto del pozo, intento de recuperacion de fondos para la comunidad afectada y no lo lograron",
+        "ano_evento": 2008,
+        "diferencias": "-1",
+        "dif_factor": "No existió cooperación para llegar a acuerdos afectando a una de las comunidades ",
+        "cooperacion": "-1",
+        "coop_factor": "Nunca se llego a un acuerdo",
+        "suma": -2
+      },
+      {
+        "event_id": "98e3b9944d7f1df1",
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C4",
+        "evento": "Solo una comunidad queda beneficiada con el proyecto del pozo, intento de recuperacion de fondos para la comunidad afectada y no lo lograron",
+        "ano_evento": 2008,
+        "diferencias": "-1",
+        "dif_factor": "No existió cooperación para llegar a acuerdos afectando a una de las comunidades ",
+        "cooperacion": "-1",
+        "coop_factor": "Nunca se llego a un acuerdo",
+        "suma": -2
+      }
+    ],
+    "actors": [
+      {
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "actor": "CENTA",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "actor": "ADEL La Unión",
+        "i_en_actor": "neutro",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "44616e973aa9e727",
+        "cod_conflict": "C5",
+        "actor": "RECLIMA (FAO)",
+        "i_en_actor": "neutro",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1, C4, C5",
+        "actor": "Productores",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1, C4, C5",
+        "actor": "Tiendas agroquímicos",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1, C4, C5",
+        "actor": "MAG - CENTA",
+        "i_en_actor": "neutro",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1, C4, C5",
+        "actor": "PMA",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "df41c0ebafba051d",
+        "cod_conflict": "C1, C4, C5",
+        "actor": "Ministerio de Salud",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "actor": "CENDEPESCA",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "neutro"
+      },
+      {
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "actor": "Marina Nacional",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "actor": "FECOPAO",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "actor": "Cooperativas pesqueras",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "c831582d0f53b9d7",
+        "cod_conflict": "C5",
+        "actor": "Alcaldía La Unión Sur",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      },
+      {
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1, C4",
+        "actor": "MAG",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1, C4",
+        "actor": "CENTA",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1, C4",
+        "actor": "BFA",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1, C4",
+        "actor": "Cooperativas de  produccion agropecuarias",
+        "i_en_actor": "neutro",
+        "i_en_conflicto": "neutro"
+      },
+      {
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1, C4",
+        "actor": "PMA",
+        "i_en_actor": "positivo",
+        "i_en_conflicto": "positivo"
+      },
+      {
+        "context_id": "de4815042051e88e",
+        "cod_conflict": "C1, C4",
+        "actor": "Alcaldia",
+        "i_en_actor": "negativo",
+        "i_en_conflicto": "negativo"
+      }
+    ]
+  },
+  "dialogue": {
+    "spaces": [
+      {
+        "dialogo_id": "152643c5ebc118a1",
+        "context_id": "a5f0c949385f9601",
+        "nombre_espacio": "FECOPAO",
+        "tipo": "formal",
+        "alcance": "Nacional",
+        "funcion": "Análisis de problemas, vela por el bienestar de los pescadores, abrir diálogo",
+        "incidencia": "alto",
+        "fortalezas": "Apoyo de instituciones de Gobierno como Gobernación, el MAG, CENDEPESCA; es referente para instituciones del sector pesquero",
+        "debilidades": "Baja escolaridad de sus integrantes; no cuenta con un espacio físico propio para la operatividad"
+      },
+      {
+        "dialogo_id": "d5ea027f769d140e",
+        "context_id": "a5f0c949385f9601",
+        "nombre_espacio": "Escuelas de campo",
+        "tipo": "informal",
+        "alcance": "Local",
+        "funcion": "Capacitación local en agro",
+        "incidencia": "alto",
+        "fortalezas": "Apoyo de instituciones de Gobierno; ubicadas en zonas donde se encuentran los agricultores",
+        "debilidades": "No cuentan recursos económicos propios, no tienen personería jurídica, dependencia de otras instituciones para su funcionamiento"
+      },
+      {
+        "dialogo_id": "b3a964367223bd87",
+        "context_id": "a5f0c949385f9601",
+        "nombre_espacio": "Ministerio de Agricultura y Ganadería - MAG",
+        "tipo": "formal",
+        "alcance": "Nacional",
+        "funcion": "Asesoría a ganaderos, implementa proyectos de fortalecimiento al sector agropecuario",
+        "incidencia": "alto",
+        "fortalezas": "Institución de gobierno(opera con presupuesto gubernamental), interviene a nivel nacional, desarrolla con fondos internacionales por ejem. FIDA, JICA, ",
+        "debilidades": "Centralización de servicios, Priorización de zonas Central y Occidente (proyectos)"
+      },
+      {
+        "dialogo_id": "dd8a0e649f7d53f4",
+        "context_id": "a5f0c949385f9601",
+        "nombre_espacio": "Mesa técnica de hortalizas",
+        "tipo": "informal",
+        "alcance": "Local",
+        "funcion": "Capacitaciones, gestión de recursos",
+        "incidencia": "bajo",
+        "fortalezas": "Constitución a nivel departamental, participación multiactoral",
+        "debilidades": "No posee Personería jurídica, no posee recursos propios"
+      }
+    ],
+    "actors": [
+      {
+        "dialogo_id": "152643c5ebc118a1",
+        "actor_id": "4b395611bff6317f",
+        "actor_name": "12 cooperativas pesqueras"
+      },
+      {
+        "dialogo_id": "d5ea027f769d140e",
+        "actor_id": "bdc15e53662ae2dd",
+        "actor_name": "Agricultores"
+      },
+      {
+        "dialogo_id": "d5ea027f769d140e",
+        "actor_id": "7e2701fe89d95430",
+        "actor_name": "FAO"
+      },
+      {
+        "dialogo_id": "d5ea027f769d140e",
+        "actor_id": "eab3a5cabfb651e2",
+        "actor_name": "ACUGOLFO"
+      },
+      {
+        "dialogo_id": "d5ea027f769d140e",
+        "actor_id": "75f734cb8b647d52",
+        "actor_name": "MAG"
+      },
+      {
+        "dialogo_id": "d5ea027f769d140e",
+        "actor_id": "91cb8ffb1087280d",
+        "actor_name": "CENTA"
+      },
+      {
+        "dialogo_id": "b3a964367223bd87",
+        "actor_id": "f44fb3a0afa5ccb0",
+        "actor_name": "Ganaderos"
+      },
+      {
+        "dialogo_id": "b3a964367223bd87",
+        "actor_id": "64ca23cec147ed5e",
+        "actor_name": "Asoc. Cooperativas"
+      },
+      {
+        "dialogo_id": "b3a964367223bd87",
+        "actor_id": "b8154e509f8e05b4",
+        "actor_name": "Productores individuales"
+      },
+      {
+        "dialogo_id": "b3a964367223bd87",
+        "actor_id": "afe6f13d1ab08f9c",
+        "actor_name": "Apicultores"
+      },
+      {
+        "dialogo_id": "dd8a0e649f7d53f4",
+        "actor_id": "bdc15e53662ae2dd",
+        "actor_name": "Agricultores"
+      },
+      {
+        "dialogo_id": "dd8a0e649f7d53f4",
+        "actor_id": "ed90231691491eaf",
+        "actor_name": "PMA"
+      },
+      {
+        "dialogo_id": "dd8a0e649f7d53f4",
+        "actor_id": "91cb8ffb1087280d",
+        "actor_name": "CENTA"
+      },
+      {
+        "dialogo_id": "dd8a0e649f7d53f4",
+        "actor_id": "08661674dc3a369e",
+        "actor_name": "ADEL La Unión"
+      }
+    ]
+  },
+  "qa": {
+    "missing_optional": [],
+    "available_sheets": [
+      "LOOKUP_CONTEXT",
+      "LOOKUP_GEO",
+      "TIDY_3_5_SE_MDV",
+      "TIDY_3_5_SE_MONTHS",
+      "TIDY_4_1_AMENAZAS",
+      "TIDY_4_2_1_AMENAZA_MDV",
+      "TIDY_5_1_ACTORES",
+      "TIDY_3_4_ECOSISTEMAS",
+      "TIDY_6_1_CONFLICT_EVENTS",
+      "TIDY_5_2_DIALOGO",
+      "TIDY_7_1_RESPONDENTS",
+      "TIDY_7_1_RESPONSES"
+    ],
+    "data_quality_notes": []
+  }
+};
+    </script>
+
+    <!-- SIDEBAR -->
+    <aside class="w-20 lg:w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 transition-all duration-300 z-50">
+        <!-- Logo Area -->
+        <div class="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
+            <div class="h-8 w-8 bg-brand-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i data-lucide="leaf" class="text-white h-5 w-5"></i>
+            </div>
+            <span class="ml-3 font-bold text-lg hidden lg:block tracking-tight">PARES <span class="text-brand-500">2.0</span></span>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3">
+            <button onclick="router.navigate('home')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group active-nav">
+                <i data-lucide="layout-grid" class="h-5 w-5 group-hover:text-brand-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Resumen</span>
+            </button> <!-- Added Dashboard as Home -->
+
+            <div class="pt-4 pb-2">
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:block">Análisis</p>
+                <div class="h-px bg-slate-800 my-2 lg:hidden"></div>
+            </div>
+
+            <button onclick="router.navigate('landscape')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="mountain" class="h-5 w-5 group-hover:text-cyan-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Paisaje</span>
+            </button>
+
+            <button onclick="router.navigate('livelihoods')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="sprout" class="h-5 w-5 group-hover:text-emerald-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Medios de Vida</span>
+            </button>
+
+            <button onclick="router.navigate('threats')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="alert-triangle" class="h-5 w-5 group-hover:text-amber-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Amenazas</span>
+            </button>
+
+            <button onclick="router.navigate('governance')" class="nav-item w-full flex items-center p-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors group">
+                <i data-lucide="users" class="h-5 w-5 group-hover:text-purple-400 transition-colors"></i>
+                <span class="ml-3 hidden lg:block font-medium">Gobernanza</span>
+            </button>
+        </nav>
+
+        <!-- User/Footer -->
+        <div class="p-4 border-t border-slate-800">
+            <div class="flex items-center">
+                <div class="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-300">
+                    <i data-lucide="user" class="h-4 w-4"></i>
+                </div>
+                <div class="ml-3 hidden lg:block">
+                    <p class="text-sm font-medium text-white" id="org-name">TierraViva</p>
+                    <p class="text-xs text-slate-500">Ver. 2.0</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-full bg-slate-50 relative overflow-hidden">
+        
+        <!-- Top Bar -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 md:px-8 z-10 flex-shrink-0">
+            <h1 id="page-title" class="text-xl font-bold text-slate-800">Resumen Ejecutivo</h1>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Context Selector -->
+                <div class="relative">
+                    <select id="context-selector" class="appearance-none bg-slate-50 border border-slate-300 text-slate-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-medium transition-shadow cursor-pointer">
+                        <!-- Options injected -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                        <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                    </div>
+                </div>
+                <button class="p-2 text-slate-400 hover:text-slate-600 transition-colors" title="Exportar Informe">
+                    <i data-lucide="download" class="h-5 w-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Area -->
+        <div id="content-area" class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
+            
+            <!-- VIEW: HOME (Bento Grid) -->
+            <div id="view-home" class="view-section space-y-6 fade-in">
+                <!-- KPI Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-cyan-50 text-cyan-600 rounded-lg"><i data-lucide="droplets" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Servicios Eco.</p><p class="text-2xl font-bold text-slate-800" id="kpi-services">-</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="wheat" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Medios de Vida</p><p class="text-2xl font-bold text-slate-800" id="kpi-livelihoods">-</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="flame" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Amenazas</p><p class="text-2xl font-bold text-slate-800" id="kpi-threats">-</p></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="users-2" class="h-6 w-6"></i></div>
+                        <div><p class="text-sm text-slate-500 font-medium">Actores</p><p class="text-2xl font-bold text-slate-800" id="kpi-actors">-</p></div>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Ecosystem Health (Large) -->
+                    <div class="bento-card lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-800">Salud de los Ecosistemas</h3>
+                            <button onclick="router.navigate('landscape')" class="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center">Ver detalles <i data-lucide="arrow-right" class="h-4 w-4 ml-1"></i></button>
+                        </div>
+                        <div class="relative h-64 w-full">
+                            <canvas id="ecosystemHealthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Threats (Tall) -->
+                    <div class="bento-card lg:row-span-2">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Ranking de Amenazas</h3>
+                        <div class="relative h-full min-h-[300px]">
+                            <canvas id="threatRankingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Executive Summary (Wide text) -->
+                    <div class="bento-card lg:col-span-2">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">Visión General del Territorio</h3>
+                        <p id="executive-summary" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: LANDSCAPE -->
+            <div id="view-landscape" class="view-section hidden fade-in space-y-6">
+                <!-- Ecosystem List Cards -->
+                <div id="ecosystems-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Injected -->
+                </div>
+            </div>
+
+            <!-- VIEW: LIVELIHOODS -->
+            <div id="view-livelihoods" class="view-section hidden fade-in space-y-6">
+                 <!-- Network Graph -->
+                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Red de Dependencias (Ecosistema → Medios de Vida)</h3>
+                    <div id="d3-network-container" class="w-full h-[500px] border border-slate-100 rounded-lg bg-slate-50 relative overflow-hidden"></div>
+                    <p class="text-sm text-slate-500 mt-2 text-center">Nodos: Verde (Servicios), Azul (Medios de Vida). Enlaces: Grosor = Nr. Usuarios.</p>
+                </div>
+
+                <!-- Heatmap -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-hidden">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Matriz Detallada</h3>
+                    <div id="heatmap-container" class="overflow-x-auto custom-scrollbar"></div>
+                </div>
+                
+                <!-- Seasonality Detail -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2">Estacionalidad</h3>
+                    <p id="seasonality-hint" class="text-sm text-slate-500 mb-4">Seleccione una celda en la matriz para ver detalles.</p>
+                    <div class="h-64"><canvas id="seasonalityChart"></canvas></div>
+                </div>
+            </div>
+
+             <!-- VIEW: THREATS -->
+             <div id="view-threats" class="view-section hidden fade-in space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Radar de Impactos</h3>
+                        <div id="threat-buttons" class="flex flex-wrap gap-2 mb-4"></div>
+                        <div class="h-80 flex items-center justify-center">
+                            <canvas id="threatRadarChart"></canvas>
+                        </div>
+                    </div>
+                     <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Línea de Tiempo de Conflictos</h3>
+                        <div id="conflicts-timeline" class="space-y-4 max-h-[400px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: GOVERNANCE -->
+            <div id="view-governance" class="view-section hidden fade-in space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Mapa de Actores (Poder vs. Interés)</h3>
+                        <div class="h-80"><canvas id="actorScatterChart"></canvas></div>
+                    </div>
+                    <div class="bento-card">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Actor List</h3>
+                        <div id="actor-list" class="space-y-2 max-h-80 overflow-y-auto"></div>
+                    </div>
+                </div>
+                <div class="bento-card">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Espacios de Diálogo</h3>
+                    <div id="dialogue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- LOGIC -->
+    <script>
+        // --- ROUTER ---
+        const router = {
+            current: 'home',
+            navigate: (viewId) => {
+                // Hide all views
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                // Show target view
+                const target = document.getElementById(`view-${viewId}`);
+                if (target) target.classList.remove('hidden');
+                
+                // Update Sidebar State
+                document.querySelectorAll('.nav-item').forEach(el => {
+                    el.classList.remove('bg-slate-800', 'text-white');
+                    el.classList.add('text-slate-400');
+                });
+                // Find active link (simple matching)
+                const activeBtn = Array.from(document.querySelectorAll('.nav-item')).find(btn => btn.onclick.toString().includes(viewId));
+                if (activeBtn) {
+                    activeBtn.classList.add('bg-slate-800', 'text-white');
+                    activeBtn.classList.remove('text-slate-400');
+                }
+
+                // Update Title
+                const titles = {
+                    'home': 'Resumen Ejecutivo',
+                    'landscape': 'Paisaje y Ecosistemas',
+                    'livelihoods': 'Medios de Vida y Servicios',
+                    'threats': 'Amenazas y Conflictos',
+                    'governance': 'Gobernanza'
+                };
+                document.getElementById('page-title').textContent = titles[viewId] || 'Dashboard';
+                
+                router.current = viewId;
+
+                // Trigger resize for charts that might be hidden
+                if (viewId === 'livelihoods') initD3Graph(); 
+                window.dispatchEvent(new Event('resize'));
+            }
+        };
+
+        // --- STATE ---
+        let state = {
+            contextId: null,
+            charts: {}
+        };
+
+        // --- INIT ---
+        window.onload = () => {
+            if (typeof BUNDLE === 'undefined') return alert('Error: No data loaded');
+            
+            lucide.createIcons();
+            initContextSelector();
+            
+            // Set first context
+            if (BUNDLE.contexts.length > 0) {
+                setContext(BUNDLE.contexts[0].context_id);
+            }
+
+            // Init Charts
+            initCharts();
+            
+            // Nav to home
+            router.navigate('home');
+        };
+
+        function initContextSelector() {
+            const sel = document.getElementById('context-selector');
+            BUNDLE.contexts.forEach(ctx => {
+                const opt = document.createElement('option');
+                opt.value = ctx.context_id;
+                opt.innerText = ctx.label;
+                sel.appendChild(opt);
+            });
+            sel.addEventListener('change', (e) => setContext(e.target.value));
+        }
+
+        function setContext(id) {
+            state.contextId = id;
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            updateKPIs();
+            updateCharts();
+            updateLists();
+            initD3Graph(); // Re-run D3 with new data
+        }
+
+        // --- UPDATERS ---
+        function updateKPIs() {
+            const kpi = BUNDLE.kpis[state.contextId] || { n_services:0, n_livelihoods:0, n_threats:0, n_actors:0 };
+            document.getElementById('kpi-services').textContent = kpi.n_services;
+            document.getElementById('kpi-livelihoods').textContent = kpi.n_livelihoods;
+            document.getElementById('kpi-threats').textContent = kpi.n_threats;
+            document.getElementById('kpi-actors').textContent = kpi.n_actors;
+
+            // Summary Text
+            const ctxLabel = BUNDLE.contexts.find(c => c.context_id === state.contextId)?.label || 'Contexto';
+            document.getElementById('executive-summary').textContent = `En el contexto de ${ctxLabel}, se han identificado ${kpi.n_services} servicios ecosistémicos clave que sustentan ${kpi.n_livelihoods} medios de vida. El análisis de vulnerabilidad destaca ${kpi.n_threats} amenazas principales, siendo gestionadas por una red de ${kpi.n_actors} actores locales e institucionales.`;
+        }
+
+        function updateLists() {
+            // Ecosystems
+            const ecoContainer = document.getElementById('ecosystems-grid');
+            const ecosystems = BUNDLE.ecosystems.filter(e => e.context_id === state.contextId);
+            ecoContainer.innerHTML = ecosystems.map(e => `
+                <div class="bg-white rounded-lg p-5 border border-slate-200 shadow-sm hover:border-brand-300 transition-colors">
+                    <div class="flex iems-start justify-between">
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded mb-3 inline-block">
+                             <i data-lucide="tree-pine" class="h-6 w-6"></i>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${getHealthColor(e.es_salud)}">${e.es_salud}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-1">${e.ecosistema}</h4>
+                    <p class="text-sm text-slate-500 mb-3">${e.tipo || 'Tipo no especificado'}</p>
+                    <p class="text-xs text-slate-400">Degradación: ${e.causas_deg || 'No reportada'}</p>
+                </div>
+            `).join('');
+            lucide.createIcons();
+
+            // Threat Buttons
+            const threatBtnsObj = document.getElementById('threat-buttons');
+            const threats = [...new Set(BUNDLE.threats.amenazas.filter(t => t.context_id === state.contextId).map(t => t.amenaza))];
+            threatBtnsObj.innerHTML = threats.map(t => 
+                `<button onclick="selectThreat('${t}')" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors focus:bg-amber-100 focus:text-amber-800 focus:ring-2 ring-amber-500 ring-offset-1">${t}</button>`
+            ).join('');
+            if(threats.length) selectThreat(threats[0]);
+
+            // Conflict Timeline
+            const conflictCont = document.getElementById('conflicts-timeline');
+            const conflicts = BUNDLE.conflicts.events.filter(c => c.context_id === state.contextId).sort((a,b) => (a.ano_evento||0) - (b.ano_evento||0));
+            conflictCont.innerHTML = conflicts.map(c => `
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-3 h-3 bg-slate-300 rounded-full"></div>
+                        <div class="w-0.5 bg-slate-200 flex-1 h-full min-h-[20px]"></div>
+                    </div>
+                    <div class="pb-6">
+                        <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">${c.ano_evento || '?'}</span>
+                        <h4 class="font-semibold text-slate-800 text-sm mt-1">${c.evento}</h4>
+                        <p class="text-xs text-slate-500 mt-1">Coop: ${c.coop_factor || '-'}</p>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-sm text-slate-400 italic">No hay conflictos registrados.</p>';
+
+            // Actors List
+            const actorList = document.getElementById('actor-list');
+            const actors = BUNDLE.actors.filter(a => a.context_id === state.contextId).sort((a,b) => b.poder - a.poder);
+            actorList.innerHTML = actors.map(a => `
+                <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded border-b border-slate-100 last:border-0">
+                    <div>
+                        <p class="font-medium text-sm text-slate-800">${a.nombre_actor}</p>
+                        <p class="text-[10px] text-slate-500 uppercase">${a.tipo_actor}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="text-xs px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded" title="Poder">P:${a.poder}</div>
+                        <div class="text-xs px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded" title="Interés">I:${a.interes}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Heatmap
+            renderHeatmap();
+        }
+
+        function getHealthColor(status) {
+            const s = (status || '').toLowerCase();
+            if(s.includes('buen') || s.includes('alta')) return 'bg-emerald-100 text-emerald-800';
+            if(s.includes('reg') || s.includes('media')) return 'bg-amber-100 text-amber-800';
+            if(s.includes('mal') || s.includes('baja')) return 'bg-rose-100 text-rose-800';
+            return 'bg-slate-100 text-slate-600';
+        }
+
+        // --- CHARTS ---
+        function initCharts() {
+            // Ecosystems
+            state.charts.eco = new Chart(document.getElementById('ecosystemHealthChart'), {
+                type: 'doughnut',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#cbd5e1'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } }, cutout: '70%' }
+            });
+
+            // Threats Ranking
+            state.charts.threatRank = new Chart(document.getElementById('threatRankingChart'), {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Score', data: [], backgroundColor: '#f59e0b', borderRadius: 4 }] },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+            });
+
+            // Threat Radar
+            state.charts.threatRadar = new Chart(document.getElementById('threatRadarChart'), {
+                type: 'radar',
+                data: { labels: ['Econ', 'Alim', 'Sanit', 'Amb', 'Pers', 'Com', 'Pol'], datasets: [{ data: [], fill: true, backgroundColor: 'rgba(245, 158, 11, 0.2)', borderColor: '#f59e0b' }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 3 } }, plugins: { legend: { display: false } } }
+            });
+
+            // Seasonality
+            state.charts.season = new Chart(document.getElementById('seasonalityChart'), {
+                type: 'bar',
+                data: { labels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'], datasets: [
+                    { label: 'Contribución', data: [], backgroundColor: '#10b981' },
+                    { label: 'Escasez', data: [], backgroundColor: '#ef4444' }
+                ]},
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 1 } } }
+            });
+
+            // Actors Scatter
+            state.charts.actor = new Chart(document.getElementById('actorScatterChart'), {
+                type: 'scatter',
+                data: { datasets: [] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    scales: { x: { min: 0, max: 10, title: { display:true, text:'Interés'} }, y: { min: 0, max: 10, title: {display:true, text:'Poder'} } },
+                    plugins: { tooltip: { callbacks: { label: ctx => ctx.raw.label } } }
+                }
+            });
+        }
+
+        function updateCharts() {
+            // Eco Health
+            const ecosystems = BUNDLE.ecosystems.filter(e => e.context_id === state.contextId);
+            const healthCounts = { Bueno: 0, Regular: 0, Malo: 0, Otro: 0 };
+            ecosystems.forEach(e => {
+                const s = (e.es_salud||'').toLowerCase();
+                if(s.includes('buen')||s.includes('3')) healthCounts.Bueno++;
+                else if(s.includes('reg')||s.includes('2')) healthCounts.Regular++;
+                else if(s.includes('mal')||s.includes('1')) healthCounts.Malo++;
+                else healthCounts.Otro++;
+            });
+            state.charts.eco.data.datasets[0].data = [healthCounts.Bueno, healthCounts.Regular, healthCounts.Malo, healthCounts.Otro];
+            state.charts.eco.update();
+
+            // Threat Rank
+            const tScores = BUNDLE.threats.threat_scores.filter(t => t.context_id === state.contextId).sort((a,b) => b.mean_score - a.mean_score).slice(0, 10);
+            state.charts.threatRank.data.labels = tScores.map(t => t.amenaza);
+            state.charts.threatRank.data.datasets[0].data = tScores.map(t => t.mean_score);
+            state.charts.threatRank.update();
+
+            // Actor Scatter
+            const actors = BUNDLE.actors.filter(a => a.context_id === state.contextId);
+            state.charts.actor.data.datasets = [{
+                label: 'Actores',
+                data: actors.map(a => ({ x: a.interes, y: a.poder, label: a.nombre_actor })),
+                backgroundColor: actors.map(a => a.tipo_actor === 'Comunitario' ? '#10b981' : a.tipo_actor === 'Gubernamental' ? '#3b82f6' : '#64748b')
+            }];
+            state.charts.actor.update();
+        }
+
+        function selectThreat(name) {
+            const t = BUNDLE.threats.amenazas.find(x => x.context_id === state.contextId && x.amenaza === name);
+            if (!t) return;
+            state.charts.threatRadar.data.datasets[0].data = [t.i_economia, t.i_alimentaria, t.i_sanitaria, t.i_ambiental, t.i_personal, t.i_comunitaria, t.i_politica];
+            state.charts.threatRadar.data.datasets[0].label = name;
+            state.charts.threatRadar.update();
+        }
+
+        function renderHeatmap() {
+            const data = BUNDLE.lifelines.se_mdv.filter(x => x.context_id === state.contextId);
+            const container = document.getElementById('heatmap-container');
+            if(!data.length) return container.innerHTML = '<p class="text-sm text-slate-400 p-4">Sin datos de matriz.</p>';
+
+            const services = [...new Set(data.map(d => d.elemento_se))];
+            const mdvs = [...new Set(data.map(d => d.mdv_name))];
+
+            let html = '<table class="w-full text-xs border-collapse">';
+            html += '<thead><tr><th class="p-2 border-b border-slate-200 text-left bg-slate-50 min-w-[120px]">Servicio \\ MdV</th>';
+            mdvs.forEach(m => html += `<th class="p-2 border-b border-slate-200 bg-slate-50 font-medium text-slate-600 rotate-45 h-24 whitespace-nowrap align-bottom"><div class="w-6">${m}</div></th>`);
+            html += '</tr></thead><tbody>';
+
+            services.forEach(s => {
+                html += `<tr><td class="p-2 border-b border-slate-100 font-medium text-slate-700 bg-slate-50 sticky left-0 shadow-sm">${s}</td>`;
+                mdvs.forEach(m => {
+                    const item = data.find(x => x.elemento_se === s && x.mdv_name === m);
+                    if(item) {
+                        const alpha = Math.min((item.nr_usuarios || 0) / 100, 1) * 0.8 + 0.2; // Mock normalization
+                        html += `<td class="p-1 border-b border-slate-100 text-center cursor-pointer hover:bg-slate-100" onclick="showSeasonality('${item.se_mdv_id}')">
+                            <div class="w-full h-8 rounded flex items-center justify-center text-[10px] font-bold text-emerald-900" style="background-color: rgba(16, 185, 129, ${alpha})">
+                                ${item.nr_usuarios || ''}
+                            </div>
+                        </td>`;
+                    } else {
+                        html += '<td class="border-b border-slate-100"></td>';
+                    }
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function showSeasonality(id) {
+            const months = BUNDLE.lifelines.se_months.filter(x => x.se_mdv_id === id);
+            const contrib = new Array(12).fill(0);
+            const fal = new Array(12).fill(0);
+            months.forEach(m => {
+                if((m.month_type||'').includes('contrib')) contrib[m.month_num - 1] = 1;
+                else fal[m.month_num - 1] = 1;
+            });
+            state.charts.season.data.datasets[0].data = contrib;
+            state.charts.season.data.datasets[1].data = fal;
+            state.charts.season.update();
+            document.getElementById('seasonality-hint').textContent = 'ID: ' + id;
+        }
+
+        // --- D3 FORCE GRAPH ---
+        function initD3Graph() {
+            const container = document.getElementById('d3-network-container');
+            container.innerHTML = ''; // Clear
+            if (router.current !== 'livelihoods') return; // Only render when visible
+
+            const width = container.clientWidth;
+            const height = 500;
+            const data = BUNDLE.lifelines.se_mdv.filter(x => x.context_id === state.contextId);
+            
+            if(!data.length) return;
+
+            const nodes = [];
+            const links = [];
+            const addedNodes = new Set();
+
+            data.forEach(d => {
+                // Service Node
+                if (!addedNodes.has('S:' + d.elemento_se)) {
+                    nodes.push({ id: 'S:' + d.elemento_se, label: d.elemento_se, type: 'service' });
+                    addedNodes.add('S:' + d.elemento_se);
+                }
+                // MDV Node
+                if (!addedNodes.has('M:' + d.mdv_name)) {
+                    nodes.push({ id: 'M:' + d.mdv_name, label: d.mdv_name, type: 'mdv' });
+                    addedNodes.add('M:' + d.mdv_name);
+                }
+                // Link
+                links.push({ source: 'S:' + d.elemento_se, target: 'M:' + d.mdv_name, value: d.nr_usuarios });
+            });
+
+            const svg = d3.select(container).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", [0, 0, width, height]);
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-200))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collide", d3.forceCollide().radius(30));
+
+            const link = svg.append("g")
+                .attr("stroke", "#94a3b8")
+                .attr("stroke-opacity", 0.6)
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("stroke-width", d => Math.sqrt(d.value || 1));
+
+            const node = svg.append("g")
+                .selectAll("circle")
+                .data(nodes)
+                .join("circle")
+                .attr("r", d => d.type === 'service' ? 8 : 12)
+                .attr("fill", d => d.type === 'service' ? '#10b981' : '#3b82f6')
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2)
+                .call(drag(simulation));
+
+            // Tooltips
+            node.append("title").text(d => d.label);
+
+            // Labels
+            const label = svg.append("g")
+                .selectAll("text")
+                .data(nodes)
+                .join("text")
+                .attr("dx", 15)
+                .attr("dy", 4)
+                .text(d => d.label)
+                .attr("font-size", "10px")
+                .attr("fill", "#475569")
+                .style("pointer-events", "none");
+
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+                
+                label
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+
+            function drag(simulation) {
+                function dragstarted(event) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    event.subject.fx = event.subject.x;
+                    event.subject.fy = event.subject.y;
+                }
+                function dragged(event) {
+                    event.subject.fx = event.x;
+                    event.subject.fy = event.y;
+                }
+                function dragended(event) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    event.subject.fx = null;
+                    event.subject.fy = null;
+                }
+                return d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -159,6 +159,37 @@ def compute_se_metrics(tables, dim_context_geo, params) -> Dict[str, pd.DataFram
 
 def compute_capacity_metrics(tables, params) -> Dict[str, pd.DataFrame]:
     res = {}
+
+    # =========================================================================
+    # PATH A: AGGREGATED DATA (TIDY_7_1_CAPACITY)
+    # =========================================================================
+    cap_df = tables.get("TIDY_7_1_CAPACITY", pd.DataFrame())
+    if not cap_df.empty and "score" in cap_df.columns:
+        logger.info("Using aggregated capacity data (TIDY_7_1_CAPACITY)")
+        df = cap_df.copy()
+
+        # Normalize score 1-5 -> 0-1
+        vals = pd.to_numeric(df["score"], errors="coerce")
+        df["response_0_1"] = ((vals - 1) / 4).clip(0, 1)
+
+        # Questions overall (use indicator as question_id)
+        q_group_cols = ["indicator"]
+        if "dimension" in df.columns:
+            q_group_cols = ["indicator", "dimension"]
+        res["CAPACITY_QUESTIONS_OVERALL"] = df.groupby(q_group_cols)["response_0_1"].mean().reset_index()
+
+        # MdV overall
+        dv_cols = ["mdv_id"]
+        if "mdv_name" in df.columns:
+            dv_cols.append("mdv_name")
+        res["CAPACITY_BY_MDV_OVERALL"] = df.groupby(dv_cols)["response_0_1"].mean().reset_index()
+
+        # No by-grupo breakdowns available in aggregated format
+        return res
+
+    # =========================================================================
+    # PATH B: INDIVIDUAL RESPONSES (Legacy)
+    # =========================================================================
     resp = tables.get("TIDY_7_1_RESPONDENTS", pd.DataFrame())
     ans = tables.get("TIDY_7_1_RESPONSES", pd.DataFrame())
     
@@ -268,7 +299,14 @@ def compute_evi(metrics: Dict[str, pd.DataFrame], params: Dict[str, Any]) -> Dic
         evi_df = evi_df.merge(cap_agg[['grupo', 'cap_gap']], on='grupo', how='left')
         evi_df['cap_norm'] = minmax(evi_df['cap_gap'].fillna(0))
     else:
-        evi_df['cap_norm'] = 0.0
+        # Fallback: use overall capacity if by-grupo is missing (aggregated data)
+        cap_overall = metrics.get('CAPACITY_BY_MDV_OVERALL', pd.DataFrame())
+        if not cap_overall.empty and 'response_0_1' in cap_overall.columns:
+            overall_gap = 1.0 - cap_overall['response_0_1'].mean()
+            evi_df['cap_gap'] = overall_gap
+            evi_df['cap_norm'] = overall_gap  # scalar, no normalization needed
+        else:
+            evi_df['cap_norm'] = 0.0
         
     # Compute EVI
     evi_df['EVI'] = (

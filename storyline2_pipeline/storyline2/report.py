@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 
 from .config import GRUPO_COL, SE_CODE_NAMES
+from . import narrative
 
 # SE_CODE_NAMES moved to config.py
 def expand_se(code):
@@ -31,261 +32,339 @@ logger = logging.getLogger(__name__)
 # HTML TEMPLATES
 # =============================================================================
 
-# HTML template with embedded CSS
-HTML_TEMPLATE = """
-<!DOCTYPE html>
+# HTML Template aligned with Storyline 1 (Interpreted Report)
+# HTML Template aligned with Storyline 1 (Interpreted Report)
+HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historia 2: Líneas de Vida de Servicios Ecosistémicos - Informe Diagnóstico</title>
+    <title>Historia 2: Servicios Ecosistémicos — Informe Interpretado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --primary-color: #2c5530;
-            --secondary-color: #4a7c59;
-            --accent-color: #7cb342;
-            --warning-color: #ff9800;
-            --danger-color: #e53935;
-            --light-bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
+            --primary: #2e7d32;   /* Green 800 */
+            --primary-light: #43a047; /* Green 600 */
+            --accent: #66bb6a;    /* Green 400 */
+            --accent-light: #a5d6a7;
+            --warning: #ef6c00;
+            --danger: #c62828;
+            --info: #1565c0;
+            --info-bg: #e3f2fd;
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --border: #e0e0e0;
+            --text: #212121;
+            --text-secondary: #616161;
+            --text-light: #9e9e9e;
         }}
-        
-        * {{
-            box-sizing: border-box;
-        }}
-        
+
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-bg);
-            margin: 0;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
         }}
-        
         .container {{
-            max-width: 1200px;
+            max-width: 960px;
             margin: 0 auto;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 40px 32px;
         }}
-        
-        h1 {{
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--accent-color);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }}
-        
-        h2 {{
-            color: var(--secondary-color);
-            border-left: 4px solid var(--accent-color);
-            padding-left: 15px;
-            margin-top: 40px;
-        }}
-        
-        h3 {{
-            color: var(--secondary-color);
-            margin-top: 25px;
-        }}
-        
-        .metadata {{
-            background: var(--light-bg);
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-            font-size: 0.9em;
-        }}
-        
-        .metadata strong {{
-            color: var(--primary-color);
-        }}
-        
-        .section {{
+        .report-header {{
+            text-align: center;
+            padding: 48px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 16px;
             margin-bottom: 40px;
         }}
-        
-        .subsection {{
-            margin-left: 20px;
-            padding: 15px;
-            background: var(--light-bg);
-            border-radius: 5px;
-            margin-top: 15px;
+        .report-header h1 {{
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }}
+        .report-header .subtitle {{
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }}
+        .report-header .meta {{
+            margin-top: 16px;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }}
+
+        /* Table of contents */
+        .toc {{
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 40px;
+        }}
+        .toc h2 {{
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }}
+        .toc ol {{
+            padding-left: 20px;
+        }}
+        .toc li {{
+            margin-bottom: 6px;
+        }}
+        .toc a {{
+            color: var(--info);
+            text-decoration: none;
+        }}
+        .toc a:hover {{
+            text-decoration: underline;
+        }}
+
+        /* Sections */
+        section {{
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }}
+        section h2 {{
+            font-size: 1.4rem;
+            color: var(--primary);
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }}
+        section h3 {{
+            font-size: 1.15rem;
+            color: var(--primary-light);
+            margin: 28px 0 12px 0;
+        }}
+        section h4 {{
+            font-size: 1rem;
+            color: var(--text);
+            margin: 20px 0 8px 0;
+        }}
+
+        /* Interpretation boxes */
+        .interp {{
+            background: #f1f8e9;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.95rem;
+            color: #33691e;
+        }}
+        .interp strong {{
+            color: var(--primary);
+        }}
+        .interp.what {{
+            background: var(--info-bg);
+            border-left-color: var(--info);
+            color: #0d47a1;
+        }}
+        .interp.what strong {{
+            color: var(--info);
+        }}
+        .interp.insight {{
+            background: #fff3e0;
+            border-left-color: var(--warning);
+            color: #e65100;
+        }}
+        .interp.insight strong {{
+            color: var(--warning);
+        }}
+        .interp.warning {{
+            background: #fce4ec;
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }}
+        .interp-label {{
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }}
+
+        /* Tables */
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 20px 0;
+            font-size: 0.9rem;
+        }}
+        th {{
+            background: var(--primary);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }}
+        td {{
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border);
+        }}
+        tr:nth-child(even) {{
+            background: #f5f5f5;
+        }}
+        tr:hover {{
+            background: #e8f5e9;
+        }}
+
+        /* Figures */
+        .figure-box {{
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+            background: var(--surface);
+        }}
+        .figure-box img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }}
+        .figure-box .fig-title {{
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }}
+        .figure-box .fig-caption {{
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            font-style: italic;
+        }}
+
+        /* Footer */
+        .footer {{
+            text-align: center;
+            padding: 24px 0;
+            font-size: 0.8rem;
+            color: var(--text-light);
         }}
         
+        /* Stats Grid */
         .stats-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin: 1rem 0;
         }}
-        
         .stat-card {{
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             padding: 1.25rem;
             border-radius: 12px;
             text-align: center;
         }}
-        
         .stat-value {{
             font-size: 2rem;
             font-weight: 700;
         }}
-        
         .stat-label {{
             font-size: 0.85rem;
             opacity: 0.9;
         }}
-        
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 0.9em;
-        }}
-        
-        table th {{
-            background: var(--secondary-color);
-            color: white;
-            padding: 12px 8px;
-            text-align: left;
-            font-weight: 600;
-        }}
-        
-        table td {{
-            padding: 10px 8px;
-            border-bottom: 1px solid var(--border-color);
-        }}
-        
-        table tr:nth-child(even) {{
-            background-color: var(--light-bg);
-        }}
-        
-        table tr:hover {{
-            background-color: #e8f5e9;
-        }}
-        
-        .figure-container {{
-            text-align: center;
-            margin: 20px 0;
-        }}
-        
-        .figure-container img {{
-            max-width: 100%;
-            height: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }}
-        
-        .figure-caption {{
-            font-style: italic;
-            color: #666;
-            margin-top: 10px;
-        }}
-        
-        .warning {{
-            background: #fff3e0;
-            border-left: 4px solid var(--warning-color);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 5px 5px 0;
-        }}
-        
-        .error {{
-            background: #ffebee;
-            border-left: 4px solid var(--danger-color);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 5px 5px 0;
-        }}
-        
-        .toc {{
-            background: var(--light-bg);
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }}
-        
-        .toc h3 {{
-            margin-top: 0;
-        }}
-        
-        .toc ul {{
-            list-style-type: none;
-            padding-left: 0;
-        }}
-        
-        .toc li {{
-            padding: 5px 0;
-        }}
-        
-        .toc a {{
-            color: var(--secondary-color);
-            text-decoration: none;
-        }}
-        
-        .toc a:hover {{
-            color: var(--primary-color);
-            text-decoration: underline;
-        }}
 
         @media print {{
-            body {{
-                background: white;
-                padding: 0;
-            }}
-            .container {{
-                box-shadow: none;
-            }}
-            .toc {{
-                page-break-after: always;
-            }}
-            h2 {{
-                page-break-before: always;
-            }}
+            body {{ font-size: 12px; }}
+            .container {{ max-width: 100%; padding: 0; }}
+            section {{ box-shadow: none; page-break-inside: avoid; }}
         }}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📊 Historia 2: Líneas de Vida de Servicios Ecosistémicos</h1>
-        <p><strong>Informe Diagnóstico - Análisis de Seguridad Basada en la Naturaleza</strong></p>
-        
-        <div class="metadata">
-            <strong>Organización:</strong> {org_name}<br>
-            <strong>Generado:</strong> {timestamp}<br>
-            <strong>Archivo de Entrada:</strong> {input_file}<br>
-            <strong>Alcance del Análisis:</strong> Conectividad de Ecosistemas y Criticidad de Servicios
-        </div>
-        
-        <div class="toc">
-            <h3>📋 Tabla de Contenidos</h3>
-            <ul>
-                <li><a href="#executive-summary">1. Resumen Ejecutivo</a></li>
-                <li><a href="#ecosystem-analysis">2. Análisis de Ecosistemas</a></li>
-                <li><a href="#service-criticality">3. Análisis de Criticidad de Servicios</a></li>
-                <li><a href="#threats-vulnerability">4. Amenazas y Vulnerabilidad</a></li>
-                <li><a href="#data-quality">5. Resumen de Calidad de Datos</a></li>
-            </ul>
-        </div>
-        
-        {content}
-        
-        <hr>
-        <p style="text-align: center; color: #666; font-size: 0.85em;">
-            Generado por Storyline 2 Pipeline v1.0.0 | Metodología PARES<br>
-            © 2026 - Para uso analítico interno
-        </p>
+<div class="container">
+    <div class="report-header">
+        <h1>📊 Historia 2: Servicios Ecosistémicos</h1>
+        <div class="subtitle">Informe Diagnóstico — Conectividad, Criticidad y Apalancamiento</div>
+        <div class="meta">Generado: {timestamp} | Organización: {org_name}</div>
     </div>
+
+    <div class="toc">
+        <h2>📋 Contenido</h2>
+        <ol>
+            <li><a href="#executive-summary">Resumen Ejecutivo</a></li>
+            <li><a href="#ecosystem-analysis">Análisis de Ecosistemas</a></li>
+            <li><a href="#service-criticality">Análisis de Criticidad de Servicios</a></li>
+            <li><a href="#threats-vulnerability">Amenazas y Vulnerabilidad</a></li>
+            <li><a href="#data-quality">Resumen de Calidad de Datos</a></li>
+        </ol>
+    </div>
+
+    {content}
+
+    <div class="footer">
+        Generado por Storyline 2 Pipeline — Metodología PARES<br>
+        © 2026 — Para uso analítico interno
+    </div>
+</div>
 </body>
 </html>
 """
+
+
+def _interp(text: str, kind: str = "read") -> str:
+    """Create an interpretation box.  kind: what | read | insight | warning"""
+    labels = {
+        "what": "📘 ¿Qué es esto?",
+        "read": "📖 Cómo leer esta información",
+        "insight": "💡 Hallazgos Clave",
+        "warning": "⚠️ Atención",
+    }
+    css_class = kind if kind in ("what", "insight", "warning") else ""
+    return f"""<div class="interp {css_class}">
+    <div class="interp-label">{labels.get(kind, "📖 Interpretación")}</div>
+    {text}
+</div>"""
+
+
+def embed_image(path: str, title: str) -> str:
+    """Embed local image file as base64 into HTML."""
+    if not path:
+        return ""
+    
+    try:
+        # If already base64
+        if path.startswith("data:image"):
+            src = path
+        else:
+            p = Path(path)
+            if not p.exists():
+                logger.warning(f"Image not found: {path}")
+                return ""
+                
+            with open(p, "rb") as f:
+                b64_data = base64.b64encode(f.read()).decode("utf-8")
+            
+            mime_type = "image/png"
+            if p.suffix.lower() in [".jpg", ".jpeg"]:
+                mime_type = "image/jpeg"
+            elif p.suffix.lower() == ".svg":
+                mime_type = "image/svg+xml"
+                
+            src = f"data:{mime_type};base64,{b64_data}"
+            
+        return f"""
+        <div class="figure-box">
+            <img src="{src}" alt="{title}">
+            <div class="fig-title">{title}</div>
+        </div>
+        """
+    except Exception as e:
+        logger.error(f"Error embedding image {path}: {e}")
+        return ""
 
 
 # =============================================================================
@@ -416,8 +495,29 @@ def generate_ecosystem_section(
     """Generate ecosystem connectivity and ELI section."""
     content = '<section id="ecosystem-analysis" class="section"><h2>2. Análisis de Ecosistemas</h2>'
     
+    content += _interp(
+        "Este análisis evalúa la estructura de la red ecológica. "
+        "<strong>Conectividad:</strong> Mide qué tan central es un ecosistema para el flujo de servicios. "
+        "<strong>Apalancamiento (ELI):</strong> Identifica ecosistemas estratégicos que, con poca intervención, "
+        "generan beneficios para muchos servicios críticos.",
+        "what"
+    )
+
+    # Narrative
+    eco_overall = metrics_tables.get("ecosystem_summary_overall", pd.DataFrame())
+    eli_overall = metrics_tables.get("ecosystem_eli_overall", pd.DataFrame())
+    narrative_text = narrative.generate_ecosystem_narrative(eco_overall, eli_overall)
+    if narrative_text:
+        content += _interp(narrative_text, "insight")
+    
     # Ecosystem summary
     content += '<h3>🌳 Resumen de Conectividad de Ecosistemas</h3>'
+    content += _interp(
+        "La tabla muestra los ecosistemas ordenados por su conectividad normalizada. "
+        "Un valor alto indica que el ecosistema soporta una gran variedad de servicios y medios de vida.",
+        "read"
+    )
+
     eco_overall = metrics_tables.get("ecosystem_summary_overall", pd.DataFrame())
     if not eco_overall.empty:
         cols = ["ecosistema", "n_obs", "n_services", "n_livelihoods", "connectivity_norm"]
@@ -429,6 +529,12 @@ def generate_ecosystem_section(
     
     # ELI rankings
     content += '<h3>📈 Índice de Apalancamiento del Ecosistema (ELI)</h3>'
+    content += _interp(
+        "El ELI combina la conectividad del ecosistema con la criticidad de los servicios que provee. "
+        "Un ELI alto señala un ecosistema 'Piedra Angular': protegerlo asegura servicios vitales para la comunidad.",
+        "read"
+    )
+
     eli_overall = metrics_tables.get("ecosystem_eli_overall", pd.DataFrame())
     if not eli_overall.empty:
         cols = ["ecosistema", "connectivity_norm", "mean_sci_norm", "eli"]
@@ -457,8 +563,27 @@ def generate_service_section(
     """Generate service criticality section."""
     content = '<section id="service-criticality" class="section"><h2>3. Análisis de Criticidad de Servicios</h2>'
     
+    content += _interp(
+        "El <strong>Índice de Criticidad del Servicio (SCI)</strong> mide qué tan esencial es un servicio ecosistémico "
+        "para la comunidad. Considera cuántos medios de vida dependen de él (Grado), cuántos usuarios lo reportan (Prevalencia), "
+        "la prioridad que le asignan (Importancia) y si su disponibilidad es estacional (Fragilidad).",
+        "what"
+    )
+
+    # Narrative
+    sci_ranking = metrics_tables.get("service_ranking_overall_balanced", pd.DataFrame())
+    narrative_text = narrative.generate_service_narrative(sci_ranking)
+    if narrative_text:
+        content += _interp(narrative_text, "insight")
+    
     # SCI components
     content += '<h3>📊 Componentes de Criticidad del Servicio</h3>'
+    content += _interp(
+        "Desglose de los factores que impulsan la criticidad. "
+        "Identifique si un servicio es crítico por ser muy usado (Usuarios) o por ser vital para una actividad económica clave (Vínculos MdV).",
+        "read"
+    )
+
     sci_overall = metrics_tables.get("service_sci_components_overall", pd.DataFrame())
     if not sci_overall.empty:
         cols = ["se_key", "links_mdv", "users", "seasonality_fragility", "priority_weight"]
@@ -484,11 +609,29 @@ def generate_threat_section(
     """Generate threat pressure and vulnerability section."""
     content = '<section id="threats-vulnerability" class="section"><h2>4. Amenazas y Vulnerabilidad</h2>'
     
+    content += _interp(
+        "Este análisis conecta las amenazas reportadas con los servicios y medios de vida. "
+        "<strong>TPS (Threat Pressure on Services):</strong> Cuánto está siendo afectado un servicio por el conjunto de amenazas. "
+        "<strong>IVL (Indirect Vulnerability of Livelihoods):</strong> Cuánto riesgo corre un medio de vida debido al deterioro de los servicios de los que depende.",
+        "what"
+    )
+
+    # TPS Narrative
+    tps_overall = metrics_tables.get("tps_overall", pd.DataFrame())
+    tps_narrative = narrative.generate_threat_narrative(tps_overall)
+    
+    # IVL Narrative
+    ivl_overall = metrics_tables.get("ivl_overall", pd.DataFrame())
+    ivl_narrative = narrative.generate_vulnerability_narrative(ivl_overall)
+
+    if tps_narrative or ivl_narrative:
+        combined_narrative = (tps_narrative + "\n" + ivl_narrative) if (tps_narrative and ivl_narrative) else (tps_narrative or ivl_narrative)
+        content += _interp(combined_narrative, "insight")
+    
     # TPS summary
     content += '<h3>⚠️ Presión de Amenazas sobre los Servicios (TPS)</h3>'
     tps_overall = metrics_tables.get("tps_overall", pd.DataFrame())
     if not tps_overall.empty:
-        # Aggregate by threat
         cols = ["amenaza", "se_key", "sum_pressure", "mean_pressure", "n_rows"]
         cols = [c for c in cols if c in tps_overall.columns]
         display = tps_overall[cols].copy()

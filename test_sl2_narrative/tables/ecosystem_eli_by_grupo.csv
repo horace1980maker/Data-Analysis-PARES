@@ -1,0 +1,6 @@
+grupo,ecosistema_id,n_obs,n_services,n_livelihoods,connectivity_raw,connectivity_norm,ecosistema,mean_sci,mean_sci_norm,eli,eli_norm
+Amarillo,d2f5a3719a00236a,1,5,1,6,0.5,Bosque Montano,0.4,0.5,0.5,0.5
+Azul,5bcb7c58676c1273,1,8,2,10,0.5,Bosque seco,0.55,0.5,0.5,0.5
+Rojo,5bcb7c58676c1273,1,8,2,10,0.5,Bosque seco,0.55,0.5,0.5,0.5
+Verde,0b9889c245c97f64,1,7,1,8,0.0,Manglar,0.5,0.5,0.2,0.0
+Verde,8102384e15c30837,1,9,1,10,1.0,Costero Marino,0.5,0.5,0.8,1.0

@@ -1446,14 +1446,51 @@ def tidy_6_2_conflict_actor(raw, geo, ctx, conf_lk, actor_lk) -> pd.DataFrame:
     df["conflict_actor_id"] = df.apply(lambda r: sha1_short("cact", r["context_id"], r["conflicto_id"], r["actor_id"]), axis=1)
     return df[["conflict_actor_id","context_id","conflicto_id","cod_conflict","actor_id","actor","i_en_actor","iea_factor","i_en_conflicto","iec_factor"]].copy()
 
-def tidy_7_1_ca(raw, survey_ctx_lk, mdv_lk, ca_q_lk) -> Tuple[pd.DataFrame,pd.DataFrame]:
+def tidy_7_1_ca(raw, survey_ctx_lk, mdv_lk, ca_q_lk) -> Tuple[pd.DataFrame,pd.DataFrame,pd.DataFrame]:
     sh = "7.1. Encuesta CA"
+
+    empty_resp = pd.DataFrame(columns=["respondent_id","survey_context_id","admin0","grupo","paisaje_inferido","mdv_id","mdv_name","tamano_propiedad"])
+    empty_ans = pd.DataFrame(columns=["response_id","respondent_id","question_id","question_order","response_raw","response_numeric"])
+    empty_cap = pd.DataFrame(columns=["mdv_id","mdv_name","dimension","indicator","score"])
+
     if sh not in raw:
-        return (
-            pd.DataFrame(columns=["respondent_id","survey_context_id","admin0","grupo","paisaje_inferido","mdv_id","mdv_name","tamano_propiedad"]),
-            pd.DataFrame(columns=["response_id","respondent_id","question_id","question_order","response_raw","response_numeric"]),
-        )
+        return empty_resp, empty_ans, empty_cap
+
     df = raw[sh].copy()
+
+    # =========================================================================
+    # NEW FORMAT (Aggregated) — detect by signature columns
+    # =========================================================================
+    if "average_valor" in df.columns and "m_d_v" in df.columns:
+        mdvmap = mdv_id_map(mdv_lk)
+
+        rows = []
+        for _, r in df.iterrows():
+            m_name = str(r.get("m_d_v", "")).strip()
+            dim = str(r.get("Dimension", "")).strip()
+            ind = str(r.get("grupo_indicador", "")).strip()
+            val = pd.to_numeric(r.get("average_valor"), errors="coerce")
+
+            if not m_name or not ind:
+                continue
+
+            mid = mdvmap.get(canonical_text(m_name), np.nan)
+
+            rows.append({
+                "mdv_id": mid,
+                "mdv_name": m_name,
+                "dimension": dim,
+                "indicator": ind,
+                "score": val
+            })
+
+        capacity = pd.DataFrame(rows) if rows else empty_cap
+        # Return empty legacy tables
+        return empty_resp, empty_ans, capacity
+
+    # =========================================================================
+    # EXISTING FORMAT (Individual responses)
+    # =========================================================================
     
     # 1. Identify fixed columns dynamically
     # Country
@@ -1547,7 +1584,7 @@ def tidy_7_1_ca(raw, survey_ctx_lk, mdv_lk, ca_q_lk) -> Tuple[pd.DataFrame,pd.Da
                 "response_numeric": numv if numv==numv else np.nan,
             })
     responses = pd.DataFrame(rows) if rows else pd.DataFrame(columns=["response_id","respondent_id","question_id","question_order","response_raw","response_numeric"])
-    return respondents, responses
+    return respondents, responses, empty_cap
 
 
 # ---------------------------
@@ -1632,7 +1669,7 @@ def compile_workbook(input_path: str, strict: bool=True, copy_raw: bool=True) ->
     t52_main, t52_bridge = tidy_5_2_dialogo(raw, geo, ctx, espacio, actor)
     t61 = tidy_6_1_conflict_events(raw, geo, ctx, conflicto)
     t62 = tidy_6_2_conflict_actor(raw, geo, ctx, conflicto, actor)
-    t71_resp, t71_ans = tidy_7_1_ca(raw, survey_ctx, mdv, ca_q)
+    t71_resp, t71_ans, t71_cap = tidy_7_1_ca(raw, survey_ctx, mdv, ca_q)
 
     tables: Dict[str,pd.DataFrame] = {}
 
@@ -1683,6 +1720,7 @@ def compile_workbook(input_path: str, strict: bool=True, copy_raw: bool=True) ->
     tables["TIDY_6_2_CONFLICTO_ACTOR"] = t62
     tables["TIDY_7_1_RESPONDENTS"] = t71_resp
     tables["TIDY_7_1_RESPONSES"] = t71_ans
+    tables["TIDY_7_1_CAPACITY"] = t71_cap
 
     # QA config
     pk_map = {

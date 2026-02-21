@@ -155,7 +155,8 @@ def plot_top_services_sci(
         ax.text(0.02, bar.get_y() + bar.get_height()/2,
                 label, va="center", ha="left", fontsize=9, color="black", fontweight="bold")
     
-    ax.set_xlim(0, max(data["sci"]) * 1.15)
+    # Increase xlim to 1.3 to avoid cutting off long bars or labels
+    ax.set_xlim(0, max(data["sci"]) * 1.3)
     
     # Save
     suffix = f"_{grupo}" if grupo else ""
@@ -229,11 +230,14 @@ def plot_top_ecosystems_eli(
     ax.set_title(title, fontweight="bold", pad=10)
     
     # Add value labels
+    max_val = data[eli_col].max()
+    offset = max_val * 0.01  # Dynamic offset
+    
     for bar, val in zip(bars, data[eli_col]):
-        ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
+        ax.text(bar.get_width() + offset, bar.get_y() + bar.get_height()/2,
                 f"{val:.2f}", va="center", fontsize=9, color="#64748B")
     
-    ax.set_xlim(0, max(data[eli_col]) * 1.15)
+    ax.set_xlim(0, max_val * 1.3)
     
     # Save
     suffix = f"_{grupo}" if grupo else "_overall"
@@ -293,11 +297,14 @@ def plot_threat_pressure(
     ax.set_title(f"Top {len(data)} Threats Pressuring Services", fontweight="bold", pad=10)
     
     # Add value labels
+    max_val = data["sum_pressure"].max()
+    offset = max_val * 0.01
+    
     for bar, val in zip(bars, data["sum_pressure"]):
-        ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
+        ax.text(bar.get_width() + offset, bar.get_y() + bar.get_height()/2,
                 f"{val:.1f}", va="center", fontsize=9, color="#64748B")
     
-    ax.set_xlim(0, max(data["sum_pressure"]) * 1.15)
+    ax.set_xlim(0, max_val * 1.3)
     
     # Save
     filename = "bar_top_threat_pressure_overall.png"
@@ -351,11 +358,14 @@ def plot_livelihood_exposure(
     ax.set_title(f"Top {len(data)} Exposed Livelihoods", fontweight="bold", pad=10)
     
     # Add value labels
+    max_val = data["sum_pressure_via_services"].max()
+    offset = max_val * 0.01
+    
     for bar, val in zip(bars, data["sum_pressure_via_services"]):
-        ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
+        ax.text(bar.get_width() + offset, bar.get_y() + bar.get_height()/2,
                 f"{val:.1f}", va="center", fontsize=9, color="#64748B")
     
-    ax.set_xlim(0, max(data["sum_pressure_via_services"]) * 1.15)
+    ax.set_xlim(0, max_val * 1.3)
     
     # Save
     filename = "bar_top_livelihood_exposure_overall.png"
