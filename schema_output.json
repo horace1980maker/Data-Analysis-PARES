@@ -32,7 +32,7 @@
       "nombre",
       "uso_fin_mdv"
     ],
-    "rows": 33
+    "rows": 124
   },
   "3.2. Priorización": {
     "columns": [
@@ -40,7 +40,7 @@
       "admin0",
       "paisaje",
       "grupo",
-      "mdv ",
+      "mdv",
       "producto_principal",
       "i_seg_alim",
       "i_area",
@@ -49,7 +49,7 @@
       "i_inclusion",
       "i_total"
     ],
-    "rows": 6
+    "rows": 18
   },
   "3.3. Car_A": {
     "columns": [
@@ -66,7 +66,7 @@
       "cv_producto",
       "cv_mercado"
     ],
-    "rows": 17
+    "rows": 48
   },
   "3.3. Car_B": {
     "columns": [
@@ -79,7 +79,7 @@
       "tenencia",
       "tenencia_descripcion"
     ],
-    "rows": 18
+    "rows": 45
   },
   "3.3. Car_C": {
     "columns": [
@@ -95,7 +95,7 @@
       "rango",
       "porcentaje"
     ],
-    "rows": 18
+    "rows": 58
   },
   "3.3. Car_D": {
     "columns": [
@@ -110,7 +110,7 @@
       "tamano",
       "porcentaje"
     ],
-    "rows": 54
+    "rows": 133
   },
   "3.4. Ecosistemas": {
     "columns": [
@@ -126,7 +126,7 @@
       "causas_deg",
       "cod_es"
     ],
-    "rows": 3
+    "rows": 6
   },
   "3.5. SE y MdV": {
     "columns": [
@@ -137,7 +137,7 @@
       "cod_es_se",
       "mdv_relacionado",
       "elemento_se",
-      "accesso",
+      "acceso",
       "barreras",
       "nr_usuarios",
       "mes_contrib",
@@ -145,7 +145,7 @@
       "inclusion",
       "incl_descripcion"
     ],
-    "rows": 9
+    "rows": 30
   },
   "4.1. Amenazas": {
     "columns": [
@@ -162,7 +162,7 @@
       "sitios_afect",
       "cod_mapa"
     ],
-    "rows": 3
+    "rows": 40
   },
   "4.2.1. Amenazas_MdV": {
     "columns": [
@@ -193,7 +193,7 @@
       "nivel_conflicto",
       "mapeo_conflicto"
     ],
-    "rows": 4
+    "rows": 16
   },
   "4.2.2. Amenazas_SE": {
     "columns": [
@@ -224,7 +224,7 @@
       "nivel_conflicto",
       "mapeo_conflicto"
     ],
-    "rows": 8
+    "rows": 16
   },
   "5.1. Actores": {
     "columns": [
@@ -274,7 +274,7 @@
       "coop_factor",
       "suma"
     ],
-    "rows": 4
+    "rows": 56
   },
   "6.2. Actores_conflict": {
     "columns": [
@@ -360,7 +360,7 @@
       "61 …participa en asociaciones o cooperativas relacionadas con este medio de vida (sistema productivo)?",
       "62. … participa en plataformas/espacios de toma de decisiones comunitarias?"
     ],
-    "rows": 4
+    "rows": 14
   },
   "LOOKUP_GEO": {
     "columns": [
@@ -369,7 +369,7 @@
       "paisaje",
       "grupo"
     ],
-    "rows": 2
+    "rows": 5
   },
   "LOOKUP_CONTEXT": {
     "columns": [
@@ -377,7 +377,7 @@
       "geo_id",
       "fecha_iso"
     ],
-    "rows": 4
+    "rows": 9
   },
   "LOOKUP_SURVEY_CONTEXT": {
     "columns": [
@@ -386,14 +386,14 @@
       "grupo",
       "paisaje_inferido"
     ],
-    "rows": 2
+    "rows": 5
   },
   "LOOKUP_MDV": {
     "columns": [
       "mdv_id",
       "mdv_name"
     ],
-    "rows": 30
+    "rows": 76
   },
   "LOOKUP_ECOSISTEMA": {
     "columns": [
@@ -401,14 +401,14 @@
       "cod_es",
       "ecosistema"
     ],
-    "rows": 6
+    "rows": 10
   },
   "LOOKUP_SE": {
     "columns": [
       "se_id",
       "cod_se"
     ],
-    "rows": 13
+    "rows": 15
   },
   "LOOKUP_ELEMENTO_SE": {
     "columns": [
@@ -423,7 +423,7 @@
       "tipo_amenaza",
       "amenaza"
     ],
-    "rows": 3
+    "rows": 16
   },
   "LOOKUP_ACTOR": {
     "columns": [
@@ -444,7 +444,7 @@
       "conflicto_id",
       "cod_conflict"
     ],
-    "rows": 9
+    "rows": 13
   },
   "LOOKUP_CA_QUESTIONS": {
     "columns": [
@@ -465,7 +465,7 @@
       "mdv_id",
       "ecosistema_id"
     ],
-    "rows": 33
+    "rows": 124
   },
   "TIDY_3_2_PRIORIZACION": {
     "columns": [
@@ -481,7 +481,7 @@
       "i_inclusion",
       "i_total"
     ],
-    "rows": 6
+    "rows": 18
   },
   "TIDY_3_3_CAR_A": {
     "columns": [
@@ -497,7 +497,7 @@
       "cv_producto",
       "cv_mercado"
     ],
-    "rows": 17
+    "rows": 48
   },
   "TIDY_3_3_CAR_B": {
     "columns": [
@@ -509,7 +509,7 @@
       "tenencia",
       "tenencia_descripcion"
     ],
-    "rows": 18
+    "rows": 45
   },
   "TIDY_3_3_CAR_C": {
     "columns": [
@@ -524,7 +524,7 @@
       "rango",
       "porcentaje"
     ],
-    "rows": 18
+    "rows": 58
   },
   "TIDY_3_3_CAR_D": {
     "columns": [
@@ -538,7 +538,7 @@
       "tamano",
       "porcentaje"
     ],
-    "rows": 54
+    "rows": 133
   },
   "TIDY_3_3_CAR_LONG": {
     "columns": [
@@ -553,7 +553,7 @@
       "field",
       "value"
     ],
-    "rows": 355
+    "rows": 961
   },
   "TIDY_3_4_ECOSISTEMAS": {
     "columns": [
@@ -566,7 +566,7 @@
       "es_salud",
       "causas_deg"
     ],
-    "rows": 3
+    "rows": 6
   },
   "TIDY_3_4_ECO_SE": {
     "columns": [
@@ -575,7 +575,7 @@
       "se_id",
       "cod_se"
     ],
-    "rows": 28
+    "rows": 57
   },
   "TIDY_3_4_ECO_MDV": {
     "columns": [
@@ -584,7 +584,7 @@
       "mdv_id",
       "mdv_name"
     ],
-    "rows": 25
+    "rows": 40
   },
   "TIDY_3_5_SE_MDV": {
     "columns": [
@@ -605,7 +605,7 @@
       "impactos_cruzados",
       "incl_descripcion"
     ],
-    "rows": 39
+    "rows": 81
   },
   "TIDY_3_5_SE_MONTHS": {
     "columns": [
@@ -615,7 +615,7 @@
       "month_num",
       "month_type"
     ],
-    "rows": 1404
+    "rows": 2790
   },
   "TIDY_3_5_SE_INCLUSION": {
     "columns": [
@@ -623,7 +623,7 @@
       "se_mdv_id",
       "group_label"
     ],
-    "rows": 468
+    "rows": 837
   },
   "TIDY_4_1_AMENAZAS": {
     "columns": [
@@ -639,7 +639,7 @@
       "sitios_afect",
       "cod_mapa"
     ],
-    "rows": 3
+    "rows": 40
   },
   "TIDY_4_2_1_AMENAZA_MDV": {
     "columns": [
@@ -669,7 +669,7 @@
       "nivel_conflicto",
       "mapeo_conflicto"
     ],
-    "rows": 8
+    "rows": 45
   },
   "TIDY_4_2_1_DIFERENCIADO": {
     "columns": [
@@ -677,7 +677,7 @@
       "amenaza_mdv_id",
       "group_label"
     ],
-    "rows": 26
+    "rows": 172
   },
   "TIDY_4_2_1_MAPEO_CONFLICTO": {
     "columns": [
@@ -686,7 +686,7 @@
       "cod_conflict",
       "conflicto_id"
     ],
-    "rows": 18
+    "rows": 39
   },
   "TIDY_4_2_2_AMENAZA_SE": {
     "columns": [
@@ -716,7 +716,7 @@
       "nivel_conflicto",
       "mapeo_conflicto"
     ],
-    "rows": 8
+    "rows": 16
   },
   "TIDY_4_2_2_DIFERENCIADO": {
     "columns": [
@@ -724,7 +724,7 @@
       "amenaza_se_id",
       "group_label"
     ],
-    "rows": 32
+    "rows": 52
   },
   "TIDY_4_2_2_MAPEO_CONFLICTO": {
     "columns": [
@@ -733,7 +733,7 @@
       "cod_conflict",
       "conflicto_id"
     ],
-    "rows": 18
+    "rows": 21
   },
   "TIDY_5_1_ACTORES": {
     "columns": [
@@ -797,7 +797,7 @@
       "coop_factor",
       "suma"
     ],
-    "rows": 8
+    "rows": 33
   },
   "TIDY_6_2_CONFLICTO_ACTOR": {
     "columns": [
@@ -825,7 +825,7 @@
       "mdv_name",
       "tamano_propiedad"
     ],
-    "rows": 4
+    "rows": 14
   },
   "TIDY_7_1_RESPONSES": {
     "columns": [
@@ -836,7 +836,17 @@
       "response_raw",
       "response_numeric"
     ],
-    "rows": 248
+    "rows": 868
+  },
+  "TIDY_7_1_CAPACITY": {
+    "columns": [
+      "mdv_id",
+      "mdv_name",
+      "dimension",
+      "indicator",
+      "score"
+    ],
+    "rows": 0
   },
   "QA_INPUT_SCHEMA": {
     "columns": [
@@ -852,7 +862,7 @@
       "rows",
       "cols"
     ],
-    "rows": 58
+    "rows": 59
   },
   "QA_PK_DUPLICATES": {
     "columns": [

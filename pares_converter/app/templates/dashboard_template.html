@@ -176,6 +176,10 @@
       <div id="context-selector" class="flex items-center gap-2">
         <!-- Filled by JS -->
       </div>
+      <a href="capacity.html" target="_blank" class="ml-4 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-sm font-medium rounded-lg border border-emerald-500/30 transition-colors flex items-center gap-2" title="Ir al Dashboard de Capacidad Adaptativa">
+        <i data-lucide="activity" class="w-4 h-4"></i>
+        Capacidad Adaptativa
+      </a>
     </nav>
 
     <div class="nav-dots">
@@ -350,6 +354,13 @@
                 Analizando texto...
               </p>
             </div>
+            <div class="glass-panel p-6 border-l-4 border-l-purple-500">
+              <h3 class="text-white font-semibold mb-2">Impactos Diferenciados</h3>
+              <p class="text-slate-400 text-sm mb-3">Grupos especialmente vulnerables a estas amenazas:</p>
+              <div id="s3-differentiated" class="flex flex-wrap gap-2">
+                <span class="text-slate-500 text-xs italic">Analizando grupos...</span>
+              </div>
+            </div>
             <div class="glass-panel p-6 border-l-4 border-l-amber-500">
               <h3 class="text-white font-semibold mb-2">
                 Salud del Ecosistema
@@ -420,37 +431,54 @@
             </div>
           </div>
 
-          <!-- Flow: Timeline -->
-          <div class="glass-panel p-6">
-            <h3
-              class="text-white font-semibold mb-4 text-sm uppercase tracking-wider"
-            >
-              Línea de Tiempo
-            </h3>
-            <div
-              class="overflow-y-auto pr-2 space-y-4 relative"
-              style="max-height: 500px"
-              id="conflict-timeline"
-            >
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Flow: Timeline -->
+            <div class="glass-panel p-6 flex flex-col">
+              <h3
+                class="text-white font-semibold mb-4 text-sm uppercase tracking-wider shrink-0"
+              >
+                Línea de Tiempo (Conflictos)
+              </h3>
               <div
-                class="absolute left-[7px] top-2 bottom-0 w-0.5 bg-white/10"
-              ></div>
-              <!-- Filled by JS -->
+                class="overflow-y-auto pr-2 space-y-4 relative flex-1"
+                style="max-height: 400px"
+                id="conflict-timeline"
+              >
+                <div
+                  class="absolute left-[7px] top-2 bottom-0 w-0.5 bg-white/10"
+                ></div>
+                <!-- Filled by JS -->
+              </div>
+            </div>
+
+            <!-- Dialogue Spaces -->
+            <div class="glass-panel p-6 flex flex-col">
+              <h3
+                class="text-white font-semibold mb-4 text-sm uppercase tracking-wider shrink-0"
+              >
+                Espacios de Diálogo Activos
+              </h3>
+              <div
+                class="overflow-y-auto pr-2 space-y-4 flex-1"
+                style="max-height: 400px"
+                id="dialogue-spaces"
+              >
+                <!-- Filled by JS -->
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- S5: ACTION PORTFOLIO -->
+      <!-- S5: ACTION PORTFOLIO -> DIAGNÓSTICO FINAL -->
       <section id="s5" class="section-screen" style="padding-top: 6rem">
         <div class="max-w-5xl mx-auto w-full space-y-10">
           <div class="text-center">
             <h2 class="text-4xl font-bold text-white mb-4">
-              Cartera de Acción Recomendada
+              Diagnóstico Final
             </h2>
             <p class="text-slate-400">
-              Síntesis automática basada en prioridades, amenazas y capacidad de
-              actuación.
+              Análisis estructural de riesgos y principales opciones estratégicas para los medios de vida prioritarios.
             </p>
           </div>
 
@@ -505,6 +533,10 @@
           ),
           health: BUNDLE_SAFE.ecosystems.filter((x) =>
             x.context_id.includes(ctxId),
+          ),
+          differentiated: BUNDLE_SAFE.differentiated_impacts || [],
+          dialogue: BUNDLE_SAFE.dialogue.spaces.filter((x) =>
+            x.context_id.includes(ctxId) || x.context_id === "",
           ),
         };
 
@@ -564,8 +596,15 @@
                             ${i + 1}
                         </div>
                         <div>
-                            <h4 class="text-white font-medium">${mdv.mdv_name}</h4>
-                            <p class="text-xs text-slate-500">${mdv.sistema || "Sistema productivo"}</p>
+                            <h4 class="text-white font-medium flex items-center gap-2">
+                                ${mdv.mdv_name}
+                                ${mdv.uso_final ? `<span class="px-2 py-0.5 rounded text-[9px] uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">${mdv.uso_final}</span>` : ""}
+                            </h4>
+                            <p class="text-xs text-slate-500 flex flex-wrap items-center gap-2 mt-1">
+                                <span>${mdv.sistema || "Sistema productivo"}</span>
+                                ${mdv.tenencia ? `<span class="px-1.5 py-0.5 bg-white/5 rounded text-[10px]">${mdv.tenencia}</span>` : ""}
+                                ${mdv.tamano ? `<span class="px-1.5 py-0.5 bg-white/5 rounded text-[10px]">${mdv.tamano}</span>` : ""}
+                            </p>
                         </div>
                     </div>
                     <div class="text-right">
@@ -636,6 +675,15 @@
           distinctBarriers.length
             ? `<ul class="list-disc pl-4 space-y-2 text-slate-300">"${distinctBarriers.join('", "')}"</ul>`
             : "No se registraron barreras explícitas en los datos.";
+
+        // Differentiated Impacts
+        const diffGroups = [...new Set(data.differentiated.map((d) => d.group_label))].filter(Boolean);
+        const diffContainer = document.getElementById("s3-differentiated");
+        if (diffContainer) {
+          diffContainer.innerHTML = diffGroups.length
+            ? diffGroups.map((g) => `<span class="px-2 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded text-xs">${g}</span>`).join("")
+            : '<span class="text-slate-500 text-xs">Sin impactos diferenciados registrados.</span>';
+        }
 
         // Eco Health Doughnut
         let good = 0,
@@ -748,6 +796,26 @@
             )
             .join("") ||
           '<p class="pl-6 text-sm text-slate-500">Sin conflictos registrados.</p>';
+          
+        // Dialogue Spaces
+        const dialogBox = document.getElementById("dialogue-spaces");
+        if (dialogBox) {
+          dialogBox.innerHTML = data.dialogue.length
+            ? data.dialogue.map((d) => `
+                <div class="p-4 bg-white/5 rounded-xl border border-white/5 hover:border-emerald-500/30 transition-all">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="messages-square" class="w-4 h-4 text-emerald-400"></i>
+                        <h4 class="text-white font-medium text-sm">${d.nombre_espacio}</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-2">${d.funcion}</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${d.alcance ? `<span class="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded text-[10px] uppercase">${d.alcance}</span>` : ""}
+                        ${d.incidencia ? `<span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded text-[10px] uppercase">Incidencia: ${d.incidencia}</span>` : ""}
+                    </div>
+                </div>
+            `).join("")
+            : '<p class="text-sm text-slate-500">Sin espacios de diálogo registrados.</p>';
+        }
       }
 
       function renderS5(data) {
@@ -781,27 +849,29 @@
             const leadActor = highPower.length
               ? highPower[idx % highPower.length].nombre_actor
               : "Autoridad Local";
+            
+            const puntaje = mdv.i_total ? Number(mdv.i_total).toFixed(2) : "N/D";
 
             return `
-                <div class="glass-panel p-0 overflow-hidden flex flex-col group hover:ring-1 hover:ring-emerald-500/50 transition-all">
-                    <div class="h-1 bg-gradient-to-r from-emerald-500 to-blue-500"></div>
+                <div class="glass-panel p-0 overflow-hidden flex flex-col group hover:ring-1 hover:ring-blue-500/50 transition-all">
+                    <div class="h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
                     <div class="p-6 flex-1 flex flex-col">
                         <div class="flex justify-between mb-4">
-                            <span class="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Paquete ${idx + 1}</span>
-                            <i data-lucide="sprout" class="text-emerald-400 w-4 h-4"></i>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Prioridad ${idx + 1}</span>
+                            <i data-lucide="target" class="text-blue-400 w-4 h-4"></i>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2">${mdv.mdv_name}</h3>
                         <p class="text-sm text-slate-400 mb-6 flex-1">
-                            Fortalecer <strong>${mainSrv}</strong> para mitigar el impacto de <strong>${t}</strong>.
+                            El principal riesgo detectado es <strong>${t}</strong>, el cual amenaza críticamente a <strong>${mainSrv}</strong>.
                         </p>
                         <div class="space-y-3 pt-4 border-t border-white/5">
                             <div class="flex items-center gap-2 text-xs text-slate-300">
-                                <i data-lucide="shield" class="w-3 h-3 text-emerald-500"></i>
-                                <span>Acción: ${mdv.intervention_type || "SbN General"}</span>
+                                <i data-lucide="activity" class="w-3 h-3 text-rose-500"></i>
+                                <span>Puntaje de Riesgo (Agregado): ${puntaje}</span>
                             </div>
                             <div class="flex items-center gap-2 text-xs text-slate-300">
-                                <i data-lucide="users" class="w-3 h-3 text-blue-500"></i>
-                                <span>Liderazgo: ${leadActor}</span>
+                                <i data-lucide="users" class="w-3 h-3 text-purple-400"></i>
+                                <span>Aliado Estratégico Potencial: ${leadActor}</span>
                             </div>
                         </div>
                     </div>

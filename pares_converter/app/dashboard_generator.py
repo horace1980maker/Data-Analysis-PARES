@@ -243,6 +243,32 @@ def extract_threats(xl: pd.ExcelFile) -> Dict[str, Any]:
     
     return threats
 
+def extract_differentiated_impacts(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
+    """Extract differentiated impact groups for threats."""
+    impacts = []
+    
+    # Check TIDY_4_2_1_DIFERENCIADO
+    if "TIDY_4_2_1_DIFERENCIADO" in xl.sheet_names:
+        df = _read_table(xl, "TIDY_4_2_1_DIFERENCIADO")
+        if "group_label" in df.columns:
+            for _, row in df.iterrows():
+                impacts.append({
+                    "source": "mdv",
+                    "group_label": str(row["group_label"])
+                })
+                
+    # Check TIDY_4_2_2_DIFERENCIADO
+    if "TIDY_4_2_2_DIFERENCIADO" in xl.sheet_names:
+        df = _read_table(xl, "TIDY_4_2_2_DIFERENCIADO")
+        if "group_label" in df.columns:
+            for _, row in df.iterrows():
+                impacts.append({
+                    "source": "se",
+                    "group_label": str(row["group_label"])
+                })
+                
+    return impacts
+
 
 def extract_actors(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
     """Extract actor data for power-interest scatter."""
@@ -345,21 +371,6 @@ def extract_dialogue(xl: pd.ExcelFile) -> Dict[str, Any]:
     return dialogue
 
 
-
-INTERVENTION_MAP = {
-    "Sequía": "Cosecha de Agua y Sistemas Agroforestales",
-    "Inundación": "Restauración de Riberas y Drenaje Sostenible",
-    "Incendios": "Manejo Integrado del Fuego y Barreras Vivas",
-    "Plagas": "Manejo Integrado de Plagas y Diversificación",
-    "Deslizamientos": "Estabilización de Laderas y Reforestación",
-    "Deforestación": "Restauración Ecológica y Agroforestería",
-    "Contaminación": "Biofiltros y Gestión de Cuencas",
-    "Huracanes": "Barreras de Viento y Diversificación de Cultivos",
-    "Vientos fuertes": "Cortinas Rompevientos",
-    "Temperaturas extremas": "Sombra en Cafetales y Cultivos",
-    "Erosión": "Prácticas de Conservación de Suelos"
-}
-
 def extract_livelihoods(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
     """Extract livelihood details from characterization and prioritization tables."""
     livelihoods = []
@@ -374,7 +385,6 @@ def extract_livelihoods(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
                 "context_id": "",
                 "i_total": 0,
                 "rank": 999,
-                "intervention_type": "SbN General",  # Default
                 "top_threat": ""
             })
     
@@ -392,7 +402,13 @@ def extract_livelihoods(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
             
             # Calculate simple impact score
             if impact_cols:
-                vals = [row[c] for c in impact_cols if pd.notna(row[c])]
+                vals = []
+                for c in impact_cols:
+                    if pd.notna(row[c]):
+                        try:
+                            vals.append(float(row[c]))
+                        except (ValueError, TypeError):
+                            pass
                 score = sum(vals) / len(vals) if vals else 0
             else:
                 score = 0
@@ -438,13 +454,33 @@ def extract_livelihoods(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
                 if prio:
                     liv["i_total"] = prio["i_total"]
                     liv["rank"] = prio["rank"]
+                else:
                     liv["i_total"] = 0
                     liv["rank"] = 999
                 
+
+    # Extract tenure (tenencia) from CAR_B
+    car_b_sheet = next((s for s in xl.sheet_names if "3_3_CAR_B" in s), None)
+    if car_b_sheet:
+        car_b = _read_table(xl, car_b_sheet)
+        for liv in livelihoods:
+            subset = car_b[car_b["mdv_id"].astype(str) == liv["mdv_id"]]
+            if len(subset) > 0:
+                row = subset.iloc[0]
+                liv["tenencia"] = str(row.get("tenencia", ""))
                 
-                    liv["intervention_type"] = "SbN General" # Reset/Default if re-assigning? No, let's leave it to the final pass or specific logic data.
-                    # Actually, let's remove the logic from here and put it below to ensure it runs for everyone.
-    
+    # Extract size (tamano) from CAR_C
+    car_c_sheet = next((s for s in xl.sheet_names if "3_3_CAR_C" in s), None)
+    if car_c_sheet:
+        car_c = _read_table(xl, car_c_sheet)
+        for liv in livelihoods:
+            subset = car_c[car_c["mdv_id"].astype(str) == liv["mdv_id"]]
+            if len(subset) > 0:
+                row = subset.iloc[0]
+                tamaño_val = row.get("tamano", "")
+                unidad_val = row.get("unidad", "")
+                liv["tamano"] = f"{tamaño_val} {unidad_val}".strip()
+
     # Final pass: Assign interventions based on threats (Runs for ALL livelihoods, regardless of CAR_A presence)
     for liv in livelihoods:
         ctx_id = liv.get("context_id", "")
@@ -461,17 +497,6 @@ def extract_livelihoods(xl: pd.ExcelFile) -> List[Dict[str, Any]]:
         if t_data:
             threat_name = t_data["threat"]
             liv["top_threat"] = threat_name
-            
-            found_intervention = "SbN General"
-            for k, v in INTERVENTION_MAP.items():
-                if k.lower() in threat_name.lower():
-                    found_intervention = v
-                    break
-            
-            if found_intervention == "SbN General" and threat_name:
-                 found_intervention = f"Gestión de {threat_name}"
-            
-            liv["intervention_type"] = found_intervention
     
     return livelihoods
 
@@ -531,6 +556,7 @@ def build_bundle(xl: pd.ExcelFile, file_name: str, org_name: str = "Organizació
         "livelihoods": extract_livelihoods(xl),
         "conflicts": extract_conflicts(xl),
         "dialogue": extract_dialogue(xl),
+        "differentiated_impacts": extract_differentiated_impacts(xl),
         "capacity": analyze_capacity(extract_capacity(xl)),
         "qa": build_qa_summary(xl)
     }
