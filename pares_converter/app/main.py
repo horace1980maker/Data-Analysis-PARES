@@ -52,10 +52,6 @@ def read_converter():
     ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "converter.html")
     return FileResponse(ui_path)
 
-@app.get("/analyzer")
-def read_analyzer():
-    ui_path = os.path.join(os.path.dirname(__file__), "..", "ui", "analyzer.html")
-    return FileResponse(ui_path)
 
 @app.get("/dashboard")
 def read_dashboard():

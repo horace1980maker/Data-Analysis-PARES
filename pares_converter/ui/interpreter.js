@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('file', selectedFile);
 
         try {
-            updateProgress(20, 'Generando informe narrativo...');
+            updateProgress(20, 'Generando reporte analítico...');
 
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 progressContainer.style.display = 'none';
                 resultCard.style.display = 'block';
-                showToast('Informe narrativo generado exitosamente!', 'success');
+                showToast('Reporte analítico generado exitosamente!', 'success');
             }, 500);
 
         } catch (error) {
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (interpResults.report) {
             const prefix = `storyline${selectedStoryline}`;
             const timestamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15);
-            downloadBlob(interpResults.report, `${prefix}_narrative_${timestamp}.html`);
+            downloadBlob(interpResults.report, `${prefix}_analysis_${timestamp}.html`);
             showToast('Descargando informe HTML...', 'success');
         } else {
             showToast('Informe no disponible', 'error');

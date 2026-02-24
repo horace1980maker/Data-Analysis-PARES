@@ -151,8 +151,8 @@ const translations = {
         es: 'Análisis técnico de priorización y métricas para acciones SbN'
     },
     'storyline.1.desc.narrative': {
-        en: 'Narrative interpreted report with actionable insights',
-        es: 'Informe narrativo interpretado con recomendaciones de acción'
+        en: 'Priority analysis of territories and key threats',
+        es: 'Análisis de priorización territorial y amenazas principales'
     },
     'storyline.2.title': {
         en: 'Ecosystem-Service Lifelines',
@@ -163,8 +163,8 @@ const translations = {
         es: 'Análisis técnico de conectividad, apalancamiento (ELI) y criticidad'
     },
     'storyline.2.desc.narrative': {
-        en: 'Narrative analysis of ecosystem leverage and criticality',
-        es: 'Análisis narrativo de apalancamiento ecosistémico y criticidad'
+        en: 'Analysis of ecosystem leverage and criticality',
+        es: 'Análisis de apalancamiento ecosistémico y criticidad'
     },
     'storyline.3.title': {
         en: 'Equity & Vulnerability',
@@ -175,8 +175,8 @@ const translations = {
         es: 'Análisis técnico de impactos diferenciados y métricas de inclusión'
     },
     'storyline.3.desc.narrative': {
-        en: 'Narrative report on differentiated impacts and barriers',
-        es: 'Informe narrativo sobre impactos diferenciados y barreras'
+        en: 'Analysis of differentiated impacts and access barriers',
+        es: 'Análisis de impactos diferenciados y barreras de acceso'
     },
     'storyline.4.title': {
         en: 'Feasibility & Governance',
@@ -187,8 +187,8 @@ const translations = {
         es: 'Análisis técnico de redes de actores y dinámicas de conflicto'
     },
     'storyline.4.desc.narrative': {
-        en: 'Narrative report on governance and conflict risks',
-        es: 'Informe narrativo sobre gobernanza y riesgos de conflicto'
+        en: 'Analysis of governance and conflict risks',
+        es: 'Análisis de gobernanza y riesgos de conflicto'
     },
     'storyline.5.title': {
         en: 'SbN Portfolio Design',
@@ -199,8 +199,8 @@ const translations = {
         es: 'Síntesis técnica de hallazgos y recomendaciones'
     },
     'storyline.5.desc.narrative': {
-        en: 'Roadmap and narrative strategy for SbN implementation',
-        es: 'Hoja de ruta y estrategia narrativa para implementación SbN'
+        en: 'Roadmap and strategy for SbN implementation',
+        es: 'Hoja de ruta y estrategia para implementación SbN'
     },
     'storyline.6.title': {
         en: 'Adaptive Capacity',
@@ -211,8 +211,8 @@ const translations = {
         es: 'Métricas de resiliencia, equidad y barreras en medios de vida'
     },
     'storyline.6.desc.narrative': {
-        en: 'Involvement report on adaptive capacity and empowerment',
-        es: 'Informe narrativo sobre capacidad adaptativa y empoderamiento'
+        en: 'Analysis of adaptive capacity and empowerment',
+        es: 'Análisis de capacidad adaptativa y empoderamiento'
     },
     'storyline.status.available': {
         en: 'Available',
