@@ -216,9 +216,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             background: var(--surface);
         }}
         .figure-box img {{
-            max-width: 100%;
+            max-width: 85%;
             height: auto;
             border-radius: 8px;
+            margin: 0 auto;
+            display: block;
         }}
         .figure-box .fig-title {{
             font-weight: 600;

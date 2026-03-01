@@ -229,9 +229,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             background: var(--surface);
         }}
         .figure-box img {{
-            max-width: 100%;
+            max-width: 85%;
             height: auto;
             border-radius: 8px;
+            margin: 0 auto;
+            display: block;
         }}
         .figure-box .fig-title {{
             font-weight: 600;
@@ -395,19 +397,7 @@ def df_to_html(
     return html
 
 
-def embed_image(path: str, caption: str = "") -> str:
-    """Embed an image as base64 in HTML."""
-    try:
-        with open(path, "rb") as f:
-            b64 = base64.b64encode(f.read()).decode("utf-8")
-        html = f'<div class="figure-container"><img src="data:image/png;base64,{b64}" alt="Figure">'
-        if caption:
-            html += f'<p class="figure-caption">{caption}</p>'
-        html += '</div>'
-        return html
-    except Exception as e:
-        logger.warning(f"Failed to embed image {path}: {e}")
-        return f'<div class="warning">Imagen no disponible: {Path(path).name}</div>'
+
 
 
 # =============================================================================

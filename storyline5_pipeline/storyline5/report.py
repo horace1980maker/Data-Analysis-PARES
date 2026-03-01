@@ -192,11 +192,13 @@ HTML_TEMPLATE = """
         }}
         
         .figure-container img {{
-            max-width: 100%;
+            max-width: 85%;
             height: auto;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            display: block;
         }}
         
         .figure-caption {{
