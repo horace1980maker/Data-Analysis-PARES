@@ -236,6 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 progressContainer.style.display = 'none';
                 resultCard.style.display = 'block';
+                
+                // Show AI report section ONLY for Storyline 1
+                const aiSection = document.getElementById('ai-report-section');
+                if (aiSection) {
+                    aiSection.style.display = (selectedStoryline === 1) ? 'block' : 'none';
+                }
+                
                 showToast('Reporte analítico generado exitosamente!', 'success');
             }, 500);
 
@@ -288,6 +295,99 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             showToast('Archivo ZIP no disponible', 'error');
         }
+    });
+
+    // ==== AI REPORT LOGIC ====
+    const aiButtons = document.querySelectorAll('.ai-btn');
+    const aiLoading = document.getElementById('ai-loading');
+    const aiReportContainer = document.getElementById('ai-report-container');
+    const aiReportContent = document.getElementById('ai-report-content');
+    const aiReportTitle = document.getElementById('ai-report-title');
+    const closeAiReport = document.getElementById('close-ai-report');
+
+    if (closeAiReport) {
+        closeAiReport.addEventListener('click', () => {
+            aiReportContainer.style.display = 'none';
+        });
+    }
+
+    aiButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!selectedFile || selectedStoryline !== 1) {
+                showToast('Archivo no cargado o historia no compatible', 'error');
+                return;
+            }
+
+            const modelName = btn.getAttribute('data-model');
+            let prettyModelName = modelName;
+            if (modelName === 'gpt-4o-mini') prettyModelName = 'GPT-4o (OpenAI)';
+            else if (modelName === 'glm-4') prettyModelName = 'GLM-4 (Zhipu)';
+            else if (modelName === 'gemma2:27b') prettyModelName = 'Gemma 2 27B';
+            else if (modelName === 'qwen2.5:32b') prettyModelName = 'Qwen 2.5 32B';
+
+            // Reset UI
+            aiReportContainer.style.display = 'none';
+            aiLoading.style.display = 'block';
+            aiReportContent.innerHTML = '';
+            aiReportTitle.textContent = `Reporte IA: ${prettyModelName}`;
+            
+            // Disable all AI buttons
+            aiButtons.forEach(b => b.disabled = true);
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('storyline', selectedStoryline);
+            formData.append('model_name', modelName);
+
+            try {
+                showToast(`Iniciando generación con ${prettyModelName}...`, 'info');
+                const response = await fetch('/analyze/ai_report', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    let errorMessage = 'Error al generar reporte IA';
+                    try {
+                        const errData = await response.json();
+                        errorMessage = errData.detail || errData.error || errorMessage;
+                    } catch (e) {
+                         try {
+                             errorMessage = await response.text() || errorMessage;
+                         } catch (e2) {}
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+                
+                // Use a simple markdown parser or just format line breaks if no marked.js
+                // Assuming result.report_markdown contains the text
+                let rawMarkdown = result.report_markdown || "No content returned.";
+                
+                // Basic markdown rendering (fallback)
+                // Ideally marked.min.js would be used
+                rawMarkdown = rawMarkdown
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n\n/g, '<br><br>')
+                    .replace(/\n/g, '<br>');
+
+                aiReportContent.innerHTML = rawMarkdown;
+                aiReportContainer.style.display = 'block';
+                showToast(`Reporte generado con ${prettyModelName}!`, 'success');
+
+            } catch (error) {
+                console.error(error);
+                showToast(error.message, 'error');
+            } finally {
+                aiLoading.style.display = 'none';
+                aiButtons.forEach(b => b.disabled = false);
+            }
+        });
     });
 
     // ==== UTILITY FUNCTIONS ====

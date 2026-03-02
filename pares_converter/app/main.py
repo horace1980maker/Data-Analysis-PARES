@@ -37,6 +37,8 @@ if storyline5_path not in sys.path:
     sys.path.insert(0, storyline5_path)
 
 app = FastAPI(title="PARES Excel Converter & Analyzer")
+from .ai_analysis import router as ai_analysis_router
+app.include_router(ai_analysis_router)
 
 @app.get("/health")
 def health():
