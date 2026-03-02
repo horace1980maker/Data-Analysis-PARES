@@ -673,7 +673,7 @@ def build_evidence_table(bundles: List[Dict[str, Any]]) -> pd.DataFrame:
             evidence_rows.append({
                 "bundle_id": bundle_id,
                 "evidence_type": "services",
-                "evidence_component": "Critical services linked",
+                "evidence_component": "Servicios críticos vinculados",
                 "evidence_value": bundle.get("services_text", ""),
             })
         
@@ -682,7 +682,7 @@ def build_evidence_table(bundles: List[Dict[str, Any]]) -> pd.DataFrame:
             evidence_rows.append({
                 "bundle_id": bundle_id,
                 "evidence_type": "ecosystems",
-                "evidence_component": "Supporting ecosystems",
+                "evidence_component": "Ecosistemas de soporte",
                 "evidence_value": bundle.get("ecosystems_text", ""),
             })
         
@@ -691,7 +691,7 @@ def build_evidence_table(bundles: List[Dict[str, Any]]) -> pd.DataFrame:
             evidence_rows.append({
                 "bundle_id": bundle_id,
                 "evidence_type": "threats",
-                "evidence_component": "Driver threats",
+                "evidence_component": "Amenazas principales",
                 "evidence_value": bundle.get("threats_text", ""),
             })
         
@@ -708,7 +708,7 @@ def build_evidence_table(bundles: List[Dict[str, Any]]) -> pd.DataFrame:
             evidence_rows.append({
                 "bundle_id": bundle_id,
                 "evidence_type": "barriers",
-                "evidence_component": "Access barriers mentioned",
+                "evidence_component": "Barreras de acceso mencionadas",
                 "evidence_value": join_as_text(bundle["top_barriers"], "; ", 3),
             })
         

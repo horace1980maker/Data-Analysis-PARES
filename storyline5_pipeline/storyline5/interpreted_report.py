@@ -734,7 +734,15 @@ def section_portfolio_evidence(
             "permitiendo <strong>rastrear las decisiones hasta los datos originales</strong>.",
             "read"
         ))
-        parts.append(_df_to_html(evidence_overall, max_rows=30))
+        evidence_display = evidence_overall.copy()
+        evidence_cols = {
+            "bundle_id": "ID Paquete", 
+            "evidence_type": "Tipo de Evidencia", 
+            "evidence_component": "Componente", 
+            "evidence_value": "Valor de Evidencia"
+        }
+        evidence_display.rename(columns=evidence_cols, inplace=True)
+        parts.append(_df_to_html(evidence_display, max_rows=30))
 
     parts.append('</section>')
     return "\n".join(parts)
@@ -1063,7 +1071,15 @@ def section_data_coverage(
             "Si alguna tabla crítica tiene 0 filas, los resultados del portafolio podrían no reflejar esa dimensión.",
             "read"
         ))
-        parts.append(_df_to_html(coverage, max_rows=30))
+        coverage_display = coverage.copy()
+        coverage_cols = {
+            "component": "Componente",
+            "category": "Categoría",
+            "available": "Disponible",
+            "row_count": "Filas"
+        }
+        coverage_display.rename(columns=coverage_cols, inplace=True)
+        parts.append(_df_to_html(coverage_display, max_rows=30))
 
     # Warnings
     if warnings:

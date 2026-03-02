@@ -584,7 +584,15 @@ def generate_portfolio_evidence(
     evidence_overall = portfolio_tables.get("BUNDLE_EVIDENCE_OVERALL", pd.DataFrame())
     if not evidence_overall.empty:
         html += '<h3>Resumen de Evidencia</h3>'
-        html += df_to_html(evidence_overall, max_rows=30)
+        evidence_display = evidence_overall.copy()
+        evidence_cols = {
+            "bundle_id": "ID Paquete", 
+            "evidence_type": "Tipo de Evidencia", 
+            "evidence_component": "Componente", 
+            "evidence_value": "Valor de Evidencia"
+        }
+        evidence_display.rename(columns=evidence_cols, inplace=True)
+        html += df_to_html(evidence_display, max_rows=30)
     
     html += '</section>'
     return html
@@ -760,7 +768,15 @@ def generate_data_coverage_section(
     coverage = portfolio_tables.get("COVERAGE_SUMMARY", pd.DataFrame())
     if not coverage.empty:
         html += '<h3>Disponibilidad de Datos</h3>'
-        html += df_to_html(coverage, max_rows=30)
+        coverage_display = coverage.copy()
+        coverage_cols = {
+            "component": "Componente",
+            "category": "Categoría",
+            "available": "Disponible",
+            "row_count": "Filas"
+        }
+        coverage_display.rename(columns=coverage_cols, inplace=True)
+        html += df_to_html(coverage_display, max_rows=30)
     
     # Warnings
     if warnings:

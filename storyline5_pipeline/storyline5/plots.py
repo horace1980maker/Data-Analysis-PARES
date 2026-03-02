@@ -32,9 +32,21 @@ COLORS = {
 }
 
 TIER_COLORS = {
+    "Hacer ahora": COLORS["do_now"],
+    "Hacer después": COLORS["do_next"],
+    "Hacer más tarde": COLORS["do_later"],
     "Do now": COLORS["do_now"],
     "Do next": COLORS["do_next"],
     "Do later": COLORS["do_later"],
+    "Acción inmediata": COLORS["do_now"],
+    "Próxima acción": COLORS["do_next"],
+    "Acción posterior": COLORS["do_later"],
+}
+
+TIER_TRANSLATIONS = {
+    "Do now": "Hacer ahora",
+    "Do next": "Hacer después",
+    "Do later": "Hacer más tarde",
 }
 
 
@@ -118,32 +130,32 @@ def portfolio_matrix(
         )
     
     # Labels and title
-    ax.set_xlabel("Feasibility Score", fontweight="bold")
-    ax.set_ylabel("Impact Potential", fontweight="bold")
+    ax.set_xlabel("Puntaje de Viabilidad", fontweight="bold")
+    ax.set_ylabel("Potencial de Impacto", fontweight="bold")
     
-    title_scope = f" - {grupo}" if grupo else " (Overall)"
-    ax.set_title(f"Portfolio Matrix: {scenario.title()}{title_scope}", fontsize=14, fontweight="bold")
+    title_scope = f" - {grupo}" if grupo else " (General)"
+    ax.set_title(f"Matriz de Portafolio: {scenario.title()}{title_scope}", fontsize=14, fontweight="bold")
     
     # Add quadrant lines
     ax.axhline(y=0.5, color="gray", linestyle="--", alpha=0.5)
     ax.axvline(x=0.5, color="gray", linestyle="--", alpha=0.5)
     
     # Quadrant labels
-    ax.text(0.75, 0.95, "High Impact\nHigh Feasibility", transform=ax.transAxes, 
+    ax.text(0.75, 0.95, "Alto Impacto\nAlta Viabilidad", transform=ax.transAxes, 
             fontsize=9, alpha=0.5, ha="center")
-    ax.text(0.25, 0.95, "High Impact\nLow Feasibility", transform=ax.transAxes,
+    ax.text(0.25, 0.95, "Alto Impacto\nBaja Viabilidad", transform=ax.transAxes,
             fontsize=9, alpha=0.5, ha="center")
     
     # Legend for tiers
     legend_elements = [
-        plt.scatter([], [], c=TIER_COLORS["Do now"], s=100, label="Do now"),
-        plt.scatter([], [], c=TIER_COLORS["Do next"], s=100, label="Do next"),
-        plt.scatter([], [], c=TIER_COLORS["Do later"], s=100, label="Do later"),
+        plt.scatter([], [], c=TIER_COLORS["Hacer ahora"], s=100, label="Hacer ahora"),
+        plt.scatter([], [], c=TIER_COLORS["Hacer después"], s=100, label="Hacer después"),
+        plt.scatter([], [], c=TIER_COLORS["Hacer más tarde"], s=100, label="Hacer más tarde"),
     ]
     ax.legend(handles=legend_elements, loc="lower right", framealpha=0.9)
     
     # Add note about bubble size
-    ax.text(0.02, 0.02, "Bubble size = Equity urgency", transform=ax.transAxes,
+    ax.text(0.02, 0.02, "Tamaño de burbuja = Urgencia de equidad", transform=ax.transAxes,
             fontsize=8, alpha=0.6)
     
     ax.set_xlim(-0.05, 1.05)
@@ -197,10 +209,10 @@ def stacked_components_chart(
     
     # Get component values
     components = {
-        "Impact Potential": df["impact_potential_norm"].fillna(0),
-        "Leverage (SCI×ELI)": df["leverage"].fillna(0),
-        "Equity Urgency": df["evi_score"].fillna(0),
-        "Feasibility": df["feasibility_score"].fillna(0),
+        "Potencial de Impacto": df["impact_potential_norm"].fillna(0),
+        "Apalancamiento (SCI×ELI)": df["leverage"].fillna(0),
+        "Urgencia de Equidad": df["evi_score"].fillna(0),
+        "Viabilidad": df["feasibility_score"].fillna(0),
     }
     
     component_colors = [COLORS["impact"], COLORS["leverage"], COLORS["equity"], COLORS["feasibility"]]
@@ -216,9 +228,9 @@ def stacked_components_chart(
         ax.bar(x, values, width, label=name, bottom=bottom, color=color, alpha=0.85)
         bottom += values.values
     
-    ax.set_xlabel("Bundle (MdV)", fontweight="bold")
-    ax.set_ylabel("Cumulative Score", fontweight="bold")
-    ax.set_title(f"Component Contributions - Top 10 Bundles ({scenario.title()})", 
+    ax.set_xlabel("Paquete (MdV)", fontweight="bold")
+    ax.set_ylabel("Puntaje Acumulado", fontweight="bold")
+    ax.set_title(f"Contribuciones de Componentes - Top 10 Paquetes ({scenario.title()})", 
                  fontsize=14, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=45, ha="right")
@@ -277,8 +289,8 @@ def bundle_scores_by_grupo(
     bars = ax.bar(x, grupo_stats["portfolio_score"], width, color=COLORS["primary"], alpha=0.85)
     
     ax.set_xlabel("Grupo", fontweight="bold")
-    ax.set_ylabel("Mean Portfolio Score", fontweight="bold")
-    ax.set_title(f"Bundle Scores by Grupo ({scenario.title()})", fontsize=14, fontweight="bold")
+    ax.set_ylabel("Puntaje Medio del Portafolio", fontweight="bold")
+    ax.set_title(f"Puntajes de Paquetes por Grupo ({scenario.title()})", fontsize=14, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(grupo_stats["grupo"], rotation=0)
     
@@ -342,9 +354,9 @@ def top_services_in_bundles(
     x = np.arange(len(service_counts))
     bars = ax.barh(x, service_counts.values, color=COLORS["secondary"], alpha=0.85)
     
-    ax.set_xlabel("Frequency in Bundles", fontweight="bold")
-    ax.set_ylabel("Service", fontweight="bold")
-    ax.set_title("Top Services Appearing in Bundles", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Frecuencia en Paquetes", fontweight="bold")
+    ax.set_ylabel("Servicio", fontweight="bold")
+    ax.set_title("Principales Servicios que Aparecen en Paquetes", fontsize=14, fontweight="bold")
     ax.set_yticks(x)
     ax.set_yticklabels([str(s)[:30] for s in service_counts.index])
     
@@ -403,9 +415,9 @@ def top_threats_in_bundles(
     x = np.arange(len(threat_counts))
     bars = ax.barh(x, threat_counts.values, color=COLORS["accent"], alpha=0.85)
     
-    ax.set_xlabel("Frequency in Bundles", fontweight="bold")
-    ax.set_ylabel("Threat", fontweight="bold")
-    ax.set_title("Top Threats Driving Bundle Risk", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Frecuencia en Paquetes", fontweight="bold")
+    ax.set_ylabel("Amenaza", fontweight="bold")
+    ax.set_title("Principales Amenazas que Impulsan el Riesgo de Paquetes", fontsize=14, fontweight="bold")
     ax.set_yticks(x)
     ax.set_yticklabels([str(t)[:30] for t in threat_counts.index])
     
@@ -452,17 +464,18 @@ def tier_distribution_chart(
     fig, ax = plt.subplots(figsize=(8, 8))
     
     colors = [TIER_COLORS.get(t, COLORS["secondary"]) for t in tier_counts.index]
+    labels = [TIER_TRANSLATIONS.get(t, t) for t in tier_counts.index]
     
     wedges, texts, autotexts = ax.pie(
         tier_counts.values,
-        labels=tier_counts.index,
+        labels=labels,
         colors=colors,
         autopct="%1.0f%%",
         startangle=90,
         explode=[0.02] * len(tier_counts),
     )
     
-    ax.set_title(f"Bundle Tier Distribution ({scenario.title()})", fontsize=14, fontweight="bold")
+    ax.set_title(f"Distribución de Niveles de Paquetes ({scenario.title()})", fontsize=14, fontweight="bold")
     
     # Save
     figures_dir = Path(outdir) / "figures"

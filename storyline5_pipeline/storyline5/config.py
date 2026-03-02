@@ -218,9 +218,9 @@ FECHA_COL = "fecha_iso"
 # TIER LABELS
 # =============================================================================
 
-TIER_DO_NOW = "Do now"
-TIER_DO_NEXT = "Do next"
-TIER_DO_LATER = "Do later"
+TIER_DO_NOW = "Hacer ahora"
+TIER_DO_NEXT = "Hacer después"
+TIER_DO_LATER = "Hacer más tarde"
 
 # =============================================================================
 # INDICATOR TYPES
@@ -240,8 +240,8 @@ INDICATOR_TYPES = [
 # =============================================================================
 
 STORYLINE_COMPONENTS = {
-    "impact_potential": "Storyline 1 - Priority, Risk, Capacity Gap",
-    "leverage": "Storyline 2 - Service/Ecosystem Criticality",
-    "equity_urgency": "Storyline 3 - Equity Vulnerability",
-    "feasibility": "Storyline 4 - Feasibility, Governance, Conflict Risk",
+    "impact_potential": "Storyline 1 - Prioridad, Riesgo, Brecha de Capacidad",
+    "leverage": "Storyline 2 - Criticidad de Servicios/Ecosistemas",
+    "equity_urgency": "Storyline 3 - Equidad y Vulnerabilidad",
+    "feasibility": "Storyline 4 - Viabilidad, Gobernanza, Riesgo de Conflicto",
 }
