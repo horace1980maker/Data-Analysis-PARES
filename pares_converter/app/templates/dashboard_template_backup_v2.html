@@ -69,7 +69,17 @@
 
         /* Bento Grid Utilities */
         .bento-card {
-            @apply bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col transition-all duration-200 hover:shadow-md;
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 200ms;
+        }
+        .bento-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
     </style>
 </head>
