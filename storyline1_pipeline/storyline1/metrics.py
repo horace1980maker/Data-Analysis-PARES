@@ -626,7 +626,9 @@ def action_priority_index(
         """Fill missing mdv_name values from the lookup."""
         if "mdv_name" in df.columns and "mdv_id" in df.columns:
             mask = df["mdv_name"].isna() | (df["mdv_name"] == "")
-            df.loc[mask, "mdv_name"] = df.loc[mask, "mdv_id"].map(mdv_name_lookup)
+            mapped = df.loc[mask, "mdv_id"].map(mdv_name_lookup)
+            valid_mask = mask & mapped.notna()
+            df.loc[valid_mask, "mdv_name"] = mapped[valid_mask]
             # If still missing, use mdv_id as fallback
             mask = df["mdv_name"].isna() | (df["mdv_name"] == "")
             df.loc[mask, "mdv_name"] = df.loc[mask, "mdv_id"].astype(str)
@@ -670,7 +672,10 @@ def action_priority_index(
             # Fill missing mdv_name from risk
             if "mdv_name_risk" in overall.columns:
                 mask = overall["mdv_name"].isna() | (overall["mdv_name"] == "")
-                overall.loc[mask, "mdv_name"] = overall.loc[mask, "mdv_name_risk"]
+                valid_risk = overall["mdv_name_risk"].notna() & (overall["mdv_name_risk"] != "")
+                assign_mask = mask & valid_risk
+                if assign_mask.sum() > 0:
+                    overall.loc[assign_mask, "mdv_name"] = overall.loc[assign_mask, "mdv_name_risk"]
                 overall = overall.drop(columns=["mdv_name_risk"])
         else:
             overall["risk_norm"] = 0.5
@@ -692,7 +697,10 @@ def action_priority_index(
             # Fill missing mdv_name from capacity
             if "mdv_name_cap" in overall.columns:
                 mask = overall["mdv_name"].isna() | (overall["mdv_name"] == "")
-                overall.loc[mask, "mdv_name"] = overall.loc[mask, "mdv_name_cap"]
+                valid_cap = overall["mdv_name_cap"].notna() & (overall["mdv_name_cap"] != "")
+                assign_mask = mask & valid_cap
+                if assign_mask.sum() > 0:
+                    overall.loc[assign_mask, "mdv_name"] = overall.loc[assign_mask, "mdv_name_cap"]
                 overall = overall.drop(columns=["mdv_name_cap"])
         else:
             overall["cap_gap_norm"] = 0.5
@@ -751,7 +759,10 @@ def action_priority_index(
             # Fill missing mdv_name from risk
             if "mdv_name_risk" in by_group.columns:
                 mask = by_group["mdv_name"].isna() | (by_group["mdv_name"] == "")
-                by_group.loc[mask, "mdv_name"] = by_group.loc[mask, "mdv_name_risk"]
+                valid_risk = by_group["mdv_name_risk"].notna() & (by_group["mdv_name_risk"] != "")
+                assign_mask = mask & valid_risk
+                if assign_mask.sum() > 0:
+                    by_group.loc[assign_mask, "mdv_name"] = by_group.loc[assign_mask, "mdv_name_risk"]
                 by_group = by_group.drop(columns=["mdv_name_risk"])
         else:
             by_group["risk_norm"] = 0.5
@@ -774,7 +785,10 @@ def action_priority_index(
             # Fill missing mdv_name from capacity
             if "mdv_name_cap" in by_group.columns:
                 mask = by_group["mdv_name"].isna() | (by_group["mdv_name"] == "")
-                by_group.loc[mask, "mdv_name"] = by_group.loc[mask, "mdv_name_cap"]
+                valid_cap = by_group["mdv_name_cap"].notna() & (by_group["mdv_name_cap"] != "")
+                assign_mask = mask & valid_cap
+                if assign_mask.sum() > 0:
+                    by_group.loc[assign_mask, "mdv_name"] = by_group.loc[assign_mask, "mdv_name_cap"]
                 by_group = by_group.drop(columns=["mdv_name_cap"])
         else:
             by_group["cap_gap_norm"] = 0.5

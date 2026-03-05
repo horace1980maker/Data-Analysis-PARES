@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/ui/style.css">
+    <link rel="stylesheet" href="/ui/analyzer.css">
 </head>
 
 <body>
@@ -22,6 +23,16 @@
         </div>
 
         <header>
+            <div class="header-nav">
+                <a href="/" class="back-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Volver al Inicio</span>
+                </a>
+            </div>
             <div class="logo-area">
                 <div class="icon-pulse"></div>
                 <h1>PARES <span data-i18n="nav.converter">Conversor</span></h1>
@@ -107,7 +118,7 @@
 
             <!-- Analyzer Link Card -->
             <section class="card glass link-card">
-                <a href="/analyzer" class="link-card-content">
+                <a href="/interpreter" class="link-card-content">
                     <div class="link-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -129,6 +140,8 @@
                     </div>
                 </a>
             </section>
+
+
         </main>
 
         <footer>
