@@ -279,7 +279,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="toc">
         <h2>📋 Contenido</h2>
         <ol>
-            <li><a href="#sec1">Resumen Ejecutivo</a></li>
+            <li><a href="#sec1">Resumen</a></li>
             <li><a href="#sec2">Análisis de Prioridad</a></li>
             <li><a href="#sec3">Análisis de Amenazas</a></li>
             <li><a href="#sec4">Capacidad Adaptativa</a></li>
@@ -411,7 +411,7 @@ def _load_figures(input_dir: Path) -> Dict[str, str]:
 def section_executive_summary(tables: Dict[str, pd.DataFrame]) -> str:
     parts = []
     parts.append('<section id="sec1">')
-    parts.append('<h2>1. Resumen Ejecutivo</h2>')
+    parts.append('<h2>1. Resumen</h2>')
 
     parts.append(_interp(
         "Este resumen presenta los resultados más importantes del análisis de prioridad. "

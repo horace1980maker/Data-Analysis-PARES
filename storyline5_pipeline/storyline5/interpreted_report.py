@@ -404,7 +404,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="toc">
         <h2>📋 Contenido</h2>
         <ol>
-            <li><a href="#sec1">Resumen Ejecutivo</a></li>
+            <li><a href="#sec1">Resumen</a></li>
             <li><a href="#sec2">Evidencia del Portafolio</a></li>
             <li><a href="#sec3">Detalles de los Paquetes</a></li>
             <li><a href="#sec4">Plan de Monitoreo</a></li>
@@ -538,7 +538,7 @@ def section_executive_summary(
 ) -> str:
     parts = []
     parts.append('<section id="sec1">')
-    parts.append('<h2>1. Resumen Ejecutivo</h2>')
+    parts.append('<h2>1. Resumen</h2>')
 
     parts.append(_interp(
         "Este resumen presenta los resultados clave del <strong>Diseño de Portafolio SbN</strong> "

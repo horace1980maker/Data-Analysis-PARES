@@ -391,7 +391,7 @@ HTML_TEMPLATE = """
         <div class="toc">
             <h3>📋 Tabla de Contenidos</h3>
             <ul>
-                <li><a href="#executive-summary">1. Resumen Ejecutivo</a></li>
+                <li><a href="#executive-summary">1. Resumen</a></li>
                 <li><a href="#portfolio-evidence">2. Evidencia del Portafolio</a></li>
                 <li><a href="#bundle-details">3. Detalles de los Paquetes</a></li>
                 <li><a href="#monitoring-plan">4. Plan de Monitoreo</a></li>
@@ -495,7 +495,7 @@ def generate_executive_summary(
 ) -> str:
     """Generate executive summary section."""
     html = '<section id="executive-summary">'
-    html += '<h2>1. Resumen Ejecutivo</h2>'
+    html += '<h2>1. Resumen</h2>'
     
     # Count bundles
     bundles_overall = portfolio_tables.get("BUNDLES_OVERALL", pd.DataFrame())

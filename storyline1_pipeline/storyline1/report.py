@@ -312,7 +312,7 @@ HTML_TEMPLATE = """
         <div class="toc">
             <h3>📋 Tabla de Contenidos</h3>
             <ul>
-                <li><a href="#executive-summary">1. Resumen Ejecutivo</a></li>
+                <li><a href="#executive-summary">1. Resumen</a></li>
                 <li><a href="#priority-analysis">2. Análisis de Prioridad</a></li>
                 <li><a href="#threat-analysis">3. Análisis de Amenazas</a></li>
                 <li><a href="#capacity-analysis">4. Análisis de Capacidad</a></li>
@@ -406,7 +406,7 @@ def generate_executive_summary(
     sections = []
     
     sections.append('<section id="executive-summary" class="section">')
-    sections.append('<h2>1. Resumen Ejecutivo</h2>')
+    sections.append('<h2>1. Resumen</h2>')
     
     # Top livelihoods overall (balanced scenario)
     rankings_balanced = tables.get("rankings_overall_balanced", pd.DataFrame())

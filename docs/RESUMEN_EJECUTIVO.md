@@ -1,4 +1,4 @@
-# Sistema de Análisis de Datos PARES — Resumen Ejecutivo
+# Sistema de Análisis de Datos PARES — Resumen
 
 ## ¿Qué es este sistema?
 

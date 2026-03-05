@@ -1,4 +1,4 @@
-# Sistema de anaisis de datos PARES — Resumen Ejecutivo (Versión Corta)
+# Sistema de anaisis de datos PARES — Resumen (Versión Corta)
 
 ## ¿Qué es?
 

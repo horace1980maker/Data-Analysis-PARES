@@ -246,7 +246,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="toc">
         <h2>📋 Contenido</h2>
         <ol>
-            <li><a href="#sec1">Resumen Ejecutivo</a></li>
+            <li><a href="#sec1">Resumen</a></li>
             <li><a href="#sec2">Actores y Redes</a></li>
             <li><a href="#sec3">Espacios de Diálogo</a></li>
             <li><a href="#sec4">Análisis de Conflictos</a></li>
@@ -352,7 +352,7 @@ def section_executive_summary(
 ) -> str:
     parts = []
     parts.append('<section id="sec1">')
-    parts.append('<h2>1. Resumen Ejecutivo</h2>')
+    parts.append('<h2>1. Resumen</h2>')
 
     parts.append(_interp(
         "Historia 4 analiza las <strong>condiciones habilitantes</strong> para la implementación "

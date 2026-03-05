@@ -284,7 +284,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="toc">
         <h2>📋 Contenido</h2>
         <ol>
-            <li><a href="#executive-summary">Resumen Ejecutivo</a></li>
+            <li><a href="#executive-summary">Resumen</a></li>
             <li><a href="#differentiated-impacts">Impactos Diferenciados</a></li>
             <li><a href="#service-access">Acceso a Servicios y Barreras</a></li>
             <li><a href="#capacity-gaps">Brechas de Capacidad</a></li>
@@ -393,7 +393,7 @@ def generate_executive_summary(
     figures: Dict[str, str],
 ) -> str:
     """Generate executive summary section."""
-    content = '<section id="executive-summary" class="section"><h2>1. Resumen Ejecutivo</h2>'
+    content = '<section id="executive-summary" class="section"><h2>1. Resumen</h2>'
     
     # Stats cards
     content += '<div class="stats-grid">'

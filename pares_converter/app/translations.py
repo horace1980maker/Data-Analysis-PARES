@@ -54,7 +54,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     },
     "s1.executive_summary": {
         "en": "Executive Summary",
-        "es": "Resumen Ejecutivo"
+        "es": "Resumen"
     },
     "s1.priority_analysis": {
         "en": "Priority Analysis",
@@ -100,7 +100,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     },
     "s2.executive_summary": {
         "en": "Executive Summary",
-        "es": "Resumen Ejecutivo"
+        "es": "Resumen"
     },
     "s2.ecosystem_analysis": {
         "en": "Ecosystem Analysis",
@@ -134,7 +134,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     },
     "s3.executive_summary": {
         "en": "Executive Summary",
-        "es": "Resumen Ejecutivo"
+        "es": "Resumen"
     },
     "s3.differentiated_impacts": {
         "en": "Differentiated Impacts",
