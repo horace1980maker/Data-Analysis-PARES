@@ -281,7 +281,7 @@ def quantile_tier(
         Series of tier labels
     """
     if scores.empty:
-        return pd.Series(dtype=str)
+        return pd.Series(dtype="object")
     
     # Get thresholds
     do_now_pct = tiers_config.get("do_now_top_pct", 0.33)
